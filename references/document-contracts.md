@@ -9,19 +9,38 @@ contracts define what belongs in each document, when an agent should read or
 update it, and how its contents age.
 
 These contracts prevent CSDD from becoming a single large context dump.
+Normative terms have the meanings defined in [protocol.md](protocol.md).
+
+## Canonical layout
+
+The four primary documents MUST be human-readable Markdown files at these exact
+v0 paths:
+
+```text
+.csdd/
+|-- specs.md
+|-- todo.md
+|-- decisions.md
+|-- handoff.md
+`-- archive/        # optional
+```
+
+Project-root alternatives and configurable locations are outside v0. In the
+rest of this document, short names such as `todo.md` refer to these canonical
+paths.
 
 ## Shared rules
 
-1. Load documents according to task need, never as an unconditional startup
-   ritual.
+1. Context hydration MUST NOT be unconditional. Load documents according to
+   task need.
 2. Prefer current, actionable state over chronological narration.
 3. Persist consequential knowledge, not a transcript of activity.
 4. Keep information in one canonical document and link to it when another
    document needs the context.
 5. Update shared state when work makes it materially false, incomplete, or
    misleading.
-6. Reconcile conflicts with repository evidence; do not silently overwrite
-   either side.
+6. Conflicts with repository evidence MUST be surfaced and reconciled; agents
+   MUST NOT silently overwrite either side.
 7. Keep sections scannable so agents can retrieve a relevant subset without
    reading the entire file.
 
@@ -29,13 +48,14 @@ These contracts prevent CSDD from becoming a single large context dump.
 
 | Document | Primary question | Temperature | Expected lifetime |
 | --- | --- | --- | --- |
-| `specs.md` | What must be true? | Warm | Durable, revised as project intent changes |
-| `todo.md` | What work exists now, and who owns it? | Hot | Current operational cycle |
-| `decisions.md` | What consequential choice was made, and why? | Warm | Durable until superseded |
-| `handoff.md` | What must the next agent know right now? | Hot | Transient, replaced or cleared frequently |
+| `.csdd/specs.md` | What must be true? | Warm | Durable, revised as project intent changes |
+| `.csdd/todo.md` | What work exists now, and who is accountable and executing? | Hot | Current operational cycle |
+| `.csdd/decisions.md` | What consequential choice was made, and why? | Warm | Durable until superseded |
+| `.csdd/handoff.md` | What must a resuming agent know right now? | Hot | Transient, replaced or cleared frequently |
 
-An optional `archive/` is cold context. It is not a fifth required document and
-must not be read during default hydration.
+Projects MAY omit `.csdd/archive/`. When present, it is standardized cold
+context, not a fifth primary document, and MUST NOT be read during default
+hydration.
 
 ## `specs.md`
 
@@ -102,31 +122,65 @@ silently rewrite intent merely to match its implementation.
 
 ### Contract
 
-Describe the current operational state of work, including enough ownership and
-scope information to coordinate agents.
+Describe the current operational state of work, including enough accountability,
+execution, and scope information to coordinate agents.
 
 `todo.md` is a live control surface, not a permanent project diary.
 
 ### Read policy
 
-Read relevant active work before editing when a task is non-trivial, continues
-existing work, or may overlap with another agent. A trivial local task need not
-read `todo.md` when overlap is not plausible.
+Agents MUST NOT knowingly ignore active scope overlap. Read relevant active work
+before editing when a task is non-trivial, continues existing work, or may
+overlap. A trivial or isolated task MAY avoid reading `todo.md` when overlap is
+not plausible.
+
+### Minimum task structure
+
+CSDD tasks MUST use plain, human-readable Markdown. Each task requires:
+
+- a stable task ID;
+- a concise title;
+- a state represented by its section or another obvious Markdown mechanism.
+
+```markdown
+## In Progress
+
+- [ ] T-004 — Define document templates
+```
+
+For active collaborative work, tasks SHOULD include these fields when relevant:
+
+- `Owner`: the accountable human or team and preferred coordination point;
+- `Agent`: the current operational executor or harness/task label;
+- `Scope`: the concrete write or contract boundary;
+- `Updated`: the date of the last meaningful task-state update.
+
+```markdown
+- [ ] T-021 — Implement password recovery
+  - Owner: valen
+  - Agent: codex/auth-reset
+  - Scope: `src/auth/reset-password/**`
+  - Updated: 2026-07-12
+```
+
+`Depends on`, `Blocked by`, and a short `Note` MAY be added. Trivial tasks MAY
+omit all ownership metadata. CSDD does not require story points, completion
+percentages, mandatory priorities, risk scores, complex labels, redundant
+timestamps, or mandatory reviewer fields. V0 MUST NOT require YAML front matter,
+JSON, a database, a machine schema, or harness-specific metadata.
+
+Changing `Agent` does not necessarily change `Owner`. Neither field provides
+secure identity or authentication. CSDD v0 MUST NOT attempt automatic human
+identity discovery and SHOULD use human-readable labels rather than
+provider-specific identifiers.
 
 ### Contains
 
-For each relevant task, include only the fields needed to act and coordinate:
-
-- a stable short identifier or unambiguous title;
-- status such as pending, in progress, or blocked;
-- owner when work is claimed;
-- explicit scope, preferably files, directories, modules, or contracts;
-- dependencies or blocker when relevant;
-- last meaningful checkpoint for active work;
-- a concise completion condition when it is not obvious.
-
-A bounded `Recently Completed` section may help humans and agents bridge the
-current work cycle.
+- pending, in-progress, and blocked work;
+- ownership, execution, and active scope when coordination requires them;
+- dependencies or blockers when relevant;
+- a short note or completion condition when it materially helps execution;
+- a small `Recently Completed` window when it helps interpret current state.
 
 ### Does not contain
 
@@ -135,14 +189,15 @@ current work cycle.
 - architectural rationale;
 - durable requirements;
 - transient debugging notes unrelated to coordination;
-- ownership scopes so broad that they prevent unrelated work.
+- vague ownership scopes that prevent unrelated work;
+- project-management metadata without a demonstrated coordination purpose.
 
 ### Update triggers
 
 Update `todo.md` when:
 
 - work is claimed or released;
-- scope, owner, status, dependency, or blocker changes;
+- scope, `Owner`, `Agent`, state, dependency, or blocker changes;
 - a meaningful checkpoint is needed to protect continuity;
 - work completes or becomes abandoned;
 - an active claim appears stale and is reconciled.
@@ -150,33 +205,61 @@ Update `todo.md` when:
 Do not add a task or claim for work whose coordination overhead would exceed its
 complexity.
 
-### Ownership and stale claims
+### Scope and coordination claims
 
-Ownership is an explicit soft lease:
+`Scope` SHOULD name concrete files, directories, modules, or contracts. Prefer
+paths such as `src/auth/**` and `tests/auth/**` over a vague label such as
+`backend`. Scope is usually more important for collision detection than agent
+identity.
 
-- a single writer owns overlapping scope by default;
-- overlap must be intentional and surfaced before editing;
-- an owner must keep scope narrow enough to permit independent work;
-- a last checkpoint helps later agents judge whether a claim may be stale;
-- age alone does not automatically prove that a claim is abandoned.
+Claims are advisory coordination metadata, not reliable distributed locks.
+CSDD does not guarantee exclusive access, agent liveness, atomic claims,
+automatic synchronization, or lease expiration. A single operational executor
+per overlapping scope is the safe default, but intentional overlap is allowed
+when it is surfaced and coordinated.
 
-CSDD v0 does not define a universal expiry interval. A questionable claim must
-be reconciled, not silently ignored or treated as eternally active.
+### Stale claims
+
+A claim may be stale because execution ended, a human abandoned the task, work
+completed without a CSDD update, the task moved environments, or repository
+state changed independently. `Updated` is a reconciliation signal, not proof of
+liveness or abandonment. V0 defines no strict time-based lease algorithm.
+
+Before reclaiming scope, an agent SHOULD inspect relevant `todo.md` and
+`handoff.md` entries, repository state, Git status and recent history, files in
+scope, visible branches or worktrees, and current user instructions. When an
+`Owner` exists and can reasonably be consulted, that human or team SHOULD be
+the preferred coordination point.
+
+A stale claim MAY be reclaimed after explicit reconciliation, but MUST NOT be
+reclaimed silently. Update the task to record reassignment or the other
+resolution.
+
+```markdown
+- [ ] T-042 — Migrate billing client
+  - Owner: martina
+  - Agent: codex/billing-migration
+  - Scope: `src/billing/**`
+  - Updated: 2026-07-12
+  - Note: Agent execution reassigned after stale-state reconciliation.
+```
 
 ### Aging and history
 
-Keep active and near-term work hot. Periodically remove completed entries from
-the default view. Git remains the exact technical history; optional `archive/`
-may retain concise semantic history when it would help explain prior phases or
-abandoned directions.
+Keep active and near-term work hot. `todo.md` SHOULD retain only a small,
+relevant window of completed work and remove older entries from the default
+view. The exact bound remains a dogfooding question.
 
-The archive must remain cold and must not become required startup reading.
+At the end of a meaningful phase or milestone, relevant history MAY be
+distilled into an archive entry. Do not mechanically copy completed tasks.
+Durable specifications MUST remain in `specs.md`, durable decisions MUST remain
+in `decisions.md`, and current operational state MUST remain in `todo.md`.
 
 ### Update responsibility
 
-The agent performing the work is responsible for keeping its task status, scope,
-and checkpoint honest. An agent that detects conflicting ownership must surface
-the conflict before changing either the claim or the overlapping code.
+The executing agent is responsible for keeping task state, `Agent`, scope, and
+checkpoints honest. An agent that detects conflicting scope MUST surface the
+conflict before changing the claim or overlapping code.
 
 ## `decisions.md`
 
@@ -221,12 +304,13 @@ Create or update an entry when:
 
 ### Supersession and contradiction
 
-Never erase a consequential accepted decision merely because a new agent prefers
-another approach. Add a superseding decision, link the previous entry, and state
-why the trade-off changed.
+Agents MUST NOT silently reverse or erase a consequential accepted decision.
+Add a superseding decision, link the previous entry, and state why the trade-off
+changed.
 
-If repository reality contradicts an active decision, surface whether the code
-is non-conforming, the decision is stale, or a migration is incomplete.
+If repository reality contradicts an active decision, the conflict MUST be
+surfaced and reconciled as non-conforming code, a stale decision, an incomplete
+migration, or another explicitly resolved state.
 
 ### Aging
 
@@ -236,9 +320,9 @@ retains enough lineage to prevent confusion.
 
 ### Update responsibility
 
-The agent introducing or discovering a consequential change must record or
-surface it. It must not manufacture rationale after the fact or silently convert
-an implementation accident into project policy.
+The agent introducing or discovering a consequential change MUST record or
+surface it. It MUST NOT manufacture rationale after the fact or silently
+convert an implementation accident into project policy.
 
 ## `handoff.md`
 
@@ -247,14 +331,34 @@ an implementation accident into project policy.
 Transfer the minimum current state needed for another agent to resume
 incomplete, blocked, or interrupted work safely.
 
-`handoff.md` is a transient resume point. It complements `todo.md`; it does not
-replace the task list, ownership record, or durable project documentation.
+V0 MUST use one canonical `.csdd/handoff.md`. It SHOULD be organized by task or
+workstream rather than by agent or harness. It is a transient resume point, not
+a collection of per-agent diaries. Multiple or scoped handoff files are outside
+v0.
+
+```markdown
+# Handoff
+
+## T-021 — Implement password recovery
+
+### Current state
+
+...
+
+### Risks
+
+...
+
+### Recommended next step
+
+...
+```
 
 ### Read policy
 
-Read the relevant handoff when continuing prior work or when an active task
-indicates that partial session state matters. Do not require it for unrelated
-or clearly self-contained work.
+Read the relevant task or workstream section when continuing prior work or when
+an active task indicates that partial session state matters. Trivial or
+unrelated work MAY avoid reading `handoff.md`.
 
 A handoff is a claim about recent state, not proof that the repository is
 unchanged. Confirm critical details before acting.
@@ -284,35 +388,42 @@ necessary to resume efficiently and are not better captured elsewhere.
 
 ### Update triggers
 
-Create, replace, or update a handoff when:
+At minimum, create or update a handoff when consequential incomplete state must
+survive a session close, transfer, block, or interruption. Clear or replace a
+section when it no longer describes current reality. Whether routine meaningful
+checkpoints should also trigger updates remains open for dogfooding.
+
+Relevant triggers include:
 
 - unfinished work will continue in another session or agent;
 - work becomes blocked or is interrupted with consequential partial state;
-- the current resume point, risk, or recommended next action changes;
 - a previous handoff is consumed and no longer describes current reality.
 
-A successful self-contained task needs no handoff unless another active agent
+A successful self-contained task MAY omit a handoff unless another active agent
 depends on its result.
 
 ### Relationship to `todo.md`
 
-`todo.md` answers who owns current work, its explicit scope, status,
-dependencies, and blockers. `handoff.md` answers what a resuming agent needs to
-know about the latest partial execution state.
+`todo.md` is the primary coordination and collision-prevention surface. It
+answers what work is active, its state, `Owner`, `Agent`, explicit scope,
+dependencies, and blockers. `handoff.md` transfers the partial implementation
+state, current risks, unresolved questions, and recommended next action.
 
-When both refer to the same task, the handoff should link to the canonical task
+These responsibilities MUST remain distinct. `handoff.md` MUST NOT become a
+duplicate task tracker or the primary collision-prevention mechanism.
+
+When both refer to the same task, the handoff SHOULD link to the canonical task
 entry rather than duplicate ownership fields. If they disagree, reconcile the
 task state before continuing.
 
 ### Aging and replacement
 
-Treat a handoff as replaceable current state. Remove or replace it after the
-work is resumed, completed, abandoned, or made obsolete. Promote any validated
-durable knowledge before removing the handoff.
+Treat a handoff as replaceable current state. Remove or replace its task section
+after the work is resumed, completed, abandoned, or made obsolete. Promote any
+validated durable knowledge before removing the handoff.
 
-Do not append every session forever. If a project needs historical transfer
-records, it may preserve selected summaries as optional cold context, but those
-records are outside default hydration.
+Do not append every session forever. Selected semantic history MAY move to cold
+context, but per-session handoffs MUST NOT accumulate as permanent history.
 
 ### Update responsibility
 
@@ -322,7 +433,7 @@ critical claims and replacing or clearing stale transfer state.
 
 ## Cross-document movement
 
-Information should move when its purpose or lifetime changes, not be copied
+Information SHOULD move when its purpose or lifetime changes, not be copied
 indefinitely.
 
 | From | Trigger | Canonical destination |
@@ -341,28 +452,57 @@ not continue presenting an old truth.
 
 ## Optional archive contract
 
-An archive is an open design option, not a required CSDD v0 artifact. If a
-project uses one, it should:
+Projects MAY omit `.csdd/archive/`. When the archive exists, it is standardized
+cold context and SHOULD contain `index.md`:
 
-- contain selected semantic history whose future value justifies retention;
-- remain outside default hydration;
-- distinguish archived state from current authoritative state;
-- point back to current specifications or decisions when lineage matters;
-- avoid duplicating exact technical history already available in Git.
+```text
+.csdd/archive/
+|-- index.md
+|-- 2026-07-phase-0-protocol-design.md
+`-- 2026-08-initial-skill-validation.md
+```
 
-The path `.csdd/archive/` is illustrative, not yet normative. Archive structure,
-retention thresholds, and indexing remain unresolved.
+The index SHOULD provide a concise inventory that helps agents select a relevant
+entry without loading the archive broadly.
+
+Agents MUST NOT load archive contents during default hydration. Entries SHOULD
+be organized by meaningful phase, milestone, experiment, migration, or
+workstream and MUST NOT be created for every agent session. A monolithic,
+indefinitely growing `history.md` SHOULD NOT be used.
+
+> Preserve semantic project history, not chronological activity exhaust.
+
+An archive entry SHOULD summarize:handoff
+
+- its objective and relevant outcome;
+- consequential discoveries;
+- important rejected or deferred approaches;
+- unresolved concerns;
+- related decisions;
+- useful task or Git references.
+
+It SHOULD NOT preserve:
+
+- complete transcripts or full agent reasoning;
+- every command, failed attempt, or transient hypothesis;
+- mechanical copies of `todo.md`;
+- exact technical history already available in Git.
+
+Archived state MUST be distinguishable from current authoritative state. When
+lineage matters, entries SHOULD point to current specifications or decisions.
+At phase or milestone boundaries, history MAY be distilled into an entry, but
+durable and operational facts MUST remain in their canonical primary documents.
 
 ## Contract-level open questions
 
-- Which fields, headings, or stable identifiers should v0 require versus merely
-  recommend?
-- Should document discovery assume a `.csdd/` directory, allow root-level files,
-  or support both through project instructions?
-- How much recent completion state belongs in hot `todo.md` before removal?
-- Which evidence is sufficient to release or replace an apparently stale
-  ownership claim?
-- Should `handoff.md` represent one project-wide transfer point or support
-  multiple scoped handoffs?
-- When does superseded decision detail remain warm, and when should it move to
-  optional cold context?
+- Should `handoff.md` be updated only at session close or interruption, or also
+  at meaningful checkpoints?
+- Should the `Recently Completed` window in `todo.md` be bounded by relevance,
+  phase, or a loose numeric guideline?
+- Which `Agent` label conventions remain portable across Codex, Cursor, Claude
+  Code, and future harnesses?
+- Which normative statements should be promoted from SHOULD to MUST after
+  real-world testing?
+- Will one `.csdd/handoff.md` remain practical under concurrent editing?
+- Does the archive model remain useful without becoming redundant with Git and
+  durable project documents?

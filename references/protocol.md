@@ -15,6 +15,13 @@ reconstruct a task-appropriate working context.
 
 > Agents are ephemeral. Project state must be durable.
 
+## Normative language
+
+The terms MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY express v0 protocol
+requirements, recommendations, and options. Lowercase terms are descriptive.
+Normative language is used only where interoperability or safety requires a
+clear rule.
+
 ## Problem
 
 AI coding agents are context-isolated. When work spans sessions, agents, or
@@ -78,8 +85,8 @@ should load it. It does not make any document mandatory reading.
 
 Current, operational, and frequently changing:
 
-- `todo.md`;
-- `handoff.md`.
+- `.csdd/todo.md`;
+- `.csdd/handoff.md`.
 
 Hot context is the first candidate for project or collaborative work, but a
 trivial isolated task may need neither file.
@@ -88,8 +95,8 @@ trivial isolated task may need neither file.
 
 Durable and slower-changing:
 
-- `specs.md`;
-- `decisions.md`.
+- `.csdd/specs.md`;
+- `.csdd/decisions.md`.
 
 Agents load only the sections relevant to the task.
 
@@ -97,7 +104,7 @@ Agents load only the sections relevant to the task.
 
 Historical material kept for occasional recovery or investigation:
 
-- an optional `archive/`;
+- the optional `.csdd/archive/`;
 - relevant Git history.
 
 Cold context is never part of default context hydration. It is consulted only
@@ -105,28 +112,47 @@ when current state points to it or the task requires historical explanation.
 
 ## Core project-state documents
 
-CSDD v0 separates state across four primary documents:
+CSDD v0 uses one canonical, deterministic project-state location:
+
+```text
+.csdd/
+|-- specs.md
+|-- todo.md
+|-- decisions.md
+|-- handoff.md
+`-- archive/        # optional
+```
+
+The four primary documents MUST live directly under `.csdd/`, and CSDD state
+MUST remain human-readable Markdown. V0 does not support project-root
+alternatives, arbitrary paths, or configurable discovery. A fixed location
+reduces discovery ambiguity, context cost, harness-specific behavior, and
+adapter complexity. Configurable locations remain a possible post-v0 feature.
+
+CSDD separates the four documents by responsibility:
 
 | Document | Context layer | Primary responsibility |
 | --- | --- | --- |
-| `specs.md` | L1 | Durable requirements, constraints, invariants, and contracts |
-| `decisions.md` | L1 | Consequential choices, rationale, consequences, and supersession |
-| `todo.md` | L2 | Current work, ownership, scope, dependencies, and blockers |
-| `handoff.md` | L2 | Minimum current transfer state for resuming incomplete work |
+| `.csdd/specs.md` | L1 | Durable requirements, constraints, invariants, and contracts |
+| `.csdd/decisions.md` | L1 | Consequential choices, rationale, consequences, and supersession |
+| `.csdd/todo.md` | L2 | Current work, accountability, executor, scope, dependencies, and blockers |
+| `.csdd/handoff.md` | L2 | Minimum current transfer state for resuming incomplete work |
 
-`todo.md` is the coordination authority for active work and overlap detection.
-`handoff.md` is the transfer surface for the current or next session. A handoff
-may refer to a task, but it must not become a parallel task tracker.
+`todo.md` and `handoff.md` MUST preserve distinct responsibilities. `todo.md` is
+the primary coordination surface for active work and overlap detection.
+`handoff.md` transfers current resumable working state; it is not the primary
+collision-prevention mechanism or a parallel task tracker.
 
 The detailed boundaries, read policies, update triggers, and aging rules are
 defined in [document-contracts.md](document-contracts.md). The protocol defines
-conceptual responsibilities, not a mandatory Markdown schema.
+conceptual responsibilities and minimal Markdown conventions, not a machine
+schema.
 
 ## Principles
 
 ### P1 - Agents are ephemeral; project state is durable
 
-Critical project state must not exist exclusively in chat history. Durable does
+Critical project state MUST NOT exist exclusively in chat history. Durable does
 not mean immutable: state must remain updateable as the project changes.
 
 ### P2 - Persist consequential knowledge, not activity
@@ -140,38 +166,39 @@ or an unsafe assumption.
 
 ### P3 - Minimum sufficient context
 
-An agent should load the smallest amount of project state that allows it to act
+An agent SHOULD load the smallest amount of project state that allows it to act
 correctly and safely. More available context is not automatically better
 context.
 
 ### P4 - Separate state by purpose and lifetime
 
 Requirements, work state, decisions, handoffs, operator preferences, and
-session notes have different owners and aging rules. They must not be collapsed
+session notes have different owners and aging rules. They MUST NOT be collapsed
 into one accumulating document.
 
 ### P5 - Current state over accumulated history
 
-The default operational view must describe the project now. Historical value
-may be retained as cold context, but it must not burden routine agent startup.
+The default operational view SHOULD describe the project now. Historical value
+MAY be retained as cold context, but it MUST NOT burden routine agent startup.
 
 ### P6 - Explicit coordination over inferred coordination
 
-Active work must expose enough ownership, scope, status, and dependency
-information for another agent to detect likely overlap. Agents must not assume
-that silence means a scope is free.
+Active collaborative work SHOULD expose enough ownership, scope, state, and
+dependency information for another agent to detect likely overlap. Agents MUST
+NOT knowingly ignore active scope overlap or assume that silence means a scope
+is free.
 
 ### P7 - No silent contradiction
 
 When repository evidence, specifications, decisions, or active work conflict,
-an agent must surface and reconcile the conflict rather than silently overwrite
+an agent MUST surface and reconcile the conflict rather than silently overwrite
 one side.
 
 ### P8 - Documentation is project state, not unquestionable reality
 
 CSDD documents are authoritative statements of project intent and coordination,
-but they can become stale. Conflicting repository evidence must be investigated;
-neither documentation nor code wins automatically.
+but they can become stale. Conflicting repository evidence MUST be investigated
+and reconciled; neither documentation nor code wins automatically.
 
 ### P9 - Durable knowledge should be promoted; transient knowledge should expire
 
@@ -181,13 +208,13 @@ being current.
 
 ### P10 - Context loading must be proportional to task need
 
-CSDD must not require unconditional project-state hydration. Agents should
+CSDD context hydration MUST NOT be unconditional. Agents SHOULD
 escalate context only when scope, uncertainty, dependencies, behavioral impact,
 or possible overlap demand it.
 
 ### P11 - Coordination overhead must not exceed task complexity
 
-The protocol must not make a trivial change more expensive than the change
+The protocol MUST NOT make a trivial change more expensive than the change
 itself. Claiming work, writing handoffs, and updating shared state are required
 only when they reduce meaningful coordination or continuity risk.
 
@@ -213,7 +240,8 @@ identified text replacement.
 
 Flow: inspect target -> execute -> verify.
 
-Do not read or update CSDD documents unless the target reveals broader impact.
+Trivial or isolated tasks MAY avoid reading CSDD documents entirely. If the
+target reveals broader impact, increase hydration.
 
 ### Hydration level 1 - Local awareness
 
@@ -266,8 +294,9 @@ as needed, then load only relevant specifications and decisions.
 
 ### Claim/Plan
 
-For concurrent or continuity-sensitive work, identify the task, owner, intended
-scope, dependencies, and likely overlap before editing.
+For concurrent or continuity-sensitive work, identify the task, human `Owner`,
+executing `Agent`, intended scope, dependencies, and likely overlap before
+editing when those fields are relevant.
 
 ### Execute
 
@@ -284,9 +313,9 @@ that the work made stale.
 
 ### Handoff/Close
 
-Leave the project resumable. Update task status and ownership, preserve partial
-state and unresolved risks, promote durable knowledge, and remove or replace
-transient information.
+Leave the project resumable. Update task state, accountability, and executor as
+needed; preserve partial state and unresolved risks; promote durable knowledge;
+and remove or replace transient information.
 
 A session may close as successful, partial, blocked, interrupted, or abandoned.
 An incomplete session still requires a usable checkpoint when continuity would
@@ -296,41 +325,92 @@ otherwise be lost.
 
 CSDD coordination is document-based and intentionally lightweight.
 
+### Minimum interoperable task structure
+
+Tasks MUST use plain, human-readable Markdown. Each task requires a stable task
+ID, a concise title, and an obvious state expressed by its section or another
+clear Markdown mechanism:
+
+```markdown
+## In Progress
+
+- [ ] T-004 — Define document templates
+```
+
+Active collaborative tasks SHOULD identify `Owner`, `Agent`, `Scope`, and
+`Updated` when those fields help coordination. `Depends on`, `Blocked by`, and
+a short `Note` MAY be added when relevant. Trivial tasks MAY omit all ownership
+metadata.
+
+```markdown
+- [ ] T-021 — Implement password recovery
+  - Owner: valen
+  - Agent: codex/auth-reset
+  - Scope: `src/auth/reset-password/**`
+  - Updated: 2026-07-12
+```
+
+`Owner` identifies the accountable human or team and preferred coordination
+point. `Agent` identifies the current operational executor or harness/task
+label. Reassigning execution does not necessarily change human accountability.
+Both fields are advisory labels, not authenticated identities. CSDD v0 MUST NOT
+attempt automatic human identity discovery and SHOULD prefer human-readable
+labels over provider-specific identifiers.
+
+CSDD does not require story points, completion percentages, mandatory
+priorities, risk scores, complex labels, redundant timestamps, or mandatory
+reviewer fields. V0 MUST NOT require YAML front matter, JSON, a database, a
+machine schema, or harness-specific metadata.
+
 ### C1 - Read active ownership before writing when overlap is plausible
 
-Before non-trivial work, inspect relevant active entries in `todo.md` when the
-target scope could overlap. A trivial, clearly unrelated edit does not require a
-coordination scan.
+Before non-trivial work, inspect relevant active entries in `.csdd/todo.md` when
+the target scope could overlap. A trivial, clearly unrelated edit does not
+require a coordination scan.
 
 ### C2 - Claim explicit scope when collaborative work requires ownership
 
-A claim should name concrete files, directories, modules, contracts, or another
-boundary that lets an agent judge overlap. Prefer `src/auth/**` and
+A claim SHOULD name concrete files, directories, modules, contracts, or another
+boundary that lets an agent judge overlap. Scope is usually more useful for
+collision detection than agent identity. Prefer `src/auth/**` and
 `tests/auth/**` over a vague label such as `backend`.
 
 ### C3 - Single writer per overlapping scope by default
 
-One owner for overlapping write scope is the safe default. This is not an
-absolute prohibition on shared work; it is a bias toward avoiding accidental
-conflict.
+One operational executor for overlapping write scope is the safe default. This
+is not an absolute prohibition on shared work; it is a bias toward avoiding
+accidental conflict.
 
 ### C4 - Overlap must be intentional, never silent
 
-When overlapping work is necessary, the agents or operator must surface it,
+When overlapping work is necessary, the agents or operator MUST surface it,
 agree on boundaries or sequencing, and reflect the coordination state where a
 later agent can see it.
 
 ### C5 - Durable decisions cannot be silently reversed
 
-An agent changing an accepted direction must acknowledge the active decision
-and explicitly supersede it or surface the proposed change for resolution.
+Agents MUST NOT silently reverse durable decisions. An agent changing an
+accepted direction MUST acknowledge the active decision and explicitly
+supersede it or surface the proposed change for resolution.
 
 ### C6 - Ownership claims can become stale
 
-Claims can become stale after interruption or abandonment. Metadata such as
-`owner`, `claimed_at`, and `last_checkpoint` may provide evidence, but CSDD v0
-does not define a universal timeout or automated lease algorithm. Age is a
-signal to investigate, not permission to silently seize scope.
+Claims can become stale when execution ends, work is abandoned or completed
+without reconciliation, a task moves environments, or repository state changes
+independently. Claims are soft coordination state, not distributed locks. CSDD
+does not guarantee exclusive access, liveness, atomic claims, synchronization,
+or reliable lease expiration.
+
+Before reclaiming questionable scope, an agent SHOULD inspect relevant evidence
+such as `todo.md`, `handoff.md`, repository state, Git status and recent history,
+files in scope, visible branches or worktrees, and current user instructions.
+When a human `Owner` exists and can reasonably be consulted, the agent SHOULD
+use that owner as the preferred coordination point.
+
+A stale claim MAY be reclaimed after explicit reconciliation, but it MUST NOT be
+reclaimed silently. The task entry SHOULD record the reassignment or other
+resolution. `Updated` is evidence for reconciliation, not proof that a claim is
+active or inactive. CSDD v0 defines no strict time-based lease algorithm.
 
 ## Contradiction and reconciliation
 
@@ -338,7 +418,7 @@ CSDD artifacts are authoritative statements of project state, but they are not
 infallible. Repository reality is evidence, but implementation accidents are
 not automatically project intent.
 
-When an agent finds a material conflict, it should:
+When an agent finds a material conflict, it MUST surface it and SHOULD:
 
 1. identify the conflicting claims and the affected scope;
 2. inspect enough evidence to determine whether one side is stale, incorrect,
@@ -370,18 +450,49 @@ into every document; keep one canonical home and link when necessary.
 
 ## Optional archive and cold history
 
-A project may preserve concise semantic history under a location such as
-`.csdd/archive/` when removing it from hot or warm documents would otherwise
-lose useful explanation. An archive is optional in v0, never a fifth primary
-document, and never part of default hydration.
+A project MAY omit `.csdd/archive/`. When present, the directory is standardized
+cold context and SHOULD contain `index.md`. Agents MUST NOT load archive
+contents during default hydration.
 
-Git remains the source for exact file history. A CSDD archive, if adopted,
-would instead preserve selected project meaning such as prior phases,
-superseded directions, or abandoned work whose rationale remains useful.
+Archive entries SHOULD be separate, meaningfully named Markdown files organized
+around a phase, milestone, experiment, migration, or workstream. They MUST NOT
+be created for every agent session. A monolithic, indefinitely growing
+`history.md` SHOULD NOT be used because it recreates the accumulation problem
+CSDD is intended to prevent.
 
-The protocol deliberately leaves archive layout, retention rules, and promotion
-thresholds open until real project use demonstrates that the added surface area
-is worthwhile.
+> Preserve semantic project history, not chronological activity exhaust.
+
+An entry SHOULD summarize the objective, relevant outcome, consequential
+discoveries, important rejected or deferred approaches, unresolved concerns,
+related decisions, and useful task or Git references. It SHOULD NOT preserve
+complete transcripts, full reasoning, every command or failed attempt, every
+transient hypothesis, or a mechanical copy of `todo.md`.
+
+At the end of a meaningful phase or milestone, historical context MAY be
+distilled into an archive entry. Durable requirements MUST remain in `specs.md`,
+durable decisions MUST remain in `decisions.md`, and current work MUST remain in
+`todo.md`. Git remains the source for exact file history; the archive preserves
+selected project meaning.
+
+## Planned validation scenarios
+
+Phase 0 defines five scenarios for dogfooding and later conformance tests:
+
+1. a trivial isolated rename proceeds without CSDD hydration;
+2. one agent starts a feature and a fresh agent resumes it later;
+3. two agents attempt to work in overlapping scopes;
+4. a new agent identifies and reconciles a stale claim;
+5. a completed phase is distilled from live state into cold archive context.
+
+Together these scenarios exercise adaptive hydration, continuity, document
+boundaries, overlap handling, advisory ownership, stale-claim reconciliation,
+semantic archival, and proportional overhead.
+
+Future evaluations may separate a fixture author, isolated subject agent,
+evaluator agent, and human reviewer. Evaluation SHOULD compare actual repository
+state and diffs rather than trust only the subject agent's self-report.
+Structured run reports are preferred, and full transcripts SHOULD NOT be
+preserved by default. Phase 0 defines no evaluation infrastructure.
 
 ## Trade-offs and limitations
 
@@ -397,17 +508,16 @@ enforcement. Git, tests, code review, and human escalation remain necessary.
 
 ## Open design questions
 
-Phase 0 intentionally leaves these questions unresolved:
+The following questions remain for dogfooding:
 
-- Should v0 recommend `.csdd/` as the default location for the four primary
-  documents, allow project-root files, or define only discovery rules?
-- Is an optional archive useful enough to standardize, and if so, what minimum
-  retention and indexing rules keep it cold and discoverable?
-- Which ownership metadata is worth recommending without implying a reliable
-  distributed lease?
-- How should multiple agents reconcile a stale claim when its owner cannot be
-  contacted?
-- What is the smallest interoperable document structure that remains readable
-  to humans and diverse agent harnesses?
-- Which protocol statements should become normative requirements after the
-  conceptual model has been exercised on real projects?
+- Should `handoff.md` be updated only at session close or interruption, or also
+  at meaningful checkpoints?
+- Should the `Recently Completed` window in `todo.md` be bounded by relevance,
+  phase, or a loose numeric guideline?
+- Which `Agent` label conventions remain portable across Codex, Cursor, Claude
+  Code, and future harnesses?
+- Which normative statements should be promoted from SHOULD to MUST after
+  real-world testing?
+- Will one `.csdd/handoff.md` remain practical under concurrent editing?
+- Does the archive model remain useful without becoming redundant with Git and
+  durable project documents?
