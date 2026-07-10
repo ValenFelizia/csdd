@@ -472,7 +472,7 @@ indefinitely growing `history.md` SHOULD NOT be used.
 
 > Preserve semantic project history, not chronological activity exhaust.
 
-An archive entry SHOULD summarize:handoff
+An archive entry SHOULD summarize:
 
 - its objective and relevant outcome;
 - consequential discoveries;
