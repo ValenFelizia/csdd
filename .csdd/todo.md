@@ -2,12 +2,6 @@
 
 ## In Progress
 
-- [ ] T-008 — Draft the initial `SKILL.md`
-  - Owner: valen
-  - Agent: codex/skill-draft
-  - Scope: `SKILL.md`, `.csdd/todo.md`
-  - Updated: 2026-07-10
-
 ## Pending
 
 - [ ] T-009 — Review `SKILL.md` against the protocol and document contracts
@@ -26,3 +20,9 @@
   - Scope: `.csdd/**`, `references/**`
   - Updated: 2026-07-10
   - Note: Operational contract and consistency audit accepted; `SKILL.md` remains undrafted.
+- [x] T-008 — Draft the initial CSDD SKILL.md
+  - Owner: valen
+  - Agent: cursor/skill-draft
+  - Scope: `SKILL.md`, `.csdd/todo.md`
+  - Updated: 2026-07-10
+  - Note: Initial draft validated on main after restoring canonical `.csdd/` state from `codex/t-007-operational-contract`.
