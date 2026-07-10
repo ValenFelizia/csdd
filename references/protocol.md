@@ -236,7 +236,9 @@ Relevant signals include:
 ### Hydration level 0 - Direct execution
 
 Use for clearly bounded, local, low-risk work such as a typo or an explicitly
-identified text replacement.
+identified text replacement. The target should be explicit, reversible,
+non-behavioral, independent of prior work, and have no plausible active-scope
+overlap.
 
 Flow: inspect target -> execute -> verify.
 
@@ -321,6 +323,134 @@ A session may close as successful, partial, blocked, interrupted, or abandoned.
 An incomplete session still requires a usable checkpoint when continuity would
 otherwise be lost.
 
+## Initial skill operational contract
+
+The initial CSDD skill is a concise operational router over this protocol and
+the document contracts. It tells an agent how to recognize a CSDD project,
+select the minimum useful context, coordinate work, persist consequential
+state, and close honestly. It does not duplicate the detailed protocol in
+`SKILL.md`.
+
+### Applicability and bootstrap
+
+The skill is applicable when either:
+
+- the repository contains the canonical `.csdd/` project-state documents; or
+- the user or project instructions explicitly require CSDD.
+
+An existing `.csdd/` is sufficient evidence that work in that repository is
+CSDD-aware, but not that every task requires reading CSDD documents. If CSDD is
+explicitly requested but the canonical state is missing or malformed, the
+agent MUST surface that condition and follow the requested initialization or
+repair scope; it MUST NOT silently invent an alternative layout. Without
+either signal, the skill need not enter the CSDD lifecycle.
+
+Bootstrap SHOULD inspect repository status, project instructions, the `.csdd/`
+shape, and the task's apparent target before hydrating project state. This is
+discovery, not permission to read every available document.
+
+### Context classification and read routing
+
+Classify the task using [Adaptive context hydration](#adaptive-context-hydration)
+before reading CSDD state, and increase the level when new evidence raises
+scope, ambiguity, continuity, or collision risk. Use this initial routing:
+
+| Level | Initial CSDD route |
+| --- | --- |
+| 0 - direct | No CSDD document is required. |
+| 1 - local awareness | Inspect relevant active scope in `todo.md` when overlap is plausible. |
+| 2 - operational | Inspect relevant hot context, then applicable warm context. |
+| 3 - deep | Inspect relevant hot and warm context; use cold context only on demand. |
+
+The authoritative document-specific read policies are in
+[document-contracts.md](document-contracts.md). In particular, `handoff.md` is
+for continuation or consequential partial state, while `specs.md` and
+`decisions.md` are loaded only when their documented behavioral, contractual,
+or decision triggers apply. Follow [Optional archive and cold
+history](#optional-archive-and-cold-history) for any historical access.
+
+### Ownership, overlap, and claiming
+
+Apply the [Concurrency model](#concurrency-model) before writing in plausible
+shared scope: inspect active work, compare intended path and contract scope,
+claim coordination-sensitive work, and do not edit an apparent overlap until
+it is surfaced and coordinated. Use the `todo.md` contract for task structure
+and claim triggers. Questionable ownership follows C6 and the document
+contract's stale-claim procedure; the operational contract does not define a
+second reclamation rule.
+
+### Execution, persistence, and reconciliation
+
+The skill fast path should require the agent to:
+
+1. stay within the claimed or requested scope, updating it when material scope
+   changes;
+2. validate assumptions against repository reality and verify the result in
+   proportion to risk;
+3. update `todo.md` when state, scope, executor, dependency, blocker, or a
+   continuity-critical checkpoint materially changes;
+4. preserve validated consequential knowledge in its canonical document, not
+   as an activity log; and
+5. surface and reconcile material contradictions instead of choosing code or
+   documentation automatically.
+
+The authoritative persistence triggers and document boundaries are in
+[document-contracts.md](document-contracts.md). Apply [Knowledge promotion and
+expiration](#knowledge-promotion-and-expiration) to validated findings,
+[Contradiction and reconciliation](#contradiction-and-reconciliation) to
+conflicting evidence, and the `handoff.md` contract when consequential
+resumable state may otherwise be lost. These references define the detailed
+rules; the list above is the operational sequence.
+
+### Closing behavior
+
+Every close verifies what actually happened and leaves operational state
+truthful. Treat work awaiting required review or acceptance as active rather
+than completed, even when implementation is finished. Apply the
+outcome-specific minimum:
+
+| Outcome | Required close |
+| --- | --- |
+| Completed | Verify the result; reconcile repository and durable docs; move or mark the task completed and release active scope; clear obsolete handoff state. Add a handoff only when another active workstream needs non-obvious transfer state. |
+| Partial | Keep the task honestly active with current scope and a useful checkpoint; update `handoff.md` when resumption would otherwise repeat meaningful work or proceed incorrectly. |
+| Blocked | Move or mark the task blocked, name the blocker or decision needed, and preserve consequential partial state in `handoff.md`; narrow or release scope that no longer needs protection. |
+| Interrupted | Record an honest active checkpoint and handoff when meaningful partial state or risk must survive; do not imply completion or retain a misleading claim. |
+| Trivial | Verify the change. Do not create a task, handoff, decision, archive entry, or other CSDD update unless the work discovered a material conflict or changed durable truth. |
+
+For all outcomes, promote consequential knowledge before removing transient
+state. Do not leave completed ownership claims active, duplicate facts across
+documents, or preserve routine session narration.
+
+### `SKILL.md` and progressive references
+
+`SKILL.md` SHOULD contain only the operational fast path:
+
+- applicability signals and canonical `.csdd/` discovery;
+- the context-level classifier and minimal read-routing table;
+- the essential orient, overlap-check, claim, execute, reconcile, and close
+  sequence;
+- concise persistence routing for task, handoff, specification, and decision
+  state;
+- non-negotiable guards against unconditional hydration, silent overlap,
+  silent contradiction, stale claims, and unnecessary archive access; and
+- links that identify which reference section to load when more detail is
+  required.
+
+Detailed protocol knowledge remains in `references/` and is loaded
+progressively. This document owns principles, full lifecycle semantics,
+hydration rationale, concurrency and stale-claim handling, contradiction
+resolution, knowledge promotion, archive policy, limitations, and validation
+scenarios. [document-contracts.md](document-contracts.md) owns exact document
+boundaries, read and update triggers, aging, cross-document movement, examples,
+and archive-entry structure. Templates remain in `assets/templates/`.
+
+An agent SHOULD load only the referenced section needed for the current
+decision. It SHOULD consult document contracts before making a non-obvious
+document update or resolving a boundary or aging question, and consult the
+deeper protocol sections for collaborative, conflicting, stale, or historical
+cases. The skill MUST remain usable for levels 0 and 1 without forcing either
+reference to be read in full.
+
 ## Concurrency model
 
 CSDD coordination is document-based and intentionally lightweight.
@@ -366,9 +496,14 @@ machine schema, or harness-specific metadata.
 
 Before non-trivial work, inspect relevant active entries in `.csdd/todo.md` when
 the target scope could overlap. A trivial, clearly unrelated edit does not
-require a coordination scan.
+require a coordination scan. Compare both path scope and affected contracts;
+semantically overlapping contracts may conflict even when file globs differ.
 
 ### C2 - Claim explicit scope when collaborative work requires ownership
+
+A task SHOULD be claimed before editing when it is non-trivial and explicit
+scope would reduce collision or continuity risk. Do not claim trivial isolated
+work when coordination overhead would exceed that risk.
 
 A claim SHOULD name concrete files, directories, modules, contracts, or another
 boundary that lets an agent judge overlap. Scope is usually more useful for
@@ -401,16 +536,11 @@ independently. Claims are soft coordination state, not distributed locks. CSDD
 does not guarantee exclusive access, liveness, atomic claims, synchronization,
 or reliable lease expiration.
 
-Before reclaiming questionable scope, an agent SHOULD inspect relevant evidence
-such as `todo.md`, `handoff.md`, repository state, Git status and recent history,
-files in scope, visible branches or worktrees, and current user instructions.
-When a human `Owner` exists and can reasonably be consulted, the agent SHOULD
-use that owner as the preferred coordination point.
-
-A stale claim MAY be reclaimed after explicit reconciliation, but it MUST NOT be
-reclaimed silently. The task entry SHOULD record the reassignment or other
-resolution. `Updated` is evidence for reconciliation, not proof that a claim is
-active or inactive. CSDD v0 defines no strict time-based lease algorithm.
+The authoritative evidence and reclamation procedure is the `todo.md`
+[stale-claims contract](document-contracts.md#stale-claims). It defines how to
+assess `Updated`, consult ownership, inspect repository evidence, and record any
+reassignment or release; this conceptual rule does not create a second lease or
+reclamation mechanism.
 
 ## Contradiction and reconciliation
 
@@ -453,6 +583,13 @@ into every document; keep one canonical home and link when necessary.
 A project MAY omit `.csdd/archive/`. When present, the directory is standardized
 cold context and SHOULD contain `index.md`. Agents MUST NOT load archive
 contents during default hydration.
+
+Archive access is justified only when current state or a concrete question
+requires a historical outcome, rationale, prior experiment, or milestone
+context that Git and current documents do not answer efficiently. Inspect the
+archive index first when available, then open only the relevant entry. Routine
+orientation, task completion, and curiosity are not sufficient reasons to read
+or create archive content.
 
 Archive entries SHOULD be separate, meaningfully named Markdown files organized
 around a phase, milestone, experiment, migration, or workstream. They MUST NOT
@@ -510,8 +647,6 @@ enforcement. Git, tests, code review, and human escalation remain necessary.
 
 The following questions remain for dogfooding:
 
-- Should `handoff.md` be updated only at session close or interruption, or also
-  at meaningful checkpoints?
 - Should the `Recently Completed` window in `todo.md` be bounded by relevance,
   phase, or a loose numeric guideline?
 - Which `Agent` label conventions remain portable across Codex, Cursor, Claude

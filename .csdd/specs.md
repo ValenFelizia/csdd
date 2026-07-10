@@ -1,0 +1,53 @@
+# Specifications
+
+## Project Summary
+
+CSDD (Collaborative Spec-Driven Development) is a lightweight, text-first protocol for preserving project state and coordinating work across ephemeral AI coding agents.
+
+CSDD externalizes the minimum sufficient state required for agents to orient, resume, coordinate, and hand off work without depending on shared chat history.
+
+The authoritative conceptual protocol is defined in:
+
+- `references/protocol.md`
+- `references/document-contracts.md`
+
+## Requirements
+
+- CSDD MUST remain human-readable and harness-agnostic at the protocol level.
+- CSDD MUST use `.csdd/` as the canonical project-state location in v0.
+- CSDD MUST support adaptive context hydration.
+- CSDD MUST preserve distinct responsibilities for specifications, tasks, decisions, and handoffs.
+- CSDD MUST avoid imposing collaborative overhead on trivial isolated tasks.
+- The initial skill MUST be usable without scripts, hooks, plugins, MCP, or runtime dependencies.
+- The skill MUST guide agents to reconcile documentation with repository reality.
+- The skill MUST NOT claim to provide true shared memory or reliable distributed locking.
+
+## Constraints
+
+- The initial implementation is instruction-first.
+- `SKILL.md` is the primary operational entrypoint.
+- Supporting protocol detail belongs in `references/`.
+- Project-state templates belong in `assets/templates/`.
+- The first version targets portable Agent Skills behavior.
+- Codex, Cursor, and Antigravity are initial dogfooding environments, without requiring harness-specific adapters.
+- Context loading must remain proportional to task need.
+- Coordination overhead must not exceed task complexity.
+
+## Invariants
+
+- Agents are ephemeral; project state is durable.
+- Persist consequential knowledge, not activity.
+- The four primary documents remain plain Markdown.
+- `todo.md` remains the primary coordination surface.
+- `handoff.md` transfers resumable state and does not duplicate task tracking.
+- Archive content, when present, is cold context and is never loaded by default.
+- Active scope overlap is never knowingly ignored.
+- Durable decisions are never silently reversed.
+
+## Interfaces and Contracts
+
+- Agent Skills entrypoint: `SKILL.md`
+- Conceptual protocol: `references/protocol.md`
+- Document semantics: `references/document-contracts.md`
+- Distributed project templates: `assets/templates/`
+- Runtime project state: `.csdd/`

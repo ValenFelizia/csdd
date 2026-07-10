@@ -54,8 +54,8 @@ paths.
 | `.csdd/handoff.md` | What must a resuming agent know right now? | Hot | Transient, replaced or cleared frequently |
 
 Projects MAY omit `.csdd/archive/`. When present, it is standardized cold
-context, not a fifth primary document, and MUST NOT be read during default
-hydration.
+context, not a fifth primary document. Its read policy is defined in
+[Optional archive and cold history](protocol.md#optional-archive-and-cold-history).
 
 ## `specs.md`
 
@@ -388,10 +388,11 @@ necessary to resume efficiently and are not better captured elsewhere.
 
 ### Update triggers
 
-At minimum, create or update a handoff when consequential incomplete state must
-survive a session close, transfer, block, or interruption. Clear or replace a
-section when it no longer describes current reality. Whether routine meaningful
-checkpoints should also trigger updates remains open for dogfooding.
+Create or update a handoff when consequential incomplete state must survive a
+session close, transfer, block, or interruption. Clear or replace a section
+when it no longer describes current reality. A routine checkpoint alone does
+not require a handoff unless losing it would cause a resuming agent to repeat
+meaningful work, proceed incorrectly, or miss a current risk.
 
 Relevant triggers include:
 
@@ -465,10 +466,11 @@ cold context and SHOULD contain `index.md`:
 The index SHOULD provide a concise inventory that helps agents select a relevant
 entry without loading the archive broadly.
 
-Agents MUST NOT load archive contents during default hydration. Entries SHOULD
-be organized by meaningful phase, milestone, experiment, migration, or
-workstream and MUST NOT be created for every agent session. A monolithic,
-indefinitely growing `history.md` SHOULD NOT be used.
+Archive access follows [Optional archive and cold
+history](protocol.md#optional-archive-and-cold-history). Entries SHOULD be
+organized by meaningful phase, milestone, experiment, migration, or workstream
+and MUST NOT be created for every agent session. A monolithic, indefinitely
+growing `history.md` SHOULD NOT be used.
 
 > Preserve semantic project history, not chronological activity exhaust.
 
@@ -495,8 +497,6 @@ durable and operational facts MUST remain in their canonical primary documents.
 
 ## Contract-level open questions
 
-- Should `handoff.md` be updated only at session close or interruption, or also
-  at meaningful checkpoints?
 - Should the `Recently Completed` window in `todo.md` be bounded by relevance,
   phase, or a loose numeric guideline?
 - Which `Agent` label conventions remain portable across Codex, Cursor, Claude
