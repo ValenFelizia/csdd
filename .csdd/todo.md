@@ -35,8 +35,11 @@
   - Note:
 - [x] T-011 — Run the first manual dogfooding task using CSDD
 - [x] T-012 — Prepare the five formal validation scenarios
+  - Owner: valen
+  - Scope: released
+  - Note: Five manual scenarios completed. Two protocol defects were discovered, corrected and revalidated succesfully.
 - [x] T-014 — Tighten closure and canonical-truth contracts
-  - Owner: Valen
+  - Owner: valen
   - Agent: cursor/csdd-contracts
   - Scope: released
   - Updated: 2026-07-12
