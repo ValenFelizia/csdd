@@ -174,6 +174,11 @@ secure identity or authentication. CSDD v0 MUST NOT attempt automatic human
 identity discovery and SHOULD use human-readable labels rather than
 provider-specific identifiers.
 
+Changing the operational executor SHOULD update `Agent`.
+
+Changing `Owner` requires explicit evidence that human or team accountability
+has been reassigned. A stale agent claim alone is not sufficient.
+
 ### Contains
 
 - pending, in-progress, and blocked work;

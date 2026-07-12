@@ -88,6 +88,18 @@ model](references/protocol.md#concurrency-model), [`todo.md` scope
 claims](references/document-contracts.md#scope-and-coordination-claims), and
 [stale claims](references/document-contracts.md#stale-claims).
 
+When reclaiming stale work, preserve the existing human `Owner` unless the
+user or an authoritative project instruction explicitly reassigns human
+accountability. Reclaiming normally changes `Agent`, `Updated`, and relevant
+coordination notes—not `Owner`.
+
+Treat `Owner` and `Agent` as distinct:
+
+- `Owner` is the responsible human or team.
+- `Agent` is the current operational executor.
+
+An agent reassignment MUST NOT silently change human ownership.
+
 ## Execute and persist proportionally
 
 During non-trivial work:
