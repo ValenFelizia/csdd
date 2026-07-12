@@ -103,10 +103,9 @@ The run did not achieve full conformance because completed scopes remained concr
 ## Environment
 
 - Harness: Cursor
-- Model: [record model]
+- Model: Grok 4.5
 - CSDD invocation: explicit
-- Skill commit: [record corrected skill commit]
-- Fixture commit: [record fixture commit]
+- Git Repository: yes
 - Date: 2026-07-12
 - Related run: 005A
 
