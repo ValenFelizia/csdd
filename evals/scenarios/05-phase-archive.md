@@ -97,3 +97,105 @@ The run did not achieve full conformance because completed scopes remained concr
 - Clarify that closure reconciliation does not retroactively replace historical task agents.
 - Prefer specifications for behavioral defaults unless a separate architectural or product decision has durable independent value.
 - Repeat the scenario after updating the closure guidance.
+
+# Evaluation Run 005B — Phase Closure and Semantic Archive
+
+## Environment
+
+- Harness: Cursor
+- Model: [record model]
+- CSDD invocation: explicit
+- Skill commit: [record corrected skill commit]
+- Fixture commit: [record fixture commit]
+- Date: 2026-07-12
+- Related run: 005A
+
+## Scenario
+
+The subject was asked to verify and close Notification Preferences v1, reconcile operational state, promote durable truth, remove obsolete handoff content, and create a semantic phase archive.
+
+This run repeats 005A after strengthening completed-scope release, historical Agent preservation, and canonical durable-truth rules.
+
+## Expected Behavior
+
+- Verify implementation and tests before closure.
+- Reconcile T-501, T-502, and T-503.
+- Preserve human ownership.
+- Preserve historical task agents unless the closing agent actually performed the remaining task work.
+- Release every completed write scope.
+- Promote undocumented behavioral truth to specifications.
+- Avoid duplicating that truth in decisions without independent rationale.
+- Remove obsolete handoff state.
+- Reduce hot context.
+- Create and index a concise semantic archive entry.
+- Avoid inventing next-phase work.
+
+## Observed Behavior
+
+The subject inspected the relevant CSDD state, notification implementation, public exports, tests, and targeted closure contracts.
+
+It ran the notification test suite successfully:
+
+- 1 test file
+- 3 tests passed
+
+The subject confirmed the implemented contracts and promoted the undocumented default behavior to:
+
+- `REQ-005 — Default channel preferences`
+
+The default was recorded only in `specs.md`. No redundant decision was created because the behavior had no independently useful architectural rationale.
+
+The subject reconciled the tasks as follows:
+
+- T-501 retained `Owner: lucia` and `Agent: cursor/preferences`
+- T-502 retained `Owner: lucia` and `Agent: codex/dispatcher`
+- T-503 retained `Owner: lucia` and used `Agent: cursor/phase-close`
+- all three tasks used `Scope: released`
+
+In Progress, Pending, and Blocked were left empty. T-498 and T-499 were removed from hot context and referenced only in the phase archive.
+
+The obsolete handoff section was removed.
+
+A semantic archive entry was created and indexed. It records the phase objective, outcome, durable behavior, boundaries, related decision, task identifiers, released-claim state, and code references without including logs, diffs, transcripts, or detailed operational history.
+
+## Result
+
+PASS
+
+The corrected contracts produced a clean phase closure with no active claims, no ownership distortion, no historical Agent rewriting, no redundant durable truth, and a useful semantic archive.
+
+## Dimension Results
+
+- Implementation verification: PASS
+- Task reconciliation: PASS
+- Human owner preservation: PASS
+- Historical Agent preservation: PASS
+- Closure-agent attribution: PASS
+- Completed-scope release: PASS
+- Active queue cleanup: PASS
+- Canonical specification promotion: PASS
+- Decision restraint: PASS
+- Handoff cleanup: PASS
+- Semantic archive: PASS
+- Archive indexing: PASS
+- No invented next-phase work: PASS
+
+## Comparison with 005A
+
+Run 005A retained concrete scopes on completed tasks, replaced historical task agents with the closure agent, and duplicated default behavior across specifications and decisions.
+
+After updating the skill and document contracts:
+
+- completed tasks now release their scopes;
+- T-501 and T-502 preserve their historical agents;
+- T-503 identifies the actual phase-closure executor;
+- the default behavior exists only in its canonical specification.
+
+This confirms that the corrective rules changed subject behavior under the same fixture and prompt.
+
+## Limitations
+
+- Explicit skill invocation was used.
+- The phase had no failing tests or unresolved implementation defects.
+- No existing archive entries had to be reconciled.
+- The scenario did not test closure with blocked or intentionally deferred tasks.
