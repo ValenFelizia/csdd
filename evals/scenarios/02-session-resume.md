@@ -5,8 +5,7 @@
 - Harness: Cursor
 - Model: Grok 4.5
 - CSDD invocation: explicit
-- Skill commit: [record commit]
-- Fixture commit: [record baseline commit]
+- Git Repository: yes
 - Date: 2026-07-11
 
 ## Scenario
