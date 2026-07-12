@@ -4,9 +4,7 @@
 
 ## Pending
 
-- [x] T-010 — Run the first manual dogfooding task using CSDD
-- [ ] T-011 — Prepare the five formal validation scenarios
-- [ ] T-012 — Define branch and worktree baseline reconciliation
+- [ ] T-013 — Define branch and worktree baseline reconciliation
   - Owner: valen
   - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`
   - Note: Ensure agents verify that their branch or worktree contains the intended CSDD coordination baseline before claiming or resuming collaborative work.
@@ -34,4 +32,12 @@
 - [x] T-010 — Run the first manual dogfooding task using CSDD
   - Owner: valen
   - Updated: 2026-07-11
-  - Note: 
+  - Note:
+- [x] T-011 — Run the first manual dogfooding task using CSDD
+- [x] T-012 — Prepare the five formal validation scenarios
+- [x] T-014 — Tighten closure and canonical-truth contracts
+  - Owner: Valen
+  - Agent: cursor/csdd-contracts
+  - Scope: released
+  - Updated: 2026-07-12
+  - Note: Added closure claim-release rules, protected historical Agent metadata, and clarified canonical specs/decisions boundaries.

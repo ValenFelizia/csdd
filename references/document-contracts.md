@@ -118,6 +118,18 @@ The agent whose work changes intended behavior or validates a missing constraint
 is responsible for proposing or making the corresponding update. It must not
 silently rewrite intent merely to match its implementation.
 
+### Canonical behavioral truth
+
+`specs.md` is the canonical location for durable observable behavior,
+requirements, constraints, and invariants.
+
+When implementation or tests reveal undocumented behavior that is intended to
+remain valid, promote it to `specs.md`.
+
+Do not create a parallel decision entry merely to repeat the same behavioral
+rule. Reference a decision only when that decision contains independently
+useful context, rationale, rejected alternatives, or consequences.
+
 ## `todo.md`
 
 ### Contract
@@ -266,6 +278,58 @@ The executing agent is responsible for keeping task state, `Agent`, scope, and
 checkpoints honest. An agent that detects conflicting scope MUST surface the
 conflict before changing the claim or overlapping code.
 
+### Ownership, execution, and scope semantics
+
+`Owner`, `Agent`, and `Scope` represent different forms of project state:
+
+- `Owner` identifies the human or team accountable for the work.
+- `Agent` identifies the current operational executor.
+- `Scope` identifies the files, modules, or contracts currently claimed for
+  modification.
+
+A change of operational executor normally updates `Agent`, `Updated`, and any
+reconciliation note. It does not transfer human accountability.
+
+Changing `Owner` requires explicit evidence that responsibility was reassigned
+by the user, responsible team, or authoritative project state. A stale `Agent`
+claim, a new execution session, or a task-completion action is not sufficient
+evidence to change `Owner`.
+
+### Completed-task claims
+
+When a task becomes completed, interrupted without continuation, cancelled, or
+otherwise no longer active, its write claim must be released.
+
+A completed task MUST either:
+
+- use `Scope: released`; or
+- omit `Scope` and other active-claim metadata when compacted.
+
+Concrete file or glob scopes MUST NOT remain on completed tasks when they could
+be interpreted as active claims.
+
+A small Recently Completed window may retain useful metadata, but that metadata
+must not block or confuse future overlap detection.
+
+### Historical Agent metadata
+
+The agent that reconciles, verifies, archives, or closes a task is not
+automatically the agent that executed the task.
+
+Closure MUST NOT overwrite historical `Agent` metadata solely to identify the
+closing agent.
+
+Valid approaches include:
+
+1. preserve the agent that performed the substantive task;
+2. omit `Agent` when compacting old completed entries;
+3. record the closure agent only on a dedicated phase-closure task;
+4. change `Agent` when the new agent genuinely reclaimed and executed the
+   remaining task work.
+
+If the project needs both executor and verifier provenance, it should define
+separate fields rather than overloading `Agent`.
+
 ## `decisions.md`
 
 ### Contract
@@ -328,6 +392,27 @@ retains enough lineage to prevent confusion.
 The agent introducing or discovering a consequential change MUST record or
 surface it. It MUST NOT manufacture rationale after the fact or silently
 convert an implementation accident into project policy.
+
+### Decision threshold and duplication
+
+A decision entry should capture an accepted direction whose rationale or
+tradeoffs are likely to matter after the immediate implementation context is
+gone.
+
+`decisions.md` should not restate requirements already canonical in
+`specs.md`.
+
+A behavioral rule may be supported by a decision when the decision contributes
+distinct durable value, such as:
+
+- meaningful alternatives that were rejected;
+- architectural or product tradeoffs;
+- migration or compatibility consequences;
+- legal, security, or operational rationale;
+- conditions under which the choice may be revisited.
+
+When no such independent rationale exists, record the behavior only in
+`specs.md`.
 
 ## `handoff.md`
 
@@ -456,6 +541,18 @@ Links may appear across documents, but one document should remain canonical for
 each fact. When moving information, update or remove the stale source so it does
 not continue presenting an old truth.
 
+Prefer links or identifiers such as `REQ-005` and `DEC-002` over copying the
+same normative statement into multiple documents.
+
+### Closure behavior
+
+When no resumable partial state, blocker, current risk, or unresolved question
+remains, remove the completed workstream from `handoff.md`.
+
+Phase summaries, completed-task history, and durable behavior do not belong in
+the active handoff. Promote them to their canonical durable document or a
+semantic archive entry.
+
 ## Optional archive contract
 
 Projects MAY omit `.csdd/archive/`. When the archive exists, it is standardized
@@ -499,6 +596,18 @@ Archived state MUST be distinguishable from current authoritative state. When
 lineage matters, entries SHOULD point to current specifications or decisions.
 At phase or milestone boundaries, history MAY be distilled into an entry, but
 durable and operational facts MUST remain in their canonical primary documents.
+
+### Archived task metadata
+
+Archive entries may reference completed task IDs and outcomes, but should not
+preserve active claim semantics.
+
+Do not archive concrete scopes as if they remained owned. If scope history is
+material, describe it as historical context and state explicitly that the claim
+was released.
+
+Archive summaries should preserve phase meaning, not every operational field
+from `todo.md`.
 
 ## Contract-level open questions
 

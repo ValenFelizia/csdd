@@ -93,10 +93,24 @@ user or an authoritative project instruction explicitly reassigns human
 accountability. Reclaiming normally changes `Agent`, `Updated`, and relevant
 coordination notes—not `Owner`.
 
-Treat `Owner` and `Agent` as distinct:
+Treat `Owner`, `Agent`, and `Scope` as distinct:
 
 - `Owner` is the responsible human or team.
 - `Agent` is the current operational executor.
+- `Scope` identifies the active write boundary.
+
+Reassigning or reclaiming agent execution MUST preserve the existing `Owner`
+unless the user or authoritative project state explicitly transfers human
+accountability.
+
+Phase closure or task reconciliation MUST NOT retroactively replace historical
+`Agent` metadata merely because a different agent verified or closed the work.
+Update `Agent` only when that agent actually assumes execution of the task, or
+when the project explicitly defines another convention.
+
+Completed tasks MUST release or remove their active write scope. Use
+`Scope: released` or omit claim metadata according to the project template.
+A completed task MUST NOT continue to appear as an active write claim.
 
 An agent reassignment MUST NOT silently change human ownership.
 
@@ -126,6 +140,17 @@ Route persistence as follows:
 - Update `decisions.md` when a consequential direction is accepted, a rejected
   alternative has reusable rationale, or an existing decision is superseded.
   Do not manufacture rationale or turn implementation accidents into intent.
+
+### Canonical durable truth
+
+Persist each durable truth in one canonical document:
+
+- behavioral requirements, constraints, and invariants belong in `specs.md`;
+- accepted architectural or directional choices belong in `decisions.md`.
+
+Do not duplicate a behavioral requirement in `decisions.md` unless the decision
+adds independently useful durable rationale, alternatives, or consequences.
+Prefer references between documents over restating the same truth.
 
 ## Reconcile conflicts
 

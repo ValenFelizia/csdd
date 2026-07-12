@@ -402,6 +402,9 @@ conflicting evidence, and the `handoff.md` contract when consequential
 resumable state may otherwise be lost. These references define the detailed
 rules; the list above is the operational sequence.
 
+Promote consequential knowledge to one canonical durable document. Cross-link
+related requirements and decisions instead of duplicating normative truth.
+
 ### Closing behavior
 
 Every close verifies what actually happened and leaves operational state
@@ -420,6 +423,9 @@ outcome-specific minimum:
 For all outcomes, promote consequential knowledge before removing transient
 state. Do not leave completed ownership claims active, duplicate facts across
 documents, or preserve routine session narration.
+
+At closure, release active claims, preserve human accountability, and compact
+operational metadata without rewriting execution history.
 
 ### `SKILL.md` and progressive references
 
