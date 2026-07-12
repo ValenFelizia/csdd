@@ -246,7 +246,10 @@ Before reclaiming scope, an agent SHOULD inspect relevant `todo.md` and
 `handoff.md` entries, repository state, Git status and recent history, files in
 scope, visible branches or worktrees, and current user instructions. When an
 `Owner` exists and can reasonably be consulted, that human or team SHOULD be
-the preferred coordination point.
+the preferred coordination point. When another baseline may hold live
+overlapping work or divergent durable truth, follow [Branch and worktree
+locality](#branch-and-worktree-locality) and the protocol reconciliation
+procedure before reclaiming.
 
 A stale claim MAY be reclaimed after explicit reconciliation, but MUST NOT be
 reclaimed silently. Update the task to record reassignment or the other
@@ -608,6 +611,100 @@ was released.
 
 Archive summaries should preserve phase meaning, not every operational field
 from `todo.md`.
+
+## Branch and worktree locality
+
+CSDD documents are versioned project artifacts. Their visible state is local to
+the checked-out Git branch and worktree. The current worktree is the operational
+baseline for reading and writing these documents; it does not prove the absence
+of activity, claims, or durable-truth changes elsewhere.
+
+A claim in `.csdd/todo.md` coordinates agents that can observe that version of
+the document. It is not a repository-global lock. Agents on another branch,
+worktree, or unmerged commit MAY not see or honor the claim.
+
+The absence of a claim in the current worktree does not prove the absence of
+relevant claims or in-flight work elsewhere.
+
+The authoritative procedural sequence—Trigger, Discover, Compare, Classify,
+Reconcile or block, Execute, Close—and the divergence classes are defined in
+[Branch and worktree baseline
+reconciliation](protocol.md#branch-and-worktree-baseline-reconciliation). This
+section states document-local evidence and update rules.
+
+### When to inspect other worktrees
+
+Cross-worktree inspection is required only when concurrency, stale claims,
+scope overlap, or durable-truth divergence could change the claim, reclaim,
+resume, or implementation decision. Do not scan every worktree for Level 0
+work that is clearly local and unrelated.
+
+### Cross-worktree evidence
+
+When that trigger applies, inspect:
+
+- active worktrees and their checked-out branches;
+- clean or dirty working-tree state;
+- uncommitted changes inside claimed or requested scopes;
+- relevant commits affecting `.csdd/` or the requested implementation scope;
+- divergent `todo.md`, `handoff.md`, `specs.md`, or `decisions.md`.
+
+Dirty files inside a conflicting claimed scope are strong evidence of active
+work. A worktree's mere existence is not sufficient evidence by itself.
+
+Claim age remains only one signal. Branch age, worktree state, handoff state,
+repository changes, and current user instruction must be considered together.
+None of those signals alone proves abandonment or safety to ignore another
+baseline.
+
+### Divergence classes and document effects
+
+Map observed differences to the protocol classes:
+
+| Class | Typical document evidence | Required handling |
+| --- | --- | --- |
+| No material divergence | No relevant claim, handoff, or durable-doc difference that changes the decision | Continue on the current baseline |
+| Coordination-only divergence | Differences limited to `todo.md` or `handoff.md` | Preserve live compatible claims; block on live conflict; explicitly reclaim or supersede stale operational state; import a valid handoff with source recorded when useful |
+| Durable-truth divergence | Material differences in `specs.md` or `decisions.md` | Reconcile before implementing dependent behavior; do not concatenate or silently copy |
+| Live conflicting work | Active overlapping claim plus dirty or recent overlapping commits in another worktree/branch | Surface overlap; coordinate, sequence, or block; do not silently reclaim or overwrite |
+
+### Durable truth divergence
+
+Material differences in `specs.md` or `decisions.md` must be reconciled before
+implementing behavior that depends on the disputed truth.
+
+Do not combine divergent durable documents by concatenation or silent copying.
+Choose or construct the target truth explicitly through merge, rebase,
+cherry-pick, or manual reconciliation, preserving rationale and provenance.
+Record accepted directional changes in `decisions.md` when the reconciliation
+supersedes a consequential choice.
+
+### Coordination divergence
+
+Differences limited to `todo.md` or `handoff.md` may be reconciled by:
+
+- preserving a live compatible claim;
+- blocking on a live conflicting claim;
+- explicitly reclaiming stale operational execution while preserving `Owner`
+  unless human accountability is explicitly reassigned;
+- superseding obsolete coordination state;
+- importing a valid handoff with its source branch or commit recorded.
+
+Reconciliation in one branch does not silently modify or release claims stored
+only in another branch. Closing or releasing scope on the current baseline
+must not imply that another worktree's active claim was cleared.
+
+Stale-claim reclamation across baselines still follows [Stale
+claims](#stale-claims) and Owner/Agent semantics: age is evidence, not proof;
+reclamation must be explicit; historical `Agent` metadata is not rewritten
+merely by verification or closure on another baseline.
+
+### Provenance
+
+When CSDD state is imported, superseded, or reconciled across branches, record
+the relevant source branch, worktree, or commit when that provenance is useful
+for future recovery—for example in a task `Note`, handoff section, or decision
+rationale.
 
 ## Contract-level open questions
 

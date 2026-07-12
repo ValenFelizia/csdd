@@ -164,6 +164,29 @@ blocked when appropriate, and state the decision or clarification required. See
 [Contradiction and reconciliation](references/protocol.md#contradiction-and-reconciliation)
 for the full procedure.
 
+### Branch and worktree state
+
+Treat `.csdd/` as branch-local versioned state. The current worktree is the
+operational baseline, not proof of repository-wide state.
+
+Before claiming, reclaiming, or editing overlapping scope, inspect other
+branches or worktrees only when concurrency, stale claims, overlap, or durable
+truth could change the decision. Dirty files in a conflicting claimed scope are
+strong evidence of live work; age alone is never proof.
+
+Do not silently merge, copy, release, or overwrite divergent CSDD state. If
+another worktree shows live conflicting work, or if `specs.md` or
+`decisions.md` diverge materially, reconcile explicitly or block before
+implementation. Record the source branch or commit when importing or
+superseding CSDD state.
+
+For the full Trigger → Discover → Compare → Classify → Reconcile or block →
+Execute → Close procedure and divergence classes, see [Branch and worktree
+baseline
+reconciliation](references/protocol.md#branch-and-worktree-baseline-reconciliation).
+Document-local evidence rules are in [Branch and worktree
+locality](references/document-contracts.md#branch-and-worktree-locality).
+
 ## Close truthfully
 
 - **Completed:** Verify the result, reconcile documentation and repository
@@ -188,12 +211,12 @@ review note when completion has not yet been earned.
 Load only the section relevant to the current question:
 
 - Use [the protocol](references/protocol.md) for principles, hydration semantics,
-  lifecycle, concurrency, stale claims, contradiction handling, archive policy,
-  and validation scenarios.
+  lifecycle, concurrency, stale claims, branch/worktree baseline reconciliation,
+  contradiction handling, archive policy, and validation scenarios.
 - Use [the document contracts](references/document-contracts.md) for exact
   document boundaries, read and update triggers, aging and cleanup,
-  cross-document movement, task and handoff structure, and archive-entry
-  guidance.
+  cross-document movement, task and handoff structure, branch/worktree locality,
+  and archive-entry guidance.
 
 Do not load both references in full by default and do not reproduce their
 detailed procedures in working notes.

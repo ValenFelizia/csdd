@@ -374,10 +374,12 @@ history](#optional-archive-and-cold-history) for any historical access.
 Apply the [Concurrency model](#concurrency-model) before writing in plausible
 shared scope: inspect active work, compare intended path and contract scope,
 claim coordination-sensitive work, and do not edit an apparent overlap until
-it is surfaced and coordinated. Use the `todo.md` contract for task structure
-and claim triggers. Questionable ownership follows C6 and the document
-contract's stale-claim procedure; the operational contract does not define a
-second reclamation rule.
+it is surfaced and coordinated. When another branch or worktree may hold
+relevant claims or durable truth, apply [Branch and worktree baseline
+reconciliation](#branch-and-worktree-baseline-reconciliation). Use the
+`todo.md` contract for task structure and claim triggers. Questionable
+ownership follows C6 and the document contract's stale-claim procedure; the
+operational contract does not define a second reclamation rule.
 
 ### Execution, persistence, and reconciliation
 
@@ -444,18 +446,20 @@ operational metadata without rewriting execution history.
 
 Detailed protocol knowledge remains in `references/` and is loaded
 progressively. This document owns principles, full lifecycle semantics,
-hydration rationale, concurrency and stale-claim handling, contradiction
-resolution, knowledge promotion, archive policy, limitations, and validation
-scenarios. [document-contracts.md](document-contracts.md) owns exact document
-boundaries, read and update triggers, aging, cross-document movement, examples,
-and archive-entry structure. Templates remain in `assets/templates/`.
+hydration rationale, concurrency and stale-claim handling, branch and worktree
+baseline reconciliation, contradiction resolution, knowledge promotion, archive
+policy, limitations, and validation scenarios.
+[document-contracts.md](document-contracts.md) owns exact document boundaries,
+read and update triggers, aging, cross-document movement, examples,
+branch/worktree locality evidence, and archive-entry structure. Templates
+remain in `assets/templates/`.
 
 An agent SHOULD load only the referenced section needed for the current
 decision. It SHOULD consult document contracts before making a non-obvious
 document update or resolving a boundary or aging question, and consult the
-deeper protocol sections for collaborative, conflicting, stale, or historical
-cases. The skill MUST remain usable for levels 0 and 1 without forcing either
-reference to be read in full.
+deeper protocol sections for collaborative, conflicting, stale, branch/worktree,
+or historical cases. The skill MUST remain usable for levels 0 and 1 without
+forcing either reference to be read in full.
 
 ## Concurrency model
 
@@ -504,6 +508,9 @@ Before non-trivial work, inspect relevant active entries in `.csdd/todo.md` when
 the target scope could overlap. A trivial, clearly unrelated edit does not
 require a coordination scan. Compare both path scope and affected contracts;
 semantically overlapping contracts may conflict even when file globs differ.
+When another worktree or branch may hold relevant claims or overlapping dirty
+state, extend the scan per [Branch and worktree baseline
+reconciliation](#branch-and-worktree-baseline-reconciliation).
 
 ### C2 - Claim explicit scope when collaborative work requires ownership
 
@@ -547,6 +554,107 @@ The authoritative evidence and reclamation procedure is the `todo.md`
 assess `Updated`, consult ownership, inspect repository evidence, and record any
 reassignment or release; this conceptual rule does not create a second lease or
 reclamation mechanism.
+
+Claims in `.csdd/todo.md` are not repository-global locks. Agents that do not
+observe the same version of the document—because they work on another branch,
+worktree, or unmerged commit—cannot be assumed to see or honor that claim.
+Cross-worktree evidence is therefore part of stale-claim and overlap assessment
+when concurrency outside the current baseline is plausible. See [Branch and
+worktree baseline reconciliation](#branch-and-worktree-baseline-reconciliation).
+
+## Branch and worktree baseline reconciliation
+
+`.csdd/` is versioned, branch-local state. The current worktree is the
+operational baseline for reading and writing CSDD documents, but it is not proof
+that other worktrees or branches lack relevant claims, handoffs, or durable
+truth.
+
+CSDD does not introduce a global lock service, shared configuration file, or
+out-of-band synchronization channel. Coordination remains artifact-based. When
+branches or worktrees diverge, agents MUST reconcile explicitly rather than
+silently copy, concatenate, merge, release, or overwrite CSDD state.
+
+### When cross-worktree inspection is required
+
+Cross-worktree or cross-branch inspection is mandatory only when concurrency,
+stale claims, scope overlap, or durable-truth divergence could change the
+decision to claim, reclaim, resume, or implement. Routine Level 0 work that is
+explicitly local and unrelated does not require a worktree scan merely because
+`.csdd/` exists.
+
+Age of a branch, worktree, or claim is a signal, never sufficient proof that
+work is abandoned or that another baseline is safe to ignore.
+
+### Procedure
+
+Use this sequence when the trigger applies:
+
+```text
+Trigger -> Discover -> Compare -> Classify -> Reconcile or block -> Execute -> Close
+```
+
+1. **Trigger.** Enter this procedure before claiming, reclaiming, or editing
+   overlapping scope when another branch or worktree may hold relevant CSDD
+   state or conflicting implementation; when resuming work that may have moved
+   baselines; or when `specs.md` / `decisions.md` may diverge from the intended
+   coordination baseline.
+2. **Discover.** Inspect the current worktree baseline, then relevant other
+   worktrees and branches: checked-out refs, clean or dirty status, uncommitted
+   changes inside the requested or claimed scope, recent commits touching
+   `.csdd/` or the implementation scope, and any visible handoff or ownership
+   evidence. Prefer targeted inspection over exhaustive repository enumeration.
+3. **Compare.** Diff the current `.csdd/` documents and relevant code against
+   the candidate baseline. Note whether divergence is limited to operational
+   coordination (`todo.md`, `handoff.md`), durable truth (`specs.md`,
+   `decisions.md`), implementation artifacts, or a combination.
+4. **Classify.** Assign one primary class (combine only when needed for
+   clarity):
+
+   | Class | Meaning | Default action |
+   | --- | --- | --- |
+   | No material divergence | Other baselines do not change claim, resume, or implementation decisions | Proceed on the current worktree baseline |
+   | Coordination-only divergence | Claims or handoffs differ; durable truth agrees | Preserve live compatible claims, block on live conflict, or explicitly reclaim/supersede stale operational state |
+   | Durable-truth divergence | Material differences in `specs.md` or `decisions.md` | Reconcile or block before implementing dependent behavior |
+   | Live conflicting work | Another worktree or branch shows active overlapping execution | Surface overlap; coordinate, sequence, or block; do not silently reclaim or overwrite |
+
+   Uncommitted changes inside a conflicting claimed scope are strong evidence of
+   live conflicting work. A worktree's mere existence, or an old claim timestamp
+   alone, is not.
+5. **Reconcile or block.** Choose an explicit path: merge, rebase, cherry-pick,
+   or manual reconciliation of the intended CSDD and code baseline; or mark the
+   task blocked with the decision needed. Do not silently import or overwrite
+   divergent state. Reconciling the current branch MUST NOT silently modify or
+   release claims that exist only in another branch or worktree. Preserve
+   `Owner` unless human accountability is explicitly reassigned; update `Agent`
+   only when this agent assumes execution. When importing or superseding CSDD
+   state from another branch, record the source branch or commit when that
+   provenance aids recovery.
+6. **Execute.** After the baseline is coherent—or after intentional overlap is
+   recorded—claim or resume only on the reconciled current-worktree state,
+   stay within scope, and apply ordinary concurrency and contradiction rules.
+7. **Close.** Leave truthful task state on the current baseline. Release active
+   write scope when complete. Do not imply that another worktree's claims were
+   cleared unless that worktree's documents were explicitly updated. Clear or
+   update handoff only for consequential resumable state on this baseline.
+
+Document-contract detail for locality, evidence, and provenance lives in
+[Branch and worktree locality](document-contracts.md#branch-and-worktree-locality).
+
+### Examples
+
+- **No material divergence:** Only this worktree exists; `.csdd/` and the
+  implementation scope match the intended baseline. Proceed without ceremony.
+- **Coordination-only divergence:** Another branch has an older completed claim
+  for the same files, while `specs.md` agrees. Reconcile operational state
+  explicitly if needed, then claim on the current baseline without rewriting
+  the other branch's history.
+- **Durable-truth divergence:** `decisions.md` on `feature/auth` accepts a
+  different session model than `main`. Block or reconcile the decision before
+  implementing auth behavior that depends on it.
+- **Live conflicting work:** A second worktree is checked out on an active task
+  branch with dirty files under the same `Scope`. Surface the overlap to the
+  `Owner` or coordinate sequencing; do not reclaim silently because the claim
+  looks old on this baseline.
 
 ## Contradiction and reconciliation
 
@@ -629,7 +737,8 @@ Phase 0 defines five scenarios for dogfooding and later conformance tests:
 
 Together these scenarios exercise adaptive hydration, continuity, document
 boundaries, overlap handling, advisory ownership, stale-claim reconciliation,
-semantic archival, and proportional overhead.
+branch and worktree baseline awareness, semantic archival, and proportional
+overhead.
 
 Future evaluations may separate a fixture author, isolated subject agent,
 evaluator agent, and human reviewer. Evaluation SHOULD compare actual repository
@@ -642,12 +751,16 @@ preserved by default. Phase 0 defines no evaluation infrastructure.
 CSDD exchanges a small amount of document maintenance for faster, safer context
 reconstruction. Its effectiveness depends on agents and operators keeping the
 relevant state honest and scoped. Text files cannot provide atomic claims,
-guarantee fresh ownership, prevent conflicting writes, or resolve ambiguous
-project intent without judgment.
+guarantee fresh ownership, prevent conflicting writes, synchronize every
+worktree automatically, or resolve ambiguous project intent without judgment.
+Because `.csdd/` is branch-local, claims are advisory only for observers of that
+document version; cross-worktree reconciliation remains an explicit agent
+responsibility when concurrency is material.
 
-The protocol is harness-agnostic and requires no runtime service. That keeps it
-portable and inspectable, but it also means v0 offers conventions rather than
-enforcement. Git, tests, code review, and human escalation remain necessary.
+The protocol is harness-agnostic and requires no runtime service, global lock
+file, or shared configuration channel. That keeps it portable and inspectable,
+but it also means v0 offers conventions rather than enforcement. Git, tests,
+code review, and human escalation remain necessary.
 
 ## Open design questions
 
