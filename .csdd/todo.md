@@ -2,13 +2,6 @@
 
 ## In Progress
 
-- [x] T-017 — Publish Field Report 001
-  - Owner: valen
-  - Agent: cursor/field-report
-  - Scope: `field-reports/001-v0.1-real-world-usage.md`, `.csdd/todo.md`
-  - Updated: 2026-07-17
-  - Note: Capture qualitative v0.1 usage across four real projects and derive the evidence base for v0.2.0.
-
 ## Pending
 
 - [ ] T-018 — Define the Git-aware task lifecycle
