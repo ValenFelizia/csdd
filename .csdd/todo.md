@@ -2,6 +2,8 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-018 — Define the Git-aware task lifecycle
   - Owner: valen
   - Agent: cursor/git-lifecycle
@@ -10,8 +12,10 @@
   - Target: `main`
   - Issue: `#2`
   - Updated: 2026-07-17
-  - Note: Draft PR #10. Contract tightened (Ready to Land, Base, refresh, shared surfaces, Git contract, Landed, examples). Still open for T-018: human review of draft; no SKILL.md/templates/retention/headings yet (later tasks). Not closed; PR remains draft.
-
+  - Landing: Draft PR #10 reviewed and ready to merge
+  - Verification: `git diff --check` passed; contract review completed
+  - Note: Git-aware lifecycle contract complete. SKILL.md, templates, retention, and canonical headings remain assigned to later tasks.
+  
 ## Pending
 
 - [ ] T-019 — Standardize TODO states, grouping, and retention
