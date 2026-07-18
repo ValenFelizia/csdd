@@ -88,6 +88,26 @@ model](references/protocol.md#concurrency-model), [`todo.md` scope
 claims](references/document-contracts.md#scope-and-coordination-claims), and
 [stale claims](references/document-contracts.md#stale-claims).
 
+### `todo.md` fast path
+
+Keep `todo.md` under these fixed H2 headings, including when empty, in this
+order: In Progress, Ready to Land, Blocked, Pending, Deferred, Recently
+Completed. Do not invent, rename, reorder, alias, or omit state H2 headings.
+Default presentation is flat; introduce H3 workstream grouping only when an
+existing project convention or explicit human direction requires it.
+
+Deferred requires authoritative intent plus `Reason:` and an observable
+`Resume when:`; do not invent Deferred to park unfinished work. Recently
+Completed declares `Retention: N` (fallback five), stays newest-first, and
+compacts overflow in the same coherent patch—no subjective early removal, no
+pinning, no mechanical archive. Ready to Land remains an unchecked active
+task with honest claim metadata, `Landing:`, optional concise
+`Verification:`, and no `Landed:` until the work is reachable from `Target`.
+
+For full semantics, use [TODO structure and
+retention](references/protocol.md#todo-structure-and-retention) and the
+[`todo.md` contract](references/document-contracts.md#todomd).
+
 When reclaiming stale work, preserve the existing human `Owner` unless the
 user or an authoritative project instruction explicitly reassigns human
 accountability. Reclaiming normally changes `Agent`, `Updated`, and relevant
@@ -190,9 +210,13 @@ locality](references/document-contracts.md#branch-and-worktree-locality).
 ## Close truthfully
 
 - **Completed:** Verify the result, reconcile documentation and repository
-  state, mark the task completed, release active scope, and remove obsolete
+  state, mark the task completed, release active scope, compact completed
+  metadata, enforce Recently Completed retention, and remove obsolete
   handoff state. Create a handoff only when another active workstream needs
   non-obvious transfer state.
+- **Ready to Land:** Keep the task unchecked and active with honest claim
+  metadata, `Landing:`, and concise `Verification:` when useful. Do not use
+  `Landed:` until the changes are reachable from `Target`.
 - **Partial:** Keep the task honestly active, update its scope and checkpoint,
   and update the handoff when resumption risk exists.
 - **Blocked:** Mark the task blocked, name the blocker or decision needed,
@@ -211,12 +235,13 @@ review note when completion has not yet been earned.
 Load only the section relevant to the current question:
 
 - Use [the protocol](references/protocol.md) for principles, hydration semantics,
-  lifecycle, concurrency, stale claims, branch/worktree baseline reconciliation,
-  contradiction handling, archive policy, and validation scenarios.
+  lifecycle, TODO structure and retention, concurrency, stale claims,
+  branch/worktree baseline reconciliation, contradiction handling, archive
+  policy, and validation scenarios.
 - Use [the document contracts](references/document-contracts.md) for exact
-  document boundaries, read and update triggers, aging and cleanup,
-  cross-document movement, task and handoff structure, branch/worktree locality,
-  and archive-entry guidance.
+  document boundaries, the detailed `todo.md` contract, read and update
+  triggers, aging and cleanup, cross-document movement, task and handoff
+  structure, branch/worktree locality, and archive-entry guidance.
 
 Do not load both references in full by default and do not reproduce their
 detailed procedures in working notes.

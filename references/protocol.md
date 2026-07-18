@@ -357,18 +357,19 @@ Pending → In Progress → Ready to Land → Recently Completed
 ```
 
 `Blocked` and `Deferred` are lateral states, not steps that every task must
-visit. Exact TODO headings, grouping, and retention bounds remain project
-presentation concerns; this section defines semantics, not mandatory heading
-text.
+visit. Canonical `todo.md` heading names, order, secondary grouping, and
+retention bounds are normative under [TODO structure and
+retention](#todo-structure-and-retention). Document-local field and example
+rules live in the [`todo.md` contract](document-contracts.md#todomd).
 
 | State | Meaning |
 | --- | --- |
-| Pending | Work is known but not actively claimed for execution. |
+| Pending | Accepted execution-queue work that may be claimed without a new product or prioritization decision once capacity and dependencies permit. No active `Agent` or write claim. |
 | In Progress | An agent is executing within an active claim. |
 | Ready to Land | Implementation and verification are done; landing has not yet made the work reachable from `Target`. Task state and valid session-close condition; not a completed outcome. |
-| Recently Completed | Work is completed under the Git-aware completion rules below. |
+| Recently Completed | Work is completed under the Git-aware completion rules below. Bounded operational window, not permanent history. |
 | Blocked | Progress cannot continue until a named blocker or decision is resolved. |
-| Deferred | Work is intentionally postponed; it has no `Agent` and no active claim. |
+| Deferred | Accepted, still-relevant work intentionally removed from the execution queue until an observable resume condition is met. No `Agent` and no active claim. |
 
 ### Target, Base, and Landed
 
@@ -412,8 +413,28 @@ holds landing authority.
 Persistence MUST occur when verified work remains unlanded at a session,
 responsibility, or coordination boundary—including interruption, transfer, or
 delayed landing. Lack of landing authority obligates persistence only when that
-lack delays or transfers landing; authority alone does not. Pending landing
-evidence belongs in `Note` or a `Landing` field, not in `Landed`.
+lack delays or transfers landing; authority alone does not.
+
+A persisted Ready to Land task remains active and unchecked. It MUST retain
+honest coordination metadata required by this lifecycle, including `Agent`,
+protected `Scope`, `Target`, `Base`, and `Updated` when those fields apply.
+`Agent` identifies the current operational executor responsible for the task
+and MAY change when landing responsibility is genuinely transferred or
+reclaimed; a separate landing-owner field is not introduced.
+
+A persisted Ready to Land task:
+
+- MUST include `Landing:` with the pending PR, commit, action, or landing path;
+- SHOULD include concise `Verification:` evidence;
+- MUST preserve enough verification state in the task or `handoff.md` when
+  responsibility transfers so landing does not require unnecessary repeated
+  work;
+- MUST NOT use `Landed:`, because the changes are not yet reachable from
+  `Target`.
+
+After landing satisfies the completion rules, the task moves to Recently
+Completed, becomes checked, records `Landed:` when required, releases active
+Scope, and compacts completed metadata.
 
 ### Refresh checkpoint
 
@@ -479,9 +500,90 @@ resumption would otherwise be unsafe; do not invent a second scope-release
 rule beyond [Completed-task claims](document-contracts.md#completed-task-claims)
 and the closing behavior below.
 
-`Deferred` MUST NOT carry an `Agent` or active claim. It MUST NOT hide partial
-repository changes: either land, discard, reassign, or keep an honest active
-or blocked claim that protects the incomplete work.
+`Deferred` contains accepted and still-relevant work intentionally removed
+from the execution queue until an observable resume condition is met.
+Deferral requires evidence from the user, Owner, accepted planning, or another
+authoritative project source. An agent MUST NOT defer work autonomously merely
+because it is difficult, old, blocked, unfinished, or inconvenient.
+
+Every Deferred task MUST include:
+
+- `Reason:` explaining why execution is postponed now;
+- `Resume when:` naming an observable event, dependency state, decision, or
+  planning boundary that makes the task eligible again.
+
+Conditions such as “later”, “when appropriate”, or “when there is time” are
+not sufficient.
+
+Deferred tasks MAY retain `Owner`. They MUST NOT have an `Agent`, MUST omit
+active Scope or use `Scope: released`, and MUST NOT conceal partial or
+unlanded repository changes. If partial work needs protection, the honest
+state is normally Blocked rather than Deferred. When a resume condition is
+known to be satisfied, reconcile the task into Pending or directly into In
+Progress when claimed in the same operation.
+
+`Icebox` is not a canonical state alias. Rejected, cancelled, obsolete,
+speculative, or irrelevant work is removed from `todo.md` after promoting any
+consequential truth. A rejected alternative belongs in `decisions.md` only
+when its rationale is durable and likely to prevent repeated debate.
+
+### TODO structure and retention
+
+Every `todo.md` MUST contain these six H2 headings, including when empty, in
+this exact order:
+
+1. `## In Progress`
+2. `## Ready to Land`
+3. `## Blocked`
+4. `## Pending`
+5. `## Deferred`
+6. `## Recently Completed`
+
+H2 headings under `# TODO` are reserved for canonical task state. Projects and
+agents MUST NOT omit, rename, reorder, alias, or add state H2 headings. Every
+task present in `todo.md` MUST appear under exactly one canonical state H2.
+Active and lateral states use unchecked task items; Recently Completed uses
+checked task items.
+
+State is always the primary grouping dimension. The default presentation is
+flat. A task MAY use an optional `Workstream:` field when thematic context
+materially improves coordination. Projects MAY instead adopt H3 workstream
+grouping as an explicit opt-in; an agent MUST NOT introduce or switch grouping
+modes autonomously. When H3 grouping is used, H3 headings are thematic only
+and never express task state; Recently Completed remains flat. Exact H3
+interoperability rules are in the [`todo.md`
+contract](document-contracts.md#todomd).
+
+Pending is the accepted execution queue. Pending tasks have no active `Agent`
+or write claim, MAY name dependencies, are not Blocked merely because an
+unstarted dependency remains, and MUST NOT be created from speculative ideas
+without evidence that the work was accepted. Age alone does not authorize an
+agent to remove or defer Pending work.
+
+Recently Completed is a bounded operational window, not permanent history.
+Directly under `## Recently Completed`, the project declares `Retention: N`.
+The v0.2 default is `Retention: 5`. If the line is absent in an older project,
+agents MUST use five as the fallback until migration. `N` is a positive
+integer (`N >= 1`) and applies globally. `Retention: 0` is invalid. A human
+or explicit project policy MAY change it; agents MUST NOT increase it
+autonomously to avoid compaction.
+
+Recently Completed remains flat, is ordered newest first, retains entries
+until they exceed the declared limit, does not permit subjective early
+removal, and does not support pinned entries. When a task completes, the
+closing agent MUST, in the same coherent TODO patch: insert it at the top;
+update `Updated` to the completion transition date; compact metadata that no
+longer serves operational coordination; and remove the oldest entries that
+exceed `Retention`. An agent modifying Recently Completed MUST reconcile an
+existing overflow. An agent editing an unrelated state section is not
+required to audit retention.
+
+Retention removal is eviction from the operational view, not a new lifecycle
+state. It MUST NOT create an `Archived` state, MUST NOT mechanically copy the
+task into `.csdd/archive/`, and MUST NOT authorize reuse of its stable task
+ID. Durable truth SHOULD be promoted during task closure. Routine compaction
+does not require historical archaeology; Git, pull requests, and issues remain
+the sources for exact implementation history.
 
 ### Completion
 
@@ -657,8 +759,9 @@ CSDD coordination is document-based and intentionally lightweight.
 ### Minimum interoperable task structure
 
 Tasks MUST use plain, human-readable Markdown. Each task requires a stable task
-ID, a concise title, and an obvious state expressed by its section or another
-clear Markdown mechanism:
+ID, a concise title, and a state represented by placement under exactly one
+canonical state H2. See [TODO structure and
+retention](#todo-structure-and-retention).
 
 ```markdown
 ## In Progress
@@ -961,11 +1064,6 @@ code review, and human escalation remain necessary.
 
 The following questions remain for dogfooding or later tasks:
 
-- Should the `Recently Completed` window in `todo.md` be bounded by relevance,
-  phase, or a loose numeric guideline?
-- How should `Ready to Land`, `Deferred` / Icebox, and related states appear as
-  canonical TODO headings or groupings without over-fitting one repository's
-  board layout?
 - Which `Agent` label conventions remain portable across Codex, Cursor, Claude
   Code, and future harnesses?
 - Which normative statements should be promoted from SHOULD to MUST after
