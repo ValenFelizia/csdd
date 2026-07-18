@@ -412,7 +412,8 @@ holds landing authority.
 Persistence MUST occur when verified work remains unlanded at a session,
 responsibility, or coordination boundary—including interruption, transfer, or
 delayed landing. Lack of landing authority obligates persistence only when that
-lack delays or transfers landing; authority alone does not.
+lack delays or transfers landing; authority alone does not. Pending landing
+evidence belongs in `Note` or a `Landing` field, not in `Landed`.
 
 ### Refresh checkpoint
 
@@ -427,17 +428,21 @@ MUST:
 3. compare recorded `Base` with the current tip of `Target`;
 4. inspect diff or log for `Scope` only when that comparison shows divergence
    or status shows unexpected changes; and
-5. reconcile or block before writing.
+5. reconcile or block before proceeding with the pending write, landing, or
+   closure.
 
 Do not expand the checkpoint into a full repository survey when status is clean
 and `Base` still matches the `Target` tip.
 
 ### Minimal Git contract
 
-Agents MUST NOT stage or commit files outside the claimed `Scope` without an
-explicit reconciliation that expands or coordinates that scope. Commits
-primarily associated with one task SHOULD include the task ID in the subject or
-a trailer (for example `T-018` or `Task: T-018`).
+Agents MUST NOT stage or commit files outside the claimed `Scope`, except for
+minimal coherent patches to `.csdd/todo.md` and `.csdd/handoff.md` made under
+the [shared coordination-surface
+contract](document-contracts.md#shared-coordination-surfaces). Any other file
+outside `Scope` requires explicit reconciliation that expands or coordinates
+that scope. Commits primarily associated with one task SHOULD include the task
+ID in the subject or a trailer (for example `T-018` or `Task: T-018`).
 
 ### Illustrative landing shapes
 
@@ -445,7 +450,7 @@ These examples show evidence shapes; they do not invent alternate lifecycles.
 
 - **Direct commit to `Target`:** claim with `Target`/`Base`; after verify and
   commit on `Target`, the task may move to Recently Completed without a
-  persisted Ready to Land; record `Landed` when useful.
+  persisted Ready to Land; record `Landed` according to the rules above.
 - **Feature branch:** implement on a branch; when verified but unmerged at a
   session boundary, persist Ready to Land; land by merging so changes are
   reachable from `Target`.

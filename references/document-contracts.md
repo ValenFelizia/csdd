@@ -188,8 +188,12 @@ For active collaborative work, tasks SHOULD include these fields when relevant:
 - `Updated`: the date of the last meaningful task-state update;
 - `Target`: the integration branch or ref for repository-modifying work;
 - `Base`: the `Target` commit observed at claim or at the last explicit
-  reconciliation that updated `Base`;
-- `Landed`: commit, merged PR, or equivalent landing evidence.
+  reconciliation that updated `Base`.
+
+`Landed` is not an active-work field. It belongs on repository-modifying tasks
+that are already completed. A Ready to Land task MAY describe a pending PR,
+commit, or other landing path with `Note` or a `Landing` state field; it MUST
+NOT use `Landed` for that purpose.
 
 ```markdown
 - [ ] T-021 — Implement password recovery
@@ -217,9 +221,10 @@ Changing the operational executor SHOULD update `Agent`.
 Changing `Owner` requires explicit evidence that human or team accountability
 has been reassigned. A stale agent claim alone is not sufficient.
 
-`Target`, `Base`, and `Landed` follow [Git-aware task
-lifecycle](protocol.md#git-aware-task-lifecycle). A task entry does not grant
-permission to commit, push, or merge. Edits to `todo.md` follow [Shared
+`Target` and `Base` follow [Git-aware task
+lifecycle](protocol.md#git-aware-task-lifecycle). `Landed` follows the same
+section once the repository-modifying task is completed. A task entry does not
+grant permission to commit, push, or merge. Edits to `todo.md` follow [Shared
 coordination surfaces](#shared-coordination-surfaces).
 
 ### Task lifecycle states
@@ -240,7 +245,7 @@ tasks may standardize presentation without changing these semantics.
 | --- | --- |
 | Pending | No active write claim is required. |
 | In Progress | Active collaborative work SHOULD carry `Owner`, `Agent`, `Scope`, and `Updated` when coordination needs them, plus `Target` / `Base` when the protocol requires them. |
-| Ready to Land | Task state (and valid session-close condition), not a completed outcome. Persist when verified work remains unlanded at a session, responsibility, or coordination boundary; omit persistence only when landing completes in the same uninterrupted operation. Lack of authority alone does not require persistence unless it delays or transfers landing. |
+| Ready to Land | Task state (and valid session-close condition), not a completed outcome. Persist when verified work remains unlanded at a session, responsibility, or coordination boundary; omit persistence only when landing completes in the same uninterrupted operation. Lack of authority alone does not require persistence unless it delays or transfers landing. Describe a pending PR or commit with `Note` or `Landing`, not `Landed`. |
 | Blocked | Name the blocker. Retain `Scope` only when partial work or safe continuation needs protection; otherwise release `Scope` and explain why. |
 | Deferred | MUST NOT have an `Agent` or active claim, and MUST NOT hide partial repository changes. |
 | Recently Completed | Satisfies the protocol completion rules; active write scope is released; `Landed` recorded when required. |
@@ -249,7 +254,8 @@ tasks may standardize presentation without changing these semantics.
 
 - pending, in-progress, ready-to-land, blocked, and deferred work when used;
 - ownership, execution, and active scope when coordination requires them;
-- `Target`, `Base`, and landing evidence when repository work needs them;
+- `Target` and `Base` when active repository work needs them;
+- `Landed` on completed repository-modifying tasks when required;
 - dependencies or blockers when relevant;
 - a short note or completion condition when it materially helps execution;
 - a small `Recently Completed` window when it helps interpret current state.
