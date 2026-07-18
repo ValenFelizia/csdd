@@ -34,6 +34,12 @@
 
 Retention: 5
 
+- [x] T-019 — Standardize TODO states, grouping, and retention
+  - Owner: valen
+  - Updated: 2026-07-18
+  - Landed: PR #12 @ `7fb098c`
+  - Note: Standardized canonical TODO states, grouping, Deferred behavior, Ready to Land presentation, and bounded retention.
+
 - [x] T-018 — Define the Git-aware task lifecycle
   - Owner: valen
   - Scope: released
@@ -50,14 +56,3 @@ Retention: 5
 - [x] T-016 — v0.1.0 launch
 
 - [x] T-015 — README and public documentation
-  
-- [x] T-019 — Standardize TODO states, grouping, and retention
-  - Owner: valen
-  - Agent: cursor/t-019-todo-states
-  - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`
-  - Target: `main`
-  - Base: `00d06fb`
-  - Issue: `#3`
-  - Updated: 2026-07-18
-  - Landing: PR #12
-  - Verification: `git diff --check` passed; protocol, document-contracts, and SKILL aligned to issue #3; only principal Scope plus the shared TODO coordination surface changed; T-018 reconciled against merged PR #10 with Retention: 5 compaction
