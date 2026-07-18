@@ -44,6 +44,26 @@ paths.
 7. Keep sections scannable so agents can retrieve a relevant subset without
    reading the entire file.
 
+### Shared coordination surfaces
+
+`.csdd/todo.md` and `.csdd/handoff.md` are shared coordination surfaces, not a
+task's principal write `Scope` by default.
+
+When editing either document:
+
+1. re-read the current file before changing it;
+2. check for concurrent or intervening changes;
+3. apply the smallest patch that updates the relevant entry or section;
+4. preserve unrelated entries and sections;
+5. surface conflicts instead of overwriting them; and
+6. do not automatically add these files to a task's principal `Scope` unless the
+   task explicitly claims them.
+
+Git-aware field semantics (`Target`, `Base`, `Landed`), refresh checkpoints, the
+minimal Git contract, and landing examples live in [Git-aware task
+lifecycle](protocol.md#git-aware-task-lifecycle). This contract defines how those
+rules appear in document fields and edit behavior.
+
 ## Document map
 
 | Document | Primary question | Temperature | Expected lifetime |
@@ -165,13 +185,23 @@ For active collaborative work, tasks SHOULD include these fields when relevant:
 - `Owner`: the accountable human or team and preferred coordination point;
 - `Agent`: the current operational executor or harness/task label;
 - `Scope`: the concrete write or contract boundary;
-- `Updated`: the date of the last meaningful task-state update.
+- `Updated`: the date of the last meaningful task-state update;
+- `Target`: the integration branch or ref for repository-modifying work;
+- `Base`: the `Target` commit observed at claim or at the last explicit
+  reconciliation that updated `Base`.
+
+`Landed` is not an active-work field. It belongs on repository-modifying tasks
+that are already completed. A Ready to Land task MAY describe a pending PR,
+commit, or other landing path with `Note` or a `Landing` state field; it MUST
+NOT use `Landed` for that purpose.
 
 ```markdown
 - [ ] T-021 — Implement password recovery
   - Owner: valen
   - Agent: codex/auth-reset
   - Scope: `src/auth/reset-password/**`
+  - Target: `main`
+  - Base: `a1b2c3d`
   - Updated: 2026-07-12
 ```
 
@@ -191,10 +221,41 @@ Changing the operational executor SHOULD update `Agent`.
 Changing `Owner` requires explicit evidence that human or team accountability
 has been reassigned. A stale agent claim alone is not sufficient.
 
+`Target` and `Base` follow [Git-aware task
+lifecycle](protocol.md#git-aware-task-lifecycle). `Landed` follows the same
+section once the repository-modifying task is completed. A task entry does not
+grant permission to commit, push, or merge. Edits to `todo.md` follow [Shared
+coordination surfaces](#shared-coordination-surfaces).
+
+### Task lifecycle states
+
+Task state is represented by section placement or another obvious Markdown
+mechanism. Semantic states for repository-modifying work follow the protocol's
+[Git-aware task lifecycle](protocol.md#git-aware-task-lifecycle):
+
+```text
+Pending → In Progress → Ready to Land → Recently Completed
+```
+
+`Blocked` and `Deferred` are lateral states. Canonical heading names, board
+grouping, and retention windows are not fixed by this contract yet; later
+tasks may standardize presentation without changing these semantics.
+
+| State | Claim expectations |
+| --- | --- |
+| Pending | No active write claim is required. |
+| In Progress | Active collaborative work SHOULD carry `Owner`, `Agent`, `Scope`, and `Updated` when coordination needs them, plus `Target` / `Base` when the protocol requires them. |
+| Ready to Land | Task state (and valid session-close condition), not a completed outcome. Persist when verified work remains unlanded at a session, responsibility, or coordination boundary; omit persistence only when landing completes in the same uninterrupted operation. Lack of authority alone does not require persistence unless it delays or transfers landing. Describe a pending PR or commit with `Note` or `Landing`, not `Landed`. |
+| Blocked | Name the blocker. Retain `Scope` only when partial work or safe continuation needs protection; otherwise release `Scope` and explain why. |
+| Deferred | MUST NOT have an `Agent` or active claim, and MUST NOT hide partial repository changes. |
+| Recently Completed | Satisfies the protocol completion rules; active write scope is released; `Landed` recorded when required. |
+
 ### Contains
 
-- pending, in-progress, and blocked work;
+- pending, in-progress, ready-to-land, blocked, and deferred work when used;
 - ownership, execution, and active scope when coordination requires them;
+- `Target` and `Base` when active repository work needs them;
+- `Landed` on completed repository-modifying tasks when required;
 - dependencies or blockers when relevant;
 - a short note or completion condition when it materially helps execution;
 - a small `Recently Completed` window when it helps interpret current state.
@@ -207,7 +268,8 @@ has been reassigned. A stale agent claim alone is not sufficient.
 - durable requirements;
 - transient debugging notes unrelated to coordination;
 - vague ownership scopes that prevent unrelated work;
-- project-management metadata without a demonstrated coordination purpose.
+- project-management metadata without a demonstrated coordination purpose;
+- implied commit, push, or merge authority.
 
 ### Update triggers
 
@@ -215,6 +277,8 @@ Update `todo.md` when:
 
 - work is claimed or released;
 - scope, `Owner`, `Agent`, state, dependency, or blocker changes;
+- `Target`, `Base`, or landing evidence changes materially;
+- work becomes ready to land, blocked, deferred, or resumes from those states;
 - a meaningful checkpoint is needed to protect continuity;
 - work completes or becomes abandoned;
 - an active claim appears stale and is reconciled.
@@ -311,8 +375,25 @@ A completed task MUST either:
 Concrete file or glob scopes MUST NOT remain on completed tasks when they could
 be interpreted as active claims.
 
+For repository-modifying work, completion additionally requires the Git-aware
+rules in [Git-aware task lifecycle](protocol.md#git-aware-task-lifecycle):
+verification, reachability from the resolved `Target`, no unlanded task changes
+and no unresolved unattributed changes remaining inside `Scope`, and `Landed`
+recorded when required. Implementation finished but unlanded work belongs in
+`Ready to Land` or another honest active state, not `Recently Completed`.
+
 A small Recently Completed window may retain useful metadata, but that metadata
 must not block or confuse future overlap detection.
+
+`Blocked` tasks follow the same scope-retention rule as the protocol: keep
+`Scope` only when partial work or safe continuation needs protection;
+otherwise release it and explain why. `Deferred` tasks MUST release any active
+claim and MUST NOT use deferral to conceal unfinished repository changes.
+
+Handoff cleanup for completed work follows [Closure
+behavior](#closure-behavior); stale-claim and cross-worktree checks remain in
+[Stale claims](#stale-claims) and [Branch and worktree
+locality](#branch-and-worktree-locality).
 
 ### Historical Agent metadata
 
@@ -454,7 +535,8 @@ an active task indicates that partial session state matters. Trivial or
 unrelated work MAY avoid reading `handoff.md`.
 
 A handoff is a claim about recent state, not proof that the repository is
-unchanged. Confirm critical details before acting.
+unchanged. Confirm critical details before acting. Edits follow [Shared
+coordination surfaces](#shared-coordination-surfaces).
 
 ### Contains
 
@@ -491,6 +573,8 @@ Relevant triggers include:
 
 - unfinished work will continue in another session or agent;
 - work becomes blocked or is interrupted with consequential partial state;
+- work is ready to land and another agent must land or resume without redoing
+  verification;
 - a previous handoff is consumed and no longer describes current reality.
 
 A successful self-contained task MAY omit a handoff unless another active agent
@@ -710,6 +794,8 @@ rationale.
 
 - Should the `Recently Completed` window in `todo.md` be bounded by relevance,
   phase, or a loose numeric guideline?
+- How should `Ready to Land`, `Deferred` / Icebox, and related states appear as
+  canonical TODO headings or groupings?
 - Which `Agent` label conventions remain portable across Codex, Cursor, Claude
   Code, and future harnesses?
 - Which normative statements should be promoted from SHOULD to MUST after

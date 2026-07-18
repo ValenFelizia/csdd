@@ -275,7 +275,9 @@ a task at a lower level merely because its original wording looked simple.
 ## Adaptive session lifecycle
 
 The full lifecycle is a toolbox, not a ritual. Use only the phases justified by
-the task.
+the task. Session phases below describe how an agent works; the
+[Git-aware task lifecycle](#git-aware-task-lifecycle) describes how task state
+moves relative to repository evidence.
 
 | Task class | Expected lifecycle |
 | --- | --- |
@@ -298,7 +300,13 @@ as needed, then load only relevant specifications and decisions.
 
 For concurrent or continuity-sensitive work, identify the task, human `Owner`,
 executing `Agent`, intended scope, dependencies, and likely overlap before
-editing when those fields are relevant.
+editing when those fields are relevant. For repository-modifying work, resolve
+`Target` and apply the `Base` rules in [Git-aware task
+lifecycle](#git-aware-task-lifecycle). Run the refresh checkpoint before writing
+when that section requires it.
+
+A task claim coordinates scope and continuity. It does not grant automatic
+permission to commit, push, or merge.
 
 ### Execute
 
@@ -310,8 +318,11 @@ agents.
 ### Reconcile
 
 Compare the resulting repository state, verification results, task state,
-specifications, and decisions. Surface contradictions and update shared state
-that the work made stale.
+specifications, and decisions. For repository-modifying work, reconcile
+implementation completion against landing evidence: verified changes must be
+committed and reachable from the resolved `Target` before the task may be
+treated as completed. Surface contradictions and update shared state that the
+work made stale.
 
 ### Handoff/Close
 
@@ -319,9 +330,177 @@ Leave the project resumable. Update task state, accountability, and executor as
 needed; preserve partial state and unresolved risks; promote durable knowledge;
 and remove or replace transient information.
 
-A session may close as successful, partial, blocked, interrupted, or abandoned.
-An incomplete session still requires a usable checkpoint when continuity would
-otherwise be lost.
+`Ready to Land` is a task state and a valid session-close condition when
+verified work remains unlanded at a session, responsibility, or coordination
+boundary. It is not a completed outcome. Persistence MAY be omitted when
+landing completes immediately in the same uninterrupted operation, regardless
+of who holds landing authority. Lack of authority alone does not require
+persisting `Ready to Land` unless it delays or transfers landing. See
+[Ready to Land](#ready-to-land).
+
+A session may close as successful, partial, blocked, interrupted, abandoned, or
+ready to land. An incomplete session still requires a usable checkpoint when
+continuity would otherwise be lost.
+
+## Git-aware task lifecycle
+
+CSDD declares coordination intent; Git exposes observed execution state. Agents
+MUST reconcile both before editing, landing, or closing collaborative
+repository work.
+
+### Conceptual states
+
+The canonical progression for repository-modifying work is:
+
+```text
+Pending → In Progress → Ready to Land → Recently Completed
+```
+
+`Blocked` and `Deferred` are lateral states, not steps that every task must
+visit. Exact TODO headings, grouping, and retention bounds remain project
+presentation concerns; this section defines semantics, not mandatory heading
+text.
+
+| State | Meaning |
+| --- | --- |
+| Pending | Work is known but not actively claimed for execution. |
+| In Progress | An agent is executing within an active claim. |
+| Ready to Land | Implementation and verification are done; landing has not yet made the work reachable from `Target`. Task state and valid session-close condition; not a completed outcome. |
+| Recently Completed | Work is completed under the Git-aware completion rules below. |
+| Blocked | Progress cannot continue until a named blocker or decision is resolved. |
+| Deferred | Work is intentionally postponed; it has no `Agent` and no active claim. |
+
+### Target, Base, and Landed
+
+Work that modifies the repository MUST resolve an integration `Target`.
+
+- `Target` is the integration branch or ref the work is intended to reach.
+- `Base` is the commit of that `Target` observed when the task is claimed or
+  at the last explicit reconciliation that updated `Base`.
+- `Landed` is final landing evidence: a commit, merged pull request, or
+  equivalent that makes the verified changes reachable from the resolved
+  `Target`.
+
+`Target` MAY be inherited from an unambiguous project policy. It MUST be
+written explicitly on the task when the policy is ambiguous, non-standard, or
+relevant for coordination.
+
+`Base` MUST be recorded for collaborative Level 2/3 work, when branches or
+worktrees are in play, or when concurrency is plausible. `Base` MAY be omitted
+for Level 0 work and for Level 1 work with no coordination value. Agents MUST
+NOT silently advance `Base` to hide divergence from `Target`. When `Base`
+changes, record the reconciliation (for example in `Note` or handoff).
+
+For repository-modifying work, *landed* means the verified changes are
+committed and reachable from the resolved integration `Target`. Completed
+repository tasks SHOULD record `Landed`. They MUST record `Landed` when
+attribution is not obvious from the current tip of `Target` alone.
+
+Editing rules for `todo.md` and `handoff.md` as shared coordination surfaces
+are in [document-contracts.md](document-contracts.md#shared-coordination-surfaces).
+Those documents are not automatically part of a task's principal write `Scope`.
+
+### Ready to Land
+
+`Ready to Land` is a canonical task state. It may also describe how a session
+closes when verified work remains unlanded. It is never a completed outcome.
+
+Persistence MAY be omitted when implementation, verification, and landing
+complete immediately in the same uninterrupted operation, regardless of who
+holds landing authority.
+
+Persistence MUST occur when verified work remains unlanded at a session,
+responsibility, or coordination boundary—including interruption, transfer, or
+delayed landing. Lack of landing authority obligates persistence only when that
+lack delays or transfers landing; authority alone does not. Pending landing
+evidence belongs in `Note` or a `Landing` field, not in `Landed`.
+
+### Refresh checkpoint
+
+Before writing to a claimed repository `Scope` when Level 2/3 collaboration,
+branch/worktree use, or plausible concurrency applies, and again before
+landing or closure, after a material HEAD or `Target` change, when resuming a
+material interruption, or when unexpected changes appear in `Scope`, agents
+MUST:
+
+1. re-read the relevant task entry;
+2. run `git status --short`;
+3. compare recorded `Base` with the current tip of `Target`;
+4. inspect diff or log for `Scope` only when that comparison shows divergence
+   or status shows unexpected changes; and
+5. reconcile or block before proceeding with the pending write, landing, or
+   closure.
+
+Do not expand the checkpoint into a full repository survey when status is clean
+and `Base` still matches the `Target` tip.
+
+### Minimal Git contract
+
+Agents MUST NOT stage or commit files outside the claimed `Scope`, except for
+minimal coherent patches to `.csdd/todo.md` and `.csdd/handoff.md` made under
+the [shared coordination-surface
+contract](document-contracts.md#shared-coordination-surfaces). Any other file
+outside `Scope` requires explicit reconciliation that expands or coordinates
+that scope. Commits primarily associated with one task SHOULD include the task
+ID in the subject or a trailer (for example `T-018` or `Task: T-018`).
+
+### Illustrative landing shapes
+
+These examples show evidence shapes; they do not invent alternate lifecycles.
+
+- **Direct commit to `Target`:** claim with `Target`/`Base`; after verify and
+  commit on `Target`, the task may move to Recently Completed without a
+  persisted Ready to Land; record `Landed` according to the rules above.
+- **Feature branch:** implement on a branch; when verified but unmerged at a
+  session boundary, persist Ready to Land; land by merging so changes are
+  reachable from `Target`.
+- **Open PR / merged PR:** an open PR can evidence Ready to Land; a merged PR
+  (or equivalent) can evidence `Landed` once the merge is reachable from
+  `Target`.
+- **Worktree with dirty overlap:** refresh shows foreign dirty files in
+  `Scope` or another worktree claim; surface overlap and reconcile or block
+  before writing. Do not silently reclaim or overwrite.
+
+Cross-worktree discovery and divergence classes remain in [Branch and worktree
+baseline
+reconciliation](#branch-and-worktree-baseline-reconciliation).
+
+### Authority and permission
+
+Claiming or progressing a task does not imply permission to commit, push, or
+merge. Landing authority remains a separate human, project, or harness policy.
+
+### Blocked and Deferred
+
+`Blocked` retains `Scope` only when partial work or safe continuation needs
+protection. Otherwise it MUST release `Scope` and explain why retention is
+unnecessary. Preserve consequential partial state in `handoff.md` when
+resumption would otherwise be unsafe; do not invent a second scope-release
+rule beyond [Completed-task claims](document-contracts.md#completed-task-claims)
+and the closing behavior below.
+
+`Deferred` MUST NOT carry an `Agent` or active claim. It MUST NOT hide partial
+repository changes: either land, discard, reassign, or keep an honest active
+or blocked claim that protects the incomplete work.
+
+### Completion
+
+A repository-modifying task MAY move to `Recently Completed` only when all of
+the following hold:
+
+1. the result has been verified in proportion to risk;
+2. the verified changes are reachable from the resolved `Target`;
+3. no unlanded task changes and no unresolved unattributed changes remain
+   inside `Scope`;
+4. active write `Scope` is released (`Scope: released` or omitted when
+   compacted);
+5. obsolete handoff state for the task is cleared or replaced; and
+6. `Landed` is recorded when required by the Landed rules above.
+
+Work that awaits required review or landing remains active—typically
+`Ready to Land` or `In Progress`—even when implementation appears finished.
+Non-repository work may complete without Git landing evidence when no
+repository change was in scope.
 
 ## Initial skill operational contract
 
@@ -410,24 +589,33 @@ related requirements and decisions instead of duplicating normative truth.
 ### Closing behavior
 
 Every close verifies what actually happened and leaves operational state
-truthful. Treat work awaiting required review or acceptance as active rather
-than completed, even when implementation is finished. Apply the
-outcome-specific minimum:
+truthful. Treat work awaiting required review, acceptance, or landing as
+active rather than completed, even when implementation is finished. Apply the
+outcome-specific minimum and the [Git-aware task
+lifecycle](#git-aware-task-lifecycle) completion rules.
 
-| Outcome | Required close |
+`Ready to Land` in the table below is a session-close condition that leaves the
+task in the Ready to Land state. It is not a completed outcome.
+
+| Close condition | Required close |
 | --- | --- |
-| Completed | Verify the result; reconcile repository and durable docs; move or mark the task completed and release active scope; clear obsolete handoff state. Add a handoff only when another active workstream needs non-obvious transfer state. |
+| Completed | Verify the result; for repository-modifying work, confirm the changes are landed and reachable from `Target`, with no unlanded task changes and no unresolved unattributed changes remaining inside `Scope`; record `Landed` when required; reconcile repository and durable docs; move or mark the task completed and release active scope; clear obsolete handoff state. Add a handoff only when another active workstream needs non-obvious transfer state. |
+| Ready to Land | Persist the Ready to Land task state when verified work remains unlanded at a session, responsibility, or coordination boundary; keep the claim honest; update `handoff.md` when another agent must land or resume without redoing verification. Omit persistence only when landing completes in the same uninterrupted operation. |
 | Partial | Keep the task honestly active with current scope and a useful checkpoint; update `handoff.md` when resumption would otherwise repeat meaningful work or proceed incorrectly. |
-| Blocked | Move or mark the task blocked, name the blocker or decision needed, and preserve consequential partial state in `handoff.md`; narrow or release scope that no longer needs protection. |
-| Interrupted | Record an honest active checkpoint and handoff when meaningful partial state or risk must survive; do not imply completion or retain a misleading claim. |
+| Blocked | Move or mark the task blocked, name the blocker or decision needed, and preserve consequential partial state in `handoff.md`; retain `Scope` only when partial work or safe continuation needs protection, otherwise release it and explain why. |
+| Interrupted | Record an honest active checkpoint and handoff when meaningful partial state or risk must survive; if implementation is finished but unlanded, close as Ready to Land rather than implying completion; do not retain a misleading claim. |
 | Trivial | Verify the change. Do not create a task, handoff, decision, archive entry, or other CSDD update unless the work discovered a material conflict or changed durable truth. |
 
-For all outcomes, promote consequential knowledge before removing transient
-state. Do not leave completed ownership claims active, duplicate facts across
-documents, or preserve routine session narration.
+For all close conditions, promote consequential knowledge before removing
+transient state. Do not leave completed ownership claims active, duplicate
+facts across documents, or preserve routine session narration.
 
-At closure, release active claims, preserve human accountability, and compact
-operational metadata without rewriting execution history.
+At closure, release active claims when the Git-aware rules require it, preserve
+human accountability, and compact operational metadata without rewriting
+execution history. Stale-claim and cross-worktree procedures remain those in
+the [Concurrency model](#concurrency-model) and [Branch and worktree baseline
+reconciliation](#branch-and-worktree-baseline-reconciliation); this section
+does not redefine them.
 
 ### `SKILL.md` and progressive references
 
@@ -445,10 +633,11 @@ operational metadata without rewriting execution history.
   required.
 
 Detailed protocol knowledge remains in `references/` and is loaded
-progressively. This document owns principles, full lifecycle semantics,
-hydration rationale, concurrency and stale-claim handling, branch and worktree
-baseline reconciliation, contradiction resolution, knowledge promotion, archive
-policy, limitations, and validation scenarios.
+progressively. This document owns principles, full lifecycle semantics
+including the Git-aware task lifecycle, hydration rationale, concurrency and
+stale-claim handling, branch and worktree baseline reconciliation,
+contradiction resolution, knowledge promotion, archive policy, limitations, and
+validation scenarios.
 [document-contracts.md](document-contracts.md) owns exact document boundaries,
 read and update triggers, aging, cross-document movement, examples,
 branch/worktree locality evidence, and archive-entry structure. Templates
@@ -478,8 +667,10 @@ clear Markdown mechanism:
 ```
 
 Active collaborative tasks SHOULD identify `Owner`, `Agent`, `Scope`, and
-`Updated` when those fields help coordination. `Depends on`, `Blocked by`, and
-a short `Note` MAY be added when relevant. Trivial tasks MAY omit all ownership
+`Updated` when those fields help coordination. Repository-modifying tasks
+follow the `Target`, `Base`, and `Landed` rules in [Git-aware task
+lifecycle](#git-aware-task-lifecycle). `Depends on`, `Blocked by`, and a short
+`Note` MAY be added when relevant. Trivial tasks MAY omit all ownership
 metadata.
 
 ```markdown
@@ -487,6 +678,8 @@ metadata.
   - Owner: valen
   - Agent: codex/auth-reset
   - Scope: `src/auth/reset-password/**`
+  - Target: `main`
+  - Base: `a1b2c3d`
   - Updated: 2026-07-12
 ```
 
@@ -496,6 +689,8 @@ label. Reassigning execution does not necessarily change human accountability.
 Both fields are advisory labels, not authenticated identities. CSDD v0 MUST NOT
 attempt automatic human identity discovery and SHOULD prefer human-readable
 labels over provider-specific identifiers.
+
+A claim still does not authorize commit, push, or merge.
 
 CSDD does not require story points, completion percentages, mandatory
 priorities, risk scores, complex labels, redundant timestamps, or mandatory
@@ -764,10 +959,13 @@ code review, and human escalation remain necessary.
 
 ## Open design questions
 
-The following questions remain for dogfooding:
+The following questions remain for dogfooding or later tasks:
 
 - Should the `Recently Completed` window in `todo.md` be bounded by relevance,
   phase, or a loose numeric guideline?
+- How should `Ready to Land`, `Deferred` / Icebox, and related states appear as
+  canonical TODO headings or groupings without over-fitting one repository's
+  board layout?
 - Which `Agent` label conventions remain portable across Codex, Cursor, Claude
   Code, and future harnesses?
 - Which normative statements should be promoted from SHOULD to MUST after
