@@ -2,11 +2,17 @@
 
 ## In Progress
 
-## Pending
-
 - [ ] T-018 — Define the Git-aware task lifecycle
   - Owner: valen
-  - Note: Define refresh checkpoints, Git evidence, implementation vs landing, and truthful completion semantics. Depends on T-017.
+  - Agent: cursor/git-lifecycle
+  - Scope: `references/protocol.md`, `references/document-contracts.md`
+  - Base: `6462bae`
+  - Target: `main`
+  - Issue: `#2`
+  - Updated: 2026-07-17
+  - Note: Contractual Git-aware lifecycle core documented in protocol.md and document-contracts.md. SKILL.md, templates, retention, and canonical headings deferred to later tasks. Not closed; no PR yet.
+
+## Pending
 
 - [ ] T-019 — Standardize TODO states, grouping, and retention
   - Owner: valen

@@ -165,13 +165,18 @@ For active collaborative work, tasks SHOULD include these fields when relevant:
 - `Owner`: the accountable human or team and preferred coordination point;
 - `Agent`: the current operational executor or harness/task label;
 - `Scope`: the concrete write or contract boundary;
-- `Updated`: the date of the last meaningful task-state update.
+- `Updated`: the date of the last meaningful task-state update;
+- `Target`: the integration branch or ref for repository-modifying work;
+- `Base`: the `Target` commit observed when the task was claimed;
+- `Landed`: commit, merged PR, or equivalent landing evidence when useful.
 
 ```markdown
 - [ ] T-021 — Implement password recovery
   - Owner: valen
   - Agent: codex/auth-reset
   - Scope: `src/auth/reset-password/**`
+  - Target: `main`
+  - Base: `a1b2c3d`
   - Updated: 2026-07-12
 ```
 
@@ -191,10 +196,43 @@ Changing the operational executor SHOULD update `Agent`.
 Changing `Owner` requires explicit evidence that human or team accountability
 has been reassigned. A stale agent claim alone is not sufficient.
 
+`Target` MAY be inherited from an unambiguous project policy. It MUST be
+written on the task when ambiguous, non-standard, or coordination-relevant.
+`Base` SHOULD be recorded when the task is claimed for repository-modifying
+work. A task entry does not grant permission to commit, push, or merge.
+
+Treat `.csdd/todo.md` as a shared coordination surface. Do not treat routine
+updates to it as part of a task's principal write `Scope` unless the task
+explicitly claims that coordination document.
+
+### Task lifecycle states
+
+Task state is represented by section placement or another obvious Markdown
+mechanism. Semantic states for repository-modifying work follow the protocol's
+[Git-aware task lifecycle](protocol.md#git-aware-task-lifecycle):
+
+```text
+Pending → In Progress → Ready to Land → Recently Completed
+```
+
+`Blocked` and `Deferred` are lateral states. Canonical heading names, board
+grouping, and retention windows are not fixed by this contract yet; later
+tasks may standardize presentation without changing these semantics.
+
+| State | Claim expectations |
+| --- | --- |
+| Pending | No active write claim is required. |
+| In Progress | Active collaborative work SHOULD carry `Owner`, `Agent`, `Scope`, and `Updated` when coordination needs them, plus `Target` / `Base` when required above. |
+| Ready to Land | Keep an honest claim while landing remains outstanding. Persist this state when landing is delayed, unauthorized for the agent, interrupted, or transferred; omit persistence only when implementation, verification, and landing complete in one uninterrupted operation. |
+| Blocked | Name the blocker. Retain `Scope` only when partial work or safe continuation needs protection; otherwise release `Scope` and explain why. |
+| Deferred | MUST NOT have an `Agent` or active claim, and MUST NOT hide partial repository changes. |
+| Recently Completed | Satisfies the completion rules below; active write scope is released. |
+
 ### Contains
 
-- pending, in-progress, and blocked work;
+- pending, in-progress, ready-to-land, blocked, and deferred work when used;
 - ownership, execution, and active scope when coordination requires them;
+- `Target`, `Base`, and landing evidence when repository work needs them;
 - dependencies or blockers when relevant;
 - a short note or completion condition when it materially helps execution;
 - a small `Recently Completed` window when it helps interpret current state.
@@ -207,7 +245,8 @@ has been reassigned. A stale agent claim alone is not sufficient.
 - durable requirements;
 - transient debugging notes unrelated to coordination;
 - vague ownership scopes that prevent unrelated work;
-- project-management metadata without a demonstrated coordination purpose.
+- project-management metadata without a demonstrated coordination purpose;
+- implied commit, push, or merge authority.
 
 ### Update triggers
 
@@ -215,6 +254,8 @@ Update `todo.md` when:
 
 - work is claimed or released;
 - scope, `Owner`, `Agent`, state, dependency, or blocker changes;
+- `Target`, `Base`, or landing evidence changes materially;
+- work becomes ready to land, blocked, deferred, or resumes from those states;
 - a meaningful checkpoint is needed to protect continuity;
 - work completes or becomes abandoned;
 - an active claim appears stale and is reconciled.
@@ -311,8 +352,25 @@ A completed task MUST either:
 Concrete file or glob scopes MUST NOT remain on completed tasks when they could
 be interpreted as active claims.
 
+For repository-modifying work, completion additionally requires the Git-aware
+rules in [Git-aware task lifecycle](protocol.md#git-aware-task-lifecycle):
+verification, reachability from the resolved `Target`, and no unattributed
+changes remaining in the claimed `Scope`. Implementation finished but unlanded
+work belongs in `Ready to Land` or another honest active state, not
+`Recently Completed`.
+
 A small Recently Completed window may retain useful metadata, but that metadata
 must not block or confuse future overlap detection.
+
+`Blocked` tasks follow the same scope-retention rule as the protocol: keep
+`Scope` only when partial work or safe continuation needs protection;
+otherwise release it and explain why. `Deferred` tasks MUST release any active
+claim and MUST NOT use deferral to conceal unfinished repository changes.
+
+Handoff cleanup for completed work follows [Closure
+behavior](#closure-behavior); stale-claim and cross-worktree checks remain in
+[Stale claims](#stale-claims) and [Branch and worktree
+locality](#branch-and-worktree-locality).
 
 ### Historical Agent metadata
 
@@ -491,6 +549,8 @@ Relevant triggers include:
 
 - unfinished work will continue in another session or agent;
 - work becomes blocked or is interrupted with consequential partial state;
+- work is ready to land and another agent must land or resume without redoing
+  verification;
 - a previous handoff is consumed and no longer describes current reality.
 
 A successful self-contained task MAY omit a handoff unless another active agent
@@ -710,6 +770,8 @@ rationale.
 
 - Should the `Recently Completed` window in `todo.md` be bounded by relevance,
   phase, or a loose numeric guideline?
+- How should `Ready to Land`, `Deferred` / Icebox, and related states appear as
+  canonical TODO headings or groupings?
 - Which `Agent` label conventions remain portable across Codex, Cursor, Claude
   Code, and future harnesses?
 - Which normative statements should be promoted from SHOULD to MUST after
@@ -717,3 +779,5 @@ rationale.
 - Will one `.csdd/handoff.md` remain practical under concurrent editing?
 - Does the archive model remain useful without becoming redundant with Git and
   durable project documents?
+- What pre-edit refresh checkpoint is the smallest useful Git/CSDD reconciliation
+  step before overlapping collaborative edits?
