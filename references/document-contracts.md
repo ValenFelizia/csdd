@@ -172,7 +172,7 @@ CSDD tasks MUST use plain, human-readable Markdown. Each task requires:
 
 - a stable task ID;
 - a concise title;
-- a state represented by its section or another obvious Markdown mechanism.
+- a state represented by placement under exactly one canonical state H2.
 
 ```markdown
 ## In Progress
@@ -191,9 +191,8 @@ For active collaborative work, tasks SHOULD include these fields when relevant:
   reconciliation that updated `Base`.
 
 `Landed` is not an active-work field. It belongs on repository-modifying tasks
-that are already completed. A Ready to Land task MAY describe a pending PR,
-commit, or other landing path with `Note` or a `Landing` state field; it MUST
-NOT use `Landed` for that purpose.
+that are already completed. A Ready to Land task MUST describe the pending
+landing path with `Landing:` and MUST NOT use `Landed` for that purpose.
 
 ```markdown
 - [ ] T-021 — Implement password recovery
@@ -205,11 +204,12 @@ NOT use `Landed` for that purpose.
   - Updated: 2026-07-12
 ```
 
-`Depends on`, `Blocked by`, and a short `Note` MAY be added. Trivial tasks MAY
-omit all ownership metadata. CSDD does not require story points, completion
-percentages, mandatory priorities, risk scores, complex labels, redundant
-timestamps, or mandatory reviewer fields. V0 MUST NOT require YAML front matter,
-JSON, a database, a machine schema, or harness-specific metadata.
+`Depends on`, `Blocked by`, `Workstream:`, and a short `Note` MAY be added.
+Trivial tasks MAY omit all ownership metadata. CSDD does not require story
+points, completion percentages, mandatory priorities, risk scores, complex
+labels, redundant timestamps, or mandatory reviewer fields. V0 MUST NOT
+require YAML front matter, JSON, a database, a machine schema, or
+harness-specific metadata.
 
 Changing `Agent` does not necessarily change `Owner`. Neither field provides
 secure identity or authentication. CSDD v0 MUST NOT attempt automatic human
@@ -227,38 +227,231 @@ section once the repository-modifying task is completed. A task entry does not
 grant permission to commit, push, or merge. Edits to `todo.md` follow [Shared
 coordination surfaces](#shared-coordination-surfaces).
 
+### Canonical structure and presentation
+
+Every `todo.md` MUST contain these six H2 headings, including when empty, in
+this exact order:
+
+```markdown
+## In Progress
+## Ready to Land
+## Blocked
+## Pending
+## Deferred
+## Recently Completed
+```
+
+H2 headings under `# TODO` are reserved for canonical task state. Projects and
+agents MUST NOT omit, rename, reorder, alias, or add state H2 headings. Every
+task present in `todo.md` MUST appear under exactly one canonical state H2.
+Active and lateral states use unchecked task items (`- [ ]`). Recently
+Completed uses checked task items (`- [x]`).
+
+State is always the primary grouping dimension. The default presentation is
+flat: tasks appear directly under their state H2.
+
+```markdown
+## Pending
+
+- [ ] T-020 — Make handoffs boundary-driven
+  - Owner: valen
+  - Note: Depends on T-018.
+```
+
+A task MAY use an optional `Workstream:` field when thematic context
+materially improves coordination under flat presentation.
+
+Projects MAY instead adopt H3 workstream grouping. H3 grouping is opt-in and
+requires an existing project convention or explicit human direction; an agent
+MUST NOT introduce or switch grouping modes autonomously.
+
+When H3 grouping is used:
+
+- H3 headings are thematic only and never express task state;
+- tasks within a grouped state section MUST live under an H3 rather than
+  mixing grouped and direct task entries;
+- tasks without a specific workstream use `### General`;
+- `Workstream:` MUST NOT duplicate the H3;
+- deeper grouping is not allowed;
+- empty H3 headings are removed;
+- Recently Completed remains flat and does not use H3 grouping.
+
+```markdown
+## In Progress
+
+### Auth
+
+- [ ] T-030 — Reset password flow
+  - Owner: valen
+  - Agent: cursor/auth-reset
+  - Scope: `src/auth/reset/**`
+  - Updated: 2026-07-18
+
+### General
+
+- [ ] T-031 — Fix docs typo
+  - Owner: valen
+  - Agent: cursor/docs-typo
+  - Scope: `README.md`
+  - Updated: 2026-07-18
+```
+
 ### Task lifecycle states
 
-Task state is represented by section placement or another obvious Markdown
-mechanism. Semantic states for repository-modifying work follow the protocol's
-[Git-aware task lifecycle](protocol.md#git-aware-task-lifecycle):
+Task state is represented by section placement under the canonical H2
+structure. Semantic states for repository-modifying work follow the protocol's
+[Git-aware task lifecycle](protocol.md#git-aware-task-lifecycle) and [TODO
+structure and retention](protocol.md#todo-structure-and-retention):
 
 ```text
 Pending → In Progress → Ready to Land → Recently Completed
 ```
 
-`Blocked` and `Deferred` are lateral states. Canonical heading names, board
-grouping, and retention windows are not fixed by this contract yet; later
-tasks may standardize presentation without changing these semantics.
+`Blocked` and `Deferred` are lateral states.
 
-| State | Claim expectations |
+| State | Claim and presentation expectations |
 | --- | --- |
-| Pending | No active write claim is required. |
+| Pending | Accepted execution-queue work. No active `Agent` or write claim. MAY name dependencies. Not Blocked merely because an unstarted dependency remains. MUST NOT be created from speculative ideas without evidence the work was accepted. Age alone does not authorize removal or deferral. |
 | In Progress | Active collaborative work SHOULD carry `Owner`, `Agent`, `Scope`, and `Updated` when coordination needs them, plus `Target` / `Base` when the protocol requires them. |
-| Ready to Land | Task state (and valid session-close condition), not a completed outcome. Persist when verified work remains unlanded at a session, responsibility, or coordination boundary; omit persistence only when landing completes in the same uninterrupted operation. Lack of authority alone does not require persistence unless it delays or transfers landing. Describe a pending PR or commit with `Note` or `Landing`, not `Landed`. |
+| Ready to Land | Active unchecked task state, not a completed outcome. Persist when verified work remains unlanded at a session, responsibility, or coordination boundary; omit persistence only when landing completes in the same uninterrupted operation. Retain honest `Agent`, protected `Scope`, `Target`, `Base`, and `Updated` when required. MUST include `Landing:`; SHOULD include concise `Verification:`; MUST NOT use `Landed:`. `Agent` MAY change when landing responsibility is genuinely transferred or reclaimed. |
 | Blocked | Name the blocker. Retain `Scope` only when partial work or safe continuation needs protection; otherwise release `Scope` and explain why. |
-| Deferred | MUST NOT have an `Agent` or active claim, and MUST NOT hide partial repository changes. |
-| Recently Completed | Satisfies the protocol completion rules; active write scope is released; `Landed` recorded when required. |
+| Deferred | Authoritative intent required. MUST include `Reason:` and `Resume when:`. MAY retain `Owner`. MUST NOT have an `Agent`. MUST omit active Scope or use `Scope: released`. MUST NOT conceal partial or unlanded repository changes. Vague resume conditions are invalid. |
+| Recently Completed | Satisfies the protocol completion rules; active write scope is released; `Landed` recorded when required; checked item under the bounded retention window. |
+
+#### Pending
+
+Pending is the accepted execution queue: work that may be claimed without a new
+product or prioritization decision once capacity and dependencies permit.
+
+```markdown
+## Pending
+
+- [ ] T-022 — Update templates and write the migration guide
+  - Owner: valen
+  - Note: Depends on T-018 through T-021.
+```
+
+#### Ready to Land
+
+```markdown
+## Ready to Land
+
+- [ ] T-019 — Standardize TODO states, grouping, and retention
+  - Owner: valen
+  - Agent: cursor/t-019-todo-states
+  - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`
+  - Target: `main`
+  - Base: `00d06fb`
+  - Issue: `#3`
+  - Updated: 2026-07-18
+  - Landing: Commit, push, and PR creation remain pending for human review
+  - Verification: `git diff --check` passed; contract alignment reviewed
+```
+
+#### Deferred
+
+Deferral requires evidence from the user, Owner, accepted planning, or another
+authoritative project source. An agent MUST NOT defer work autonomously merely
+because it is difficult, old, blocked, unfinished, or inconvenient.
+
+```markdown
+## Deferred
+
+- [ ] T-040 — Migrate legacy billing export
+  - Owner: valen
+  - Scope: released
+  - Reason: Waiting for the billing schema freeze announced by the Owner
+  - Resume when: Billing schema freeze is published in `specs.md`
+  - Updated: 2026-07-18
+```
+
+Invalid deferral: inventing Deferred to park unfinished work, omitting
+`Reason:` or `Resume when:`, using non-observable conditions such as “later”
+or “when there is time”, keeping an `Agent`, retaining a concrete active
+Scope, or using Deferred to hide unlanded repository changes. If partial work
+needs protection, the honest state is normally Blocked. When a resume
+condition is known to be satisfied, reconcile into Pending or directly into
+In Progress when claimed in the same operation.
+
+`Icebox` is not a valid state alias.
+
+#### Recently Completed retention
+
+Directly under `## Recently Completed`, the project declares:
+
+```markdown
+## Recently Completed
+
+Retention: 5
+```
+
+The v0.2 default is `Retention: 5`. If the line is absent in an older project,
+agents MUST use five as the fallback until migration. `N` is a non-negative
+integer and applies globally, not per workstream. A human or explicit project
+policy MAY change it. Agents MUST NOT increase it autonomously to avoid
+compaction.
+
+Recently Completed:
+
+- remains flat;
+- is ordered newest first;
+- retains entries until they exceed the declared limit;
+- does not permit subjective early removal;
+- does not support pinned entries.
+
+When a task completes, the closing agent MUST, in the same coherent TODO
+patch:
+
+1. insert it at the top;
+2. update `Updated` to the completion transition date;
+3. compact metadata that no longer serves operational coordination;
+4. remove the oldest entries that exceed `Retention`.
+
+An agent modifying Recently Completed MUST reconcile an existing overflow. An
+agent editing an unrelated state section is not required to audit retention.
+
+Completed entries MUST omit concrete active Scope and SHOULD remove
+active-only metadata such as `Base` and usually `Target`. `Agent` and `Owner`
+MAY be omitted during compaction without rewriting historical executor
+identity. `Landed` remains when required by the Git-aware lifecycle. `Note`
+remains only when it still helps interpret current operational work.
+
+```markdown
+## Recently Completed
+
+Retention: 5
+
+- [x] T-018 — Define the Git-aware task lifecycle
+  - Owner: valen
+  - Scope: released
+  - Updated: 2026-07-18
+  - Landed: PR #10 @ `00d06fb`
+  - Note: Git-aware lifecycle contract merged to `main`.
+```
+
+Removing an entry because of retention is eviction from the operational view,
+not a new lifecycle state. It MUST NOT create an `Archived` state, MUST NOT
+mechanically copy the task into `.csdd/archive/`, and MUST NOT authorize reuse
+of its stable task ID. Durable truth SHOULD be promoted during task closure.
+If an old entry visibly contains unpromoted consequential truth, promote it
+before removal, but routine compaction does not require historical
+archaeology. Git, pull requests, and issues remain the sources for exact
+implementation history. Optional archive entries preserve semantic cold
+history only when a concrete historical question warrants them; they are not
+a mechanical destination for retention overflow.
 
 ### Contains
 
+- all six canonical state H2 headings, including when empty;
 - pending, in-progress, ready-to-land, blocked, and deferred work when used;
 - ownership, execution, and active scope when coordination requires them;
 - `Target` and `Base` when active repository work needs them;
+- `Landing` and optional `Verification` on persisted Ready to Land tasks;
 - `Landed` on completed repository-modifying tasks when required;
+- `Reason` and `Resume when` on every Deferred task;
 - dependencies or blockers when relevant;
 - a short note or completion condition when it materially helps execution;
-- a small `Recently Completed` window when it helps interpret current state.
+- a visible `Retention: N` declaration and bounded Recently Completed window.
 
 ### Does not contain
 
@@ -269,7 +462,9 @@ tasks may standardize presentation without changing these semantics.
 - transient debugging notes unrelated to coordination;
 - vague ownership scopes that prevent unrelated work;
 - project-management metadata without a demonstrated coordination purpose;
-- implied commit, push, or merge authority.
+- implied commit, push, or merge authority;
+- agent-invented state H2 headings or `Icebox` aliases;
+- YAML, JSON, front matter, a database, or another canonical task document.
 
 ### Update triggers
 
@@ -281,6 +476,7 @@ Update `todo.md` when:
 - work becomes ready to land, blocked, deferred, or resumes from those states;
 - a meaningful checkpoint is needed to protect continuity;
 - work completes or becomes abandoned;
+- Recently Completed gains an entry or requires overflow compaction;
 - an active claim appears stale and is reconciled.
 
 Do not add a task or claim for work whose coordination overhead would exceed its
@@ -330,14 +526,19 @@ resolution.
 
 ### Aging and history
 
-Keep active and near-term work hot. `todo.md` SHOULD retain only a small,
-relevant window of completed work and remove older entries from the default
-view. The exact bound remains a dogfooding question.
+Keep active and near-term work hot. `todo.md` MUST retain Recently Completed
+entries only within the declared `Retention: N` bound (fallback five when the
+line is absent). Order newest first and compact overflow in the same coherent
+patch that inserts a completed entry or otherwise modifies Recently Completed.
+Do not perform subjective early removal or pin entries.
 
 At the end of a meaningful phase or milestone, relevant history MAY be
 distilled into an archive entry. Do not mechanically copy completed tasks.
+Retention removal is not archival and does not authorize task-ID reuse.
 Durable specifications MUST remain in `specs.md`, durable decisions MUST remain
 in `decisions.md`, and current operational state MUST remain in `todo.md`.
+Git, pull requests, and issues remain the sources for exact implementation
+history.
 
 ### Update responsibility
 
@@ -382,8 +583,12 @@ and no unresolved unattributed changes remaining inside `Scope`, and `Landed`
 recorded when required. Implementation finished but unlanded work belongs in
 `Ready to Land` or another honest active state, not `Recently Completed`.
 
-A small Recently Completed window may retain useful metadata, but that metadata
-must not block or confuse future overlap detection.
+Completed entries under Recently Completed MUST omit concrete active Scope and
+SHOULD remove active-only metadata such as `Base` and usually `Target`.
+`Agent` and `Owner` MAY be omitted during compaction without rewriting
+historical executor identity. `Landed` remains when required. `Note` remains
+only when it still helps interpret current operational work. That compacted
+metadata must not block or confuse future overlap detection.
 
 `Blocked` tasks follow the same scope-retention rule as the protocol: keep
 `Scope` only when partial work or safe continuation needs protection;
@@ -394,6 +599,9 @@ Handoff cleanup for completed work follows [Closure
 behavior](#closure-behavior); stale-claim and cross-worktree checks remain in
 [Stale claims](#stale-claims) and [Branch and worktree
 locality](#branch-and-worktree-locality).
+
+Stable task IDs remain reserved after retention removal. An evicted ID MUST NOT
+be reused for a different task.
 
 ### Historical Agent metadata
 
@@ -621,7 +829,7 @@ indefinitely.
 | Session notes | Work, scope, status, or blocker changes | `todo.md` |
 | Session notes | Partial state must survive a session boundary | `handoff.md` |
 | `handoff.md` | A temporary finding becomes durable | `specs.md` or `decisions.md` |
-| `todo.md` | Work is no longer operationally relevant | Remove; optionally archive concise semantic history |
+| `todo.md` | Work is no longer operationally relevant | Remove; optionally archive concise semantic history when a concrete historical question warrants it. Retention overflow is eviction only—not mechanical archive and not task-ID reuse. |
 | `decisions.md` | A decision changes | Add explicit supersession; optionally move old detail to cold context |
 
 Links may appear across documents, but one document should remain canonical for
@@ -792,10 +1000,6 @@ rationale.
 
 ## Contract-level open questions
 
-- Should the `Recently Completed` window in `todo.md` be bounded by relevance,
-  phase, or a loose numeric guideline?
-- How should `Ready to Land`, `Deferred` / Icebox, and related states appear as
-  canonical TODO headings or groupings?
 - Which `Agent` label conventions remain portable across Codex, Cursor, Claude
   Code, and future harnesses?
 - Which normative statements should be promoted from SHOULD to MUST after
