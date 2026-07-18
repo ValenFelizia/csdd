@@ -10,7 +10,7 @@
   - Target: `main`
   - Issue: `#2`
   - Updated: 2026-07-17
-  - Note: Contractual Git-aware lifecycle core documented in protocol.md and document-contracts.md. SKILL.md, templates, retention, and canonical headings deferred to later tasks. Not closed; no PR yet.
+  - Note: Draft PR #10. Contract tightened (Ready to Land, Base, refresh, shared surfaces, Git contract, Landed, examples). Still open for T-018: human review of draft; no SKILL.md/templates/retention/headings yet (later tasks). Not closed; PR remains draft.
 
 ## Pending
 

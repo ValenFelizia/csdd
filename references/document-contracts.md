@@ -44,6 +44,26 @@ paths.
 7. Keep sections scannable so agents can retrieve a relevant subset without
    reading the entire file.
 
+### Shared coordination surfaces
+
+`.csdd/todo.md` and `.csdd/handoff.md` are shared coordination surfaces, not a
+task's principal write `Scope` by default.
+
+When editing either document:
+
+1. re-read the current file before changing it;
+2. check for concurrent or intervening changes;
+3. apply the smallest patch that updates the relevant entry or section;
+4. preserve unrelated entries and sections;
+5. surface conflicts instead of overwriting them; and
+6. do not automatically add these files to a task's principal `Scope` unless the
+   task explicitly claims them.
+
+Git-aware field semantics (`Target`, `Base`, `Landed`), refresh checkpoints, the
+minimal Git contract, and landing examples live in [Git-aware task
+lifecycle](protocol.md#git-aware-task-lifecycle). This contract defines how those
+rules appear in document fields and edit behavior.
+
 ## Document map
 
 | Document | Primary question | Temperature | Expected lifetime |
@@ -167,8 +187,9 @@ For active collaborative work, tasks SHOULD include these fields when relevant:
 - `Scope`: the concrete write or contract boundary;
 - `Updated`: the date of the last meaningful task-state update;
 - `Target`: the integration branch or ref for repository-modifying work;
-- `Base`: the `Target` commit observed when the task was claimed;
-- `Landed`: commit, merged PR, or equivalent landing evidence when useful.
+- `Base`: the `Target` commit observed at claim or at the last explicit
+  reconciliation that updated `Base`;
+- `Landed`: commit, merged PR, or equivalent landing evidence.
 
 ```markdown
 - [ ] T-021 — Implement password recovery
@@ -196,14 +217,10 @@ Changing the operational executor SHOULD update `Agent`.
 Changing `Owner` requires explicit evidence that human or team accountability
 has been reassigned. A stale agent claim alone is not sufficient.
 
-`Target` MAY be inherited from an unambiguous project policy. It MUST be
-written on the task when ambiguous, non-standard, or coordination-relevant.
-`Base` SHOULD be recorded when the task is claimed for repository-modifying
-work. A task entry does not grant permission to commit, push, or merge.
-
-Treat `.csdd/todo.md` as a shared coordination surface. Do not treat routine
-updates to it as part of a task's principal write `Scope` unless the task
-explicitly claims that coordination document.
+`Target`, `Base`, and `Landed` follow [Git-aware task
+lifecycle](protocol.md#git-aware-task-lifecycle). A task entry does not grant
+permission to commit, push, or merge. Edits to `todo.md` follow [Shared
+coordination surfaces](#shared-coordination-surfaces).
 
 ### Task lifecycle states
 
@@ -222,11 +239,11 @@ tasks may standardize presentation without changing these semantics.
 | State | Claim expectations |
 | --- | --- |
 | Pending | No active write claim is required. |
-| In Progress | Active collaborative work SHOULD carry `Owner`, `Agent`, `Scope`, and `Updated` when coordination needs them, plus `Target` / `Base` when required above. |
-| Ready to Land | Keep an honest claim while landing remains outstanding. Persist this state when landing is delayed, unauthorized for the agent, interrupted, or transferred; omit persistence only when implementation, verification, and landing complete in one uninterrupted operation. |
+| In Progress | Active collaborative work SHOULD carry `Owner`, `Agent`, `Scope`, and `Updated` when coordination needs them, plus `Target` / `Base` when the protocol requires them. |
+| Ready to Land | Task state (and valid session-close condition), not a completed outcome. Persist when verified work remains unlanded at a session, responsibility, or coordination boundary; omit persistence only when landing completes in the same uninterrupted operation. Lack of authority alone does not require persistence unless it delays or transfers landing. |
 | Blocked | Name the blocker. Retain `Scope` only when partial work or safe continuation needs protection; otherwise release `Scope` and explain why. |
 | Deferred | MUST NOT have an `Agent` or active claim, and MUST NOT hide partial repository changes. |
-| Recently Completed | Satisfies the completion rules below; active write scope is released. |
+| Recently Completed | Satisfies the protocol completion rules; active write scope is released; `Landed` recorded when required. |
 
 ### Contains
 
@@ -354,10 +371,10 @@ be interpreted as active claims.
 
 For repository-modifying work, completion additionally requires the Git-aware
 rules in [Git-aware task lifecycle](protocol.md#git-aware-task-lifecycle):
-verification, reachability from the resolved `Target`, and no unattributed
-changes remaining in the claimed `Scope`. Implementation finished but unlanded
-work belongs in `Ready to Land` or another honest active state, not
-`Recently Completed`.
+verification, reachability from the resolved `Target`, no unlanded task changes
+and no unresolved unattributed changes remaining inside `Scope`, and `Landed`
+recorded when required. Implementation finished but unlanded work belongs in
+`Ready to Land` or another honest active state, not `Recently Completed`.
 
 A small Recently Completed window may retain useful metadata, but that metadata
 must not block or confuse future overlap detection.
@@ -512,7 +529,8 @@ an active task indicates that partial session state matters. Trivial or
 unrelated work MAY avoid reading `handoff.md`.
 
 A handoff is a claim about recent state, not proof that the repository is
-unchanged. Confirm critical details before acting.
+unchanged. Confirm critical details before acting. Edits follow [Shared
+coordination surfaces](#shared-coordination-surfaces).
 
 ### Contains
 
@@ -779,5 +797,3 @@ rationale.
 - Will one `.csdd/handoff.md` remain practical under concurrent editing?
 - Does the archive model remain useful without becoming redundant with Git and
   durable project documents?
-- What pre-edit refresh checkpoint is the smallest useful Git/CSDD reconciliation
-  step before overlapping collaborative edits?
