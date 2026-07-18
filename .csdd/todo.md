@@ -4,17 +4,6 @@
 
 ## Ready to Land
 
-- [ ] T-019 — Standardize TODO states, grouping, and retention
-  - Owner: valen
-  - Agent: cursor/t-019-todo-states
-  - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`
-  - Target: `main`
-  - Base: `00d06fb`
-  - Issue: `#3`
-  - Updated: 2026-07-18
-  - Landing: PR #12
-  - Verification: `git diff --check` passed; protocol, document-contracts, and SKILL aligned to issue #3; only principal Scope plus the shared TODO coordination surface changed; T-018 reconciled against merged PR #10 with Retention: 5 compaction
-
 ## Blocked
 
 ## Pending
@@ -61,9 +50,14 @@ Retention: 5
 - [x] T-016 — v0.1.0 launch
 
 - [x] T-015 — README and public documentation
-
-- [x] T-014 — Tighten closure and canonical-truth contracts
+  
+- [x] T-019 — Standardize TODO states, grouping, and retention
   - Owner: valen
-  - Scope: released
-  - Updated: 2026-07-12
-  - Note: Added closure claim-release rules, protected historical Agent metadata, and clarified canonical specs/decisions boundaries.
+  - Agent: cursor/t-019-todo-states
+  - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`
+  - Target: `main`
+  - Base: `00d06fb`
+  - Issue: `#3`
+  - Updated: 2026-07-18
+  - Landing: PR #12
+  - Verification: `git diff --check` passed; protocol, document-contracts, and SKILL aligned to issue #3; only principal Scope plus the shared TODO coordination surface changed; T-018 reconciled against merged PR #10 with Retention: 5 compaction
