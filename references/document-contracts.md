@@ -336,16 +336,15 @@ product or prioritization decision once capacity and dependencies permit.
 ```markdown
 ## Ready to Land
 
-- [ ] T-019 — Standardize TODO states, grouping, and retention
+- [ ] T-050 — Harden session token rotation
   - Owner: valen
-  - Agent: cursor/t-019-todo-states
-  - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`
+  - Agent: cursor/auth-token-rotation
+  - Scope: `src/auth/tokens/**`, `tests/auth/tokens/**`
   - Target: `main`
-  - Base: `00d06fb`
-  - Issue: `#3`
+  - Base: `a1b2c3d`
   - Updated: 2026-07-18
-  - Landing: Commit, push, and PR creation remain pending for human review
-  - Verification: `git diff --check` passed; contract alignment reviewed
+  - Landing: Branch pushed; open PR against `main` after review
+  - Verification: `git diff --check` passed; token rotation tests green
 ```
 
 #### Deferred
@@ -386,10 +385,10 @@ Retention: 5
 ```
 
 The v0.2 default is `Retention: 5`. If the line is absent in an older project,
-agents MUST use five as the fallback until migration. `N` is a non-negative
-integer and applies globally, not per workstream. A human or explicit project
-policy MAY change it. Agents MUST NOT increase it autonomously to avoid
-compaction.
+agents MUST use five as the fallback until migration. `N` is a positive
+integer (`N >= 1`) and applies globally, not per workstream. `Retention: 0`
+is invalid. A human or explicit project policy MAY change it. Agents MUST NOT
+increase it autonomously to avoid compaction.
 
 Recently Completed:
 
@@ -829,7 +828,7 @@ indefinitely.
 | Session notes | Work, scope, status, or blocker changes | `todo.md` |
 | Session notes | Partial state must survive a session boundary | `handoff.md` |
 | `handoff.md` | A temporary finding becomes durable | `specs.md` or `decisions.md` |
-| `todo.md` | Work is no longer operationally relevant | Remove; optionally archive concise semantic history when a concrete historical question warrants it. Retention overflow is eviction only—not mechanical archive and not task-ID reuse. |
+| `todo.md` | Rejected, cancelled, or obsolete work; or completed work exceeding `Retention` | Remove rejected/cancelled/obsolete entries after promoting consequential truth. Evict completed entries only under the Retention rule. Optional semantic archive remains independently justified; retention overflow is not mechanical archival and does not authorize task-ID reuse. |
 | `decisions.md` | A decision changes | Add explicit supersession; optionally move old detail to cold context |
 
 Links may appear across documents, but one document should remain canonical for

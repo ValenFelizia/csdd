@@ -12,8 +12,8 @@
   - Base: `00d06fb`
   - Issue: `#3`
   - Updated: 2026-07-18
-  - Landing: Commit, push, and PR creation remain pending for human review
-  - Verification: `git diff --check` passed; protocol, document-contracts, and SKILL aligned to issue #3; only in-scope files changed; T-018 reconciled against merged PR #10 with Retention: 5 compaction
+  - Landing: Branch pushed; PR creation, review, and merge into main remain pending
+  - Verification: `git diff --check` passed; protocol, document-contracts, and SKILL aligned to issue #3; only principal Scope plus the shared TODO coordination surface changed; T-018 reconciled against merged PR #10 with Retention: 5 compaction
 
 ## Blocked
 

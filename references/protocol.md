@@ -563,9 +563,10 @@ agent to remove or defer Pending work.
 Recently Completed is a bounded operational window, not permanent history.
 Directly under `## Recently Completed`, the project declares `Retention: N`.
 The v0.2 default is `Retention: 5`. If the line is absent in an older project,
-agents MUST use five as the fallback until migration. `N` is a non-negative
-integer and applies globally. A human or explicit project policy MAY change
-it; agents MUST NOT increase it autonomously to avoid compaction.
+agents MUST use five as the fallback until migration. `N` is a positive
+integer (`N >= 1`) and applies globally. `Retention: 0` is invalid. A human
+or explicit project policy MAY change it; agents MUST NOT increase it
+autonomously to avoid compaction.
 
 Recently Completed remains flat, is ordered newest first, retains entries
 until they exceed the declared limit, does not permit subjective early
@@ -758,8 +759,9 @@ CSDD coordination is document-based and intentionally lightweight.
 ### Minimum interoperable task structure
 
 Tasks MUST use plain, human-readable Markdown. Each task requires a stable task
-ID, a concise title, and an obvious state expressed by its section or another
-clear Markdown mechanism:
+ID, a concise title, and a state represented by placement under exactly one
+canonical state H2. See [TODO structure and
+retention](#todo-structure-and-retention).
 
 ```markdown
 ## In Progress
