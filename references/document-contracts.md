@@ -71,7 +71,7 @@ rules appear in document fields and edit behavior.
 | `.csdd/specs.md` | What must be true? | Warm | Durable, revised as project intent changes |
 | `.csdd/todo.md` | What work exists now, and who is accountable and executing? | Hot | Current operational cycle |
 | `.csdd/decisions.md` | What consequential choice was made, and why? | Warm | Durable until superseded |
-| `.csdd/handoff.md` | What must a resuming agent know right now? | Hot | Transient, replaced or cleared frequently |
+| `.csdd/handoff.md` | What must a later agent or session know to cross this boundary safely? | Hot | Transient, replaced or removed when the risk is consumed |
 
 Projects MAY omit `.csdd/archive/`. When present, it is standardized cold
 context, not a fifth primary document. Its read policy is defined in
@@ -709,112 +709,200 @@ When no such independent rationale exists, record the behavior only in
 
 ### Contract
 
-Transfer the minimum current state needed for another agent to resume
-incomplete, blocked, or interrupted work safely.
+Transfer the minimum replaceable snapshot needed for a later agent or session to
+cross a real execution boundary safely when concrete resumption risk exists.
 
-V0 MUST use one canonical `.csdd/handoff.md`. It SHOULD be organized by task or
-workstream rather than by agent or harness. It is a transient resume point, not
-a collection of per-agent diaries. Multiple or scoped handoff files are outside
-v0.
+V0 MUST use one canonical `.csdd/handoff.md`. It is a transient resume point, not
+a progress log, duplicate task tracker, live collision board, or permanent
+history. Multiple or scoped handoff files are outside v0.
+
+Conceptual lifecycle rules—boundary and risk, consumption, outcome-specific
+behavior, and relationship to session close—live in [Boundary-driven
+handoffs](protocol.md#boundary-driven-handoffs). This section owns the
+document-local contract.
+
+### Read policy
+
+Read the relevant task or workstream section when continuing prior work or when
+an active task indicates that boundary transfer state with concrete resumption
+risk may exist. Trivial or unrelated work MAY avoid reading `handoff.md`.
+
+A handoff is a claim about recent transfer state, not proof that the repository
+is unchanged. Confirm critical details against repository reality and current
+task state before acting. Edits follow [Shared coordination
+surfaces](#shared-coordination-surfaces).
+
+Reading, claiming, reassigning, or beginning to resume does not consume the
+entry.
+
+### Creation and update trigger
+
+Create or update a handoff only when both hold:
+
+1. a real continuity, responsibility, impediment, landing, dependency, or
+   collision boundary; and
+2. concrete resumption risk that Git, `todo.md`, and other canonical project
+   documents do not already make safe to ignore.
+
+Neither condition alone is sufficient. Routine session closure, uninterrupted
+work, ordinary checkpoints, state changes, and live collisions do not
+independently require a handoff.
+
+Relevant boundaries include:
+
+- work pauses or a session closes with consequential partial state;
+- operational responsibility genuinely transfers;
+- work becomes blocked or is interrupted;
+- verified work remains unlanded because landing is delayed or transferred;
+- a collision forces a workstream to pause, sequence, or transfer;
+- an active dependent workstream needs non-obvious transfer state.
+
+A successful self-contained task MAY omit a handoff. A live collision resolved
+during uninterrupted work is coordinated in `todo.md` without creating a
+handoff.
+
+### Concrete risk requirement
+
+Every active handoff entry MUST identify a concrete resumption risk. Generic
+statements such as “context may be lost” are insufficient.
+
+If no concrete risk can be stated, the entry MUST NOT be created or MUST be
+removed.
+
+The entry MUST contain only the additional transient state needed to mitigate
+that risk. A checkpoint and next safe action are recommended when they are not
+already obvious from Git, `todo.md`, or another canonical source.
+
+Exact labels such as `Checkpoint:`, `Resume risk:`, or `Next:` are not
+mandatory. Projects MAY configure presentation while preserving the semantic
+contract. Do not require empty subsections or invent mandatory handoff metadata
+such as `From:`, `To:`, `Consumed:`, `Status:`, a second owner, or a
+handoff-specific timestamp.
+
+### Contains
+
+- the concrete resumption risk that justifies the entry;
+- the non-obvious checkpoint or partial state needed to mitigate that risk;
+- the next safe action when it is not already obvious;
+- costly verification results, exact errors, temporary hypotheses, unresolved
+  questions, or canonical references only when needed to resume efficiently.
+
+### Does not contain
+
+- the canonical backlog, task ownership, `Owner`, `Agent`, `Scope`, overlap
+  model, or other task metadata duplicated merely to complete a format;
+- a permanent chronological project history or appended session narration;
+- full chat transcripts or reasoning traces;
+- durable requirements or accepted architectural rationale;
+- routine details a later agent or session can cheaply rediscover;
+- completed-session summaries with no continuing value;
+- a live collision board or continuously synchronized activity log.
+
+### Relationship to `todo.md`
+
+`todo.md` remains canonical for task state, `Owner`, `Agent`, `Scope`,
+dependencies, blockers, overlap, sequencing, and collision prevention.
+`handoff.md` contains only additional non-obvious transient implementation or
+verification state that must cross a boundary safely.
+
+These responsibilities MUST remain distinct. `handoff.md` MUST NOT become a
+duplicate task tracker or the primary collision-prevention mechanism.
+
+Operational rule:
+
+```text
+coordination without boundary + risk -> todo.md
+coordination with boundary + risk    -> todo.md and, when needed, handoff.md
+```
+
+When both refer to the same task, the handoff SHOULD link or refer to the
+canonical task entry rather than duplicate ownership fields. If they disagree,
+reconcile the task state before continuing.
+
+Outcome-specific representation follows the table in [Boundary-driven
+handoffs](protocol.md#boundary-driven-handoffs).
+
+### Organization and presentation
+
+Use one current entry per task or workstream.
+
+Default to task-oriented entries and use the canonical task ID when one exists.
+Use a workstream entry only when the transferred state genuinely spans multiple
+tasks or no canonical task exists.
+
+Do not organize entries by agent, harness, session, or date. Do not accumulate
+multiple snapshots of the same work.
+
+Presentation inside an entry is project-configurable. Recommended compact
+content may include the non-obvious checkpoint, the concrete resumption risk,
+and the next safe action. Do not require empty subsections or fixed mandatory
+labels.
+
+Conforming compact example:
 
 ```markdown
 # Handoff
 
 ## T-021 — Implement password recovery
 
-### Current state
-
-...
-
-### Risks
-
-...
-
-### Recommended next step
-
-...
+- Checkpoint: recovery token minting works; email delivery stub still returns 503
+- Risk: resuming without the stub failure mode will re-run the full auth suite and miss the open delivery blocker
+- Next: fix the mail stub, then re-run only the delivery integration test
 ```
 
-### Read policy
+Non-conforming patterns include progress narration during uninterrupted work,
+entries without a concrete risk, mandatory empty checklist subsections, and
+appending successive session histories for the same task.
 
-Read the relevant task or workstream section when continuing prior work or when
-an active task indicates that partial session state matters. Trivial or
-unrelated work MAY avoid reading `handoff.md`.
+### Responsibility and validation
 
-A handoff is a claim about recent state, not proof that the repository is
-unchanged. Confirm critical details before acting. Edits follow [Shared
-coordination surfaces](#shared-coordination-surfaces).
+The executor leaving consequential resumable state writes the handoff at the
+boundary, after reconciling Git and `todo.md`. The resumer may be another agent
+or the same agent in a later session.
 
-### Contains
+The resumer MUST validate critical claims against repository reality and current
+task state before relying on them.
 
-- the task or scope being transferred;
-- what materially changed or was attempted;
-- the current partial state and last verified point;
-- what remains to be done;
-- blockers, risks, and unresolved questions;
-- verification performed and important results;
-- the recommended next action;
-- references to canonical tasks, specifications, or decisions when needed.
+The executor whose work resolves or transforms the risk is responsible for
+removing or replacing the entry. Cleanup responsibility does not remain
+permanently with the original author.
 
-Include exact commands, error text, or temporary hypotheses only when they are
-necessary to resume efficiently and are not better captured elsewhere.
+Do not invent or preassign a new `Agent` merely to complete a handoff. Update
+`Agent` only when operational responsibility genuinely changes under the
+Git-aware lifecycle contract.
 
-### Does not contain
+### Consumption, replacement, and cleanup
 
-- the canonical backlog, task ownership, or overlap model;
-- a permanent chronological project history;
-- full chat transcripts or reasoning traces;
-- durable requirements or accepted architectural rationale;
-- routine details another agent can cheaply rediscover;
-- completed-session summaries with no continuing value.
+A handoff is consumed only when the resumption risk that justified it has been
+resolved, superseded, or made safely recoverable from canonical project and
+repository state.
 
-### Update triggers
+When consumed:
 
-Create or update a handoff when consequential incomplete state must survive a
-session close, transfer, block, or interruption. Clear or replace a section
-when it no longer describes current reality. A routine checkpoint alone does
-not require a handoff unless losing it would cause a resuming agent to repeat
-meaningful work, proceed incorrectly, or miss a current risk.
+- remove the entry if no new boundary and risk exist;
+- replace it if a new boundary and risk require a different current snapshot;
+- never retain it as completed history or mark it with a consumed/completed
+  status.
 
-Relevant triggers include:
+Cleanup occurs at the first coherent reconciliation after the risk disappears.
+At the latest, before the next close, transfer, or landing, the entry must still
+be correct and necessary, have been replaced, or have been removed.
 
-- unfinished work will continue in another session or agent;
-- work becomes blocked or is interrupted with consequential partial state;
-- work is ready to land and another agent must land or resume without redoing
-  verification;
-- a previous handoff is consumed and no longer describes current reality.
+A known materially false entry MUST be cleared or replaced at the next coherent
+reconciliation; boundary-snapshot semantics do not authorize preserving
+misleading state.
 
-A successful self-contained task MAY omit a handoff unless another active agent
-depends on its result.
+Promote validated durable truth to its canonical document before clearing
+transient state.
 
-### Relationship to `todo.md`
+### Stale entries
 
-`todo.md` is the primary coordination and collision-prevention surface. It
-answers what work is active, its state, `Owner`, `Agent`, explicit scope,
-dependencies, and blockers. `handoff.md` transfers the partial implementation
-state, current risks, unresolved questions, and recommended next action.
+Age alone does not prove that a handoff is stale.
 
-These responsibilities MUST remain distinct. `handoff.md` MUST NOT become a
-duplicate task tracker or the primary collision-prevention mechanism.
-
-When both refer to the same task, the handoff SHOULD link to the canonical task
-entry rather than duplicate ownership fields. If they disagree, reconcile the
-task state before continuing.
-
-### Aging and replacement
-
-Treat a handoff as replaceable current state. Remove or replace its task section
-after the work is resumed, completed, abandoned, or made obsolete. Promote any
-validated durable knowledge before removing the handoff.
-
-Do not append every session forever. Selected semantic history MAY move to cold
-context, but per-session handoffs MUST NOT accumulate as permanent history.
-
-### Update responsibility
-
-The agent leaving resumable partial work is responsible for recording an honest
-checkpoint. The agent consuming the handoff is responsible for validating
-critical claims and replacing or clearing stale transfer state.
+Before removing an apparently stale entry, compare it with `todo.md`, Git,
+working-tree state when available, and active claims. If current responsibility
+or repository reality is uncertain, reconcile or block rather than silently
+inferring abandonment.
 
 ## Cross-document movement
 
@@ -826,8 +914,9 @@ indefinitely.
 | Session notes | A finding is validated and must remain true | `specs.md` |
 | Session notes | A consequential choice is accepted | `decisions.md` |
 | Session notes | Work, scope, status, or blocker changes | `todo.md` |
-| Session notes | Partial state must survive a session boundary | `handoff.md` |
+| Session notes | Boundary + concrete resumption risk requires transient transfer state | `handoff.md` |
 | `handoff.md` | A temporary finding becomes durable | `specs.md` or `decisions.md` |
+| `handoff.md` | Resumption risk is resolved, superseded, or recoverable from canonical state | Remove or replace the entry; never retain as completed history |
 | `todo.md` | Rejected, cancelled, or obsolete work; or completed work exceeding `Retention` | Remove rejected/cancelled/obsolete entries after promoting consequential truth. Evict completed entries only under the Retention rule. Optional semantic archive remains independently justified; retention overflow is not mechanical archival and does not authorize task-ID reuse. |
 | `decisions.md` | A decision changes | Add explicit supersession; optionally move old detail to cold context |
 
@@ -840,12 +929,20 @@ same normative statement into multiple documents.
 
 ### Closure behavior
 
-When no resumable partial state, blocker, current risk, or unresolved question
-remains, remove the completed workstream from `handoff.md`.
+When the resumption risk that justified a handoff is resolved, superseded, or
+safely recoverable from canonical project and repository state, remove the
+entry—or replace it when a new boundary and risk require a different current
+snapshot. Do not mark handoff entries completed or retain them as history.
 
 Phase summaries, completed-task history, and durable behavior do not belong in
 the active handoff. Promote them to their canonical durable document or a
 semantic archive entry.
+
+Completed tasks remove their obsolete handoff state unless a separate active
+dependent workstream has its own concrete transfer risk. Ready to Land, blocked,
+partial, interrupted, transfer, and collision closes follow the outcome table in
+[Boundary-driven handoffs](protocol.md#boundary-driven-handoffs) and MUST NOT
+create a handoff solely because the session ended or the task state changed.
 
 ## Optional archive contract
 

@@ -4,13 +4,20 @@
 
 ## Ready to Land
 
+- [ ] T-020 — Make handoffs boundary-driven
+  - Owner: valen
+  - Agent: cursor/t-020-boundary-driven-handoffs
+  - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`, `.csdd/handoff.md`
+  - Target: main
+  - Base: `512f3f0`
+  - Updated: 2026-07-18
+  - Issue: #4
+  - Landing: Branch `design/t-020-boundary-driven-handoffs` pushed; pending human review and PR against `main`
+  - Verification: `git diff --check` clean; only the five allowed paths changed; scoped stale-rule search and acceptance-scenario map against issue #4 passed; T-018/T-019 lifecycle and TODO semantics preserved; no handoff entry (todo + diff suffice)
+
 ## Blocked
 
 ## Pending
-
-- [ ] T-020 — Make handoffs boundary-driven
-  - Owner: valen
-  - Note: Prevent progress-log churn and define transfer, ready-to-land, blocked, and collision handoffs. Depends on T-018.
 
 - [ ] T-021 — Add the `/csdd init` adoption workflow
   - Owner: valen
