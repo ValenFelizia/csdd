@@ -136,12 +136,14 @@ CSDD separates the four documents by responsibility:
 | `.csdd/specs.md` | L1 | Durable requirements, constraints, invariants, and contracts |
 | `.csdd/decisions.md` | L1 | Consequential choices, rationale, consequences, and supersession |
 | `.csdd/todo.md` | L2 | Current work, accountability, executor, scope, dependencies, and blockers |
-| `.csdd/handoff.md` | L2 | Minimum current transfer state for resuming incomplete work |
+| `.csdd/handoff.md` | L2 | Minimum replaceable transfer state at a boundary with concrete resumption risk |
 
 `todo.md` and `handoff.md` MUST preserve distinct responsibilities. `todo.md` is
 the primary coordination surface for active work and overlap detection.
-`handoff.md` transfers current resumable working state; it is not the primary
-collision-prevention mechanism or a parallel task tracker.
+`handoff.md` holds only additional non-obvious transient state needed to cross a
+boundary safely; it is not the primary collision-prevention mechanism, a
+parallel task tracker, or chronological history. See [Boundary-driven
+handoffs](#boundary-driven-handoffs).
 
 The detailed boundaries, read policies, update triggers, and aging rules are
 defined in [document-contracts.md](document-contracts.md). The protocol defines
@@ -293,8 +295,10 @@ instructions, and available documentation.
 
 ### Orient
 
-Reconstruct minimum sufficient context. Inspect current handoff and work state
-as needed, then load only relevant specifications and decisions.
+Reconstruct minimum sufficient context. Inspect relevant handoff and work state
+when resumable risk may exist, validate critical handoff claims against
+repository reality before relying on them, then load only relevant
+specifications and decisions.
 
 ### Claim/Plan
 
@@ -327,8 +331,8 @@ work made stale.
 ### Handoff/Close
 
 Leave the project resumable. Update task state, accountability, and executor as
-needed; preserve partial state and unresolved risks; promote durable knowledge;
-and remove or replace transient information.
+needed; promote durable knowledge; and remove or replace obsolete transient
+information under [Boundary-driven handoffs](#boundary-driven-handoffs).
 
 `Ready to Land` is a task state and a valid session-close condition when
 verified work remains unlanded at a session, responsibility, or coordination
@@ -339,8 +343,67 @@ persisting `Ready to Land` unless it delays or transfers landing. See
 [Ready to Land](#ready-to-land).
 
 A session may close as successful, partial, blocked, interrupted, abandoned, or
-ready to land. An incomplete session still requires a usable checkpoint when
-continuity would otherwise be lost.
+ready to land. Session closure alone does not require a handoff. An incomplete
+session requires handoff state only when both a real boundary and concrete
+resumption risk exist.
+
+### Boundary-driven handoffs
+
+A handoff entry is created or updated only when both conditions hold:
+
+1. **Boundary:** execution reaches a real continuity, responsibility,
+   impediment, landing, dependency, or collision boundary.
+2. **Resumption risk:** without additional transient state, a later agent or
+   session would likely repeat meaningful work, proceed incorrectly, miss a
+   material risk, overlook a blocking question, or reconstruct costly
+   verification.
+
+Neither condition alone is sufficient. Routine session closure, uninterrupted
+work, ordinary checkpoints, state changes, and live collisions do not
+independently require a handoff when Git, `todo.md`, and canonical project
+documents already make continuation safe.
+
+`handoff.md` is a minimum replaceable boundary snapshot of unresolved
+resumption risk. It is not continuously synchronized live state and not
+chronological history. During uninterrupted execution, agents MUST NOT append
+progress narration or rewrite the handoff for routine intermediate changes.
+When a new boundary and risk exist, replace the prior snapshot coherently
+rather than appending session history.
+
+Reading, claiming, reassigning, or beginning to resume does not consume a
+handoff. A handoff is consumed only when its resumption risk is resolved,
+superseded, or safely recoverable from canonical repository and project state.
+Consumed or obsolete entries are removed, or replaced when a new boundary and
+risk require a new snapshot. They MUST NOT be marked completed or retained as
+history.
+
+The executor leaving consequential resumable state writes the snapshot after
+reconciling Git and `todo.md`. The resumer may be another agent or the same
+agent in a later session, and MUST validate critical claims against repository
+reality before relying on them. The executor whose work resolves or transforms
+the risk removes or replaces the entry; cleanup ownership does not permanently
+remain with the author. Age alone never proves staleness.
+
+Outcome-specific behavior:
+
+| Situation | Primary representation | Handoff behavior |
+| --- | --- | --- |
+| Transfer | `todo.md` reflects the real executor and claim | Create only when non-obvious transfer state is needed to mitigate concrete resumption risk at the responsibility boundary |
+| Ready to Land | `todo.md` records `Landing:` and useful `Verification:` | Create only when those fields are insufficient for safe continuation |
+| Blocked | `todo.md` records the state and named blocker | Create only when consequential partial state or an unresolved question creates concrete resumption risk that must survive the boundary |
+| Partial / interrupted | `todo.md` preserves honest task state and scope | Create when a later resumer would otherwise proceed incorrectly or repeat meaningful work |
+| Collision | `todo.md` coordinates scope, overlap, and sequencing | Create only when the collision forces a boundary and leaves partial state that creates concrete resumption risk |
+| Completed | Git and `todo.md` record truthful closure | Remove obsolete task handoff state; create separate transfer state only for an active dependent workstream with concrete risk |
+
+Operational rule:
+
+```text
+coordination without boundary + risk -> todo.md
+coordination with boundary + risk    -> todo.md and, when needed, handoff.md
+```
+
+Document-local creation, content, organization, consumption, and cleanup rules
+are in the [`handoff.md` contract](document-contracts.md#handoffmd).
 
 ## Git-aware task lifecycle
 
@@ -426,9 +489,11 @@ A persisted Ready to Land task:
 
 - MUST include `Landing:` with the pending PR, commit, action, or landing path;
 - SHOULD include concise `Verification:` evidence;
-- MUST preserve enough verification state in the task or `handoff.md` when
-  responsibility transfers so landing does not require unnecessary repeated
-  work;
+- MUST treat `Landing:` and `Verification:` as the primary verification
+  surface, and MAY create or update `handoff.md` only when those fields are
+  insufficient for safe continuation under [Boundary-driven
+  handoffs](#boundary-driven-handoffs), so landing does not require unnecessary
+  repeated work;
 - MUST NOT use `Landed:`, because the changes are not yet reachable from
   `Target`.
 
@@ -495,10 +560,13 @@ merge. Landing authority remains a separate human, project, or harness policy.
 
 `Blocked` retains `Scope` only when partial work or safe continuation needs
 protection. Otherwise it MUST release `Scope` and explain why retention is
-unnecessary. Preserve consequential partial state in `handoff.md` when
-resumption would otherwise be unsafe; do not invent a second scope-release
-rule beyond [Completed-task claims](document-contracts.md#completed-task-claims)
-and the closing behavior below.
+unnecessary. Named blockers stay in `todo.md`. Create or update `handoff.md`
+only when consequential partial state or an unresolved question creates
+concrete resumption risk that must survive the boundary under
+[Boundary-driven handoffs](#boundary-driven-handoffs); do not invent a
+second scope-release rule beyond [Completed-task
+claims](document-contracts.md#completed-task-claims) and the closing behavior
+below.
 
 `Deferred` contains accepted and still-relevant work intentionally removed
 from the execution queue until an observable resume condition is met.
@@ -596,7 +664,7 @@ the following hold:
    inside `Scope`;
 4. active write `Scope` is released (`Scope: released` or omitted when
    compacted);
-5. obsolete handoff state for the task is cleared or replaced; and
+5. obsolete handoff state for the task is removed or replaced; and
 6. `Landed` is recorded when required by the Landed rules above.
 
 Work that awaits required review or landing remains active—typically
@@ -645,10 +713,11 @@ scope, ambiguity, continuity, or collision risk. Use this initial routing:
 
 The authoritative document-specific read policies are in
 [document-contracts.md](document-contracts.md). In particular, `handoff.md` is
-for continuation or consequential partial state, while `specs.md` and
-`decisions.md` are loaded only when their documented behavioral, contractual,
-or decision triggers apply. Follow [Optional archive and cold
-history](#optional-archive-and-cold-history) for any historical access.
+read when relevant boundary transfer state with concrete resumption risk may
+exist, while `specs.md` and `decisions.md` are loaded only when their
+documented behavioral, contractual, or decision triggers apply. Follow
+[Optional archive and cold history](#optional-archive-and-cold-history) for any
+historical access.
 
 ### Ownership, overlap, and claiming
 
@@ -681,9 +750,10 @@ The authoritative persistence triggers and document boundaries are in
 [document-contracts.md](document-contracts.md). Apply [Knowledge promotion and
 expiration](#knowledge-promotion-and-expiration) to validated findings,
 [Contradiction and reconciliation](#contradiction-and-reconciliation) to
-conflicting evidence, and the `handoff.md` contract when consequential
-resumable state may otherwise be lost. These references define the detailed
-rules; the list above is the operational sequence.
+conflicting evidence, and [Boundary-driven
+handoffs](#boundary-driven-handoffs) with the `handoff.md` contract when both a
+real boundary and concrete resumption risk exist. These references define the
+detailed rules; the list above is the operational sequence.
 
 Promote consequential knowledge to one canonical durable document. Cross-link
 related requirements and decisions instead of duplicating normative truth.
@@ -701,11 +771,11 @@ task in the Ready to Land state. It is not a completed outcome.
 
 | Close condition | Required close |
 | --- | --- |
-| Completed | Verify the result; for repository-modifying work, confirm the changes are landed and reachable from `Target`, with no unlanded task changes and no unresolved unattributed changes remaining inside `Scope`; record `Landed` when required; reconcile repository and durable docs; move or mark the task completed and release active scope; clear obsolete handoff state. Add a handoff only when another active workstream needs non-obvious transfer state. |
-| Ready to Land | Persist the Ready to Land task state when verified work remains unlanded at a session, responsibility, or coordination boundary; keep the claim honest; update `handoff.md` when another agent must land or resume without redoing verification. Omit persistence only when landing completes in the same uninterrupted operation. |
-| Partial | Keep the task honestly active with current scope and a useful checkpoint; update `handoff.md` when resumption would otherwise repeat meaningful work or proceed incorrectly. |
-| Blocked | Move or mark the task blocked, name the blocker or decision needed, and preserve consequential partial state in `handoff.md`; retain `Scope` only when partial work or safe continuation needs protection, otherwise release it and explain why. |
-| Interrupted | Record an honest active checkpoint and handoff when meaningful partial state or risk must survive; if implementation is finished but unlanded, close as Ready to Land rather than implying completion; do not retain a misleading claim. |
+| Completed | Verify the result; for repository-modifying work, confirm the changes are landed and reachable from `Target`, with no unlanded task changes and no unresolved unattributed changes remaining inside `Scope`; record `Landed` when required; reconcile repository and durable docs; move or mark the task completed and release active scope; remove obsolete handoff state. Create a handoff only when a separate active dependent workstream has its own concrete transfer risk. |
+| Ready to Land | Persist the Ready to Land task state when verified work remains unlanded at a session, responsibility, or coordination boundary; keep the claim honest; update `handoff.md` only when `Landing:` and `Verification:` are insufficient for safe continuation. Omit task persistence only when landing completes in the same uninterrupted operation. |
+| Partial | Keep the task honestly active with current scope and a useful checkpoint; update `handoff.md` only when both a boundary and concrete resumption risk exist. |
+| Blocked | Move or mark the task blocked and name the blocker or decision needed in `todo.md`; update `handoff.md` only when consequential partial state or an unresolved question creates concrete resumption risk that must survive the boundary; retain `Scope` only when partial work or safe continuation needs protection, otherwise release it and explain why. |
+| Interrupted | Record an honest active checkpoint in `todo.md`; create or update `handoff.md` only when concrete resumption risk must survive; if implementation is finished but unlanded, close as Ready to Land rather than implying completion; do not retain a misleading claim. |
 | Trivial | Verify the change. Do not create a task, handoff, decision, archive entry, or other CSDD update unless the work discovered a material conflict or changed durable truth. |
 
 For all close conditions, promote consequential knowledge before removing
@@ -933,7 +1003,8 @@ Trigger -> Discover -> Compare -> Classify -> Reconcile or block -> Execute -> C
 7. **Close.** Leave truthful task state on the current baseline. Release active
    write scope when complete. Do not imply that another worktree's claims were
    cleared unless that worktree's documents were explicitly updated. Clear or
-   update handoff only for consequential resumable state on this baseline.
+   update handoff only when both a real boundary and concrete resumption risk
+   require it on this baseline.
 
 Document-contract detail for locality, evidence, and provenance lives in
 [Branch and worktree locality](document-contracts.md#branch-and-worktree-locality).
@@ -983,8 +1054,8 @@ only after it is sufficiently validated and its loss could harm later work:
 
 Use `specs.md` when the finding describes what must remain true. Use
 `decisions.md` when it records a consequential choice and why. Use `todo.md`
-when the information changes active work, and `handoff.md` when it is needed to
-resume the current partial state.
+when the information changes active work, and `handoff.md` only when both a
+real boundary and concrete resumption risk require transient transfer state.
 
 Transient state should expire when it is completed, disproven, superseded, or
 no longer useful for resumption. Promotion must not mean copying the same fact

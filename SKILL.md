@@ -32,7 +32,7 @@ and possible overlap. Increase the level when inspection reveals broader impact.
 | --- | --- | --- |
 | 0 — Direct | Work is explicitly bounded, local, low-risk, reversible, non-architectural, not behaviorally or contractually significant, independent of prior work, and unlikely to overlap active scope. | No CSDD state by default. |
 | 1 — Local awareness | A localized change may plausibly overlap active work. | Only relevant active scope in `todo.md`. |
-| 2 — Operational | A non-trivial bug, feature, integration, multi-file change, or continuation task. | Relevant `todo.md`; relevant `handoff.md` when partial state matters; applicable specifications and decisions. |
+| 2 — Operational | A non-trivial bug, feature, integration, multi-file change, or continuation task. | Relevant `todo.md`; relevant `handoff.md` when boundary transfer state with concrete resumption risk may exist; applicable specifications and decisions. |
 | 3 — Deep | Architecture, migration, broad refactor, cross-domain work, or material ambiguity. | Relevant hot and warm context; archive only for a concrete historical question. |
 
 For detailed signals and semantics, load only [Adaptive context
@@ -55,8 +55,8 @@ truth. Escalate hydration if the target proves broader or riskier than expected.
 
 - Read relevant `.csdd/todo.md` entries for current work, ownership, scope,
   dependencies, and blockers.
-- Read the relevant `.csdd/handoff.md` section for consequential resumable partial
-  state; validate it against the repository before relying on it.
+- Read the relevant `.csdd/handoff.md` section when concrete resumption risk may
+  exist; validate critical claims against the repository before relying on them.
 - Read relevant `.csdd/specs.md` sections for requirements, constraints, invariants,
   intended behavior, and stable contracts.
 - Read relevant `.csdd/decisions.md` entries for consequential accepted, rejected, or
@@ -151,9 +151,13 @@ Route persistence as follows:
 
 - Update `todo.md` when task state, ownership, executor, material scope,
   dependencies, blockers, or a continuity-critical checkpoint changes.
-- Update `handoff.md` when another agent could otherwise resume incorrectly,
-  repeat meaningful work, miss a current risk, or overlook a blocking question.
-  Do not update it after every trivial session.
+- Update `handoff.md` only at a real execution boundary with concrete
+  resumption risk—when a later agent or session would otherwise resume
+  incorrectly, repeat meaningful work, miss a material risk, or overlook a
+  blocking question. Do not update it for routine session closure,
+  uninterrupted work, ordinary checkpoints, or live collisions coordinated in
+  `todo.md`. Validate before relying; remove or replace when the risk is
+  consumed. Keep state and collision coordination in `todo.md`.
 - Update `specs.md` when intended behavior, a requirement, constraint,
   invariant, stable contract, or other durable project truth changes or is found
   incomplete or incorrect.
@@ -212,18 +216,20 @@ locality](references/document-contracts.md#branch-and-worktree-locality).
 - **Completed:** Verify the result, reconcile documentation and repository
   state, mark the task completed, release active scope, compact completed
   metadata, enforce Recently Completed retention, and remove obsolete
-  handoff state. Create a handoff only when another active workstream needs
-  non-obvious transfer state.
+  handoff state. Create a handoff only when a separate active dependent
+  workstream has its own concrete transfer risk.
 - **Ready to Land:** Keep the task unchecked and active with honest claim
   metadata, `Landing:`, and concise `Verification:` when useful. Do not use
-  `Landed:` until the changes are reachable from `Target`.
+  `Landed:` until the changes are reachable from `Target`. Create a handoff
+  only when those fields are insufficient for safe continuation.
 - **Partial:** Keep the task honestly active, update its scope and checkpoint,
-  and update the handoff when resumption risk exists.
-- **Blocked:** Mark the task blocked, name the blocker or decision needed,
-  preserve consequential partial state, and narrow or release unnecessary
-  scope.
+  and update the handoff only when both a boundary and concrete resumption risk
+  exist.
+- **Blocked:** Mark the task blocked, name the blocker or decision needed in
+  `todo.md`, preserve consequential partial state in `handoff.md` only when
+  concrete resumption risk exists, and narrow or release unnecessary scope.
 - **Interrupted:** Leave an honest active checkpoint. Create a handoff only when
-  meaningful partial state or risk must survive. Do not imply completion.
+  concrete resumption risk must survive. Do not imply completion.
 - **Trivial:** Verify the change and do not create CSDD state unless durable
   truth or a material conflict changed.
 
@@ -235,13 +241,13 @@ review note when completion has not yet been earned.
 Load only the section relevant to the current question:
 
 - Use [the protocol](references/protocol.md) for principles, hydration semantics,
-  lifecycle, TODO structure and retention, concurrency, stale claims,
-  branch/worktree baseline reconciliation, contradiction handling, archive
-  policy, and validation scenarios.
+  lifecycle, boundary-driven handoffs, TODO structure and retention, concurrency,
+  stale claims, branch/worktree baseline reconciliation, contradiction handling,
+  archive policy, and validation scenarios.
 - Use [the document contracts](references/document-contracts.md) for exact
-  document boundaries, the detailed `todo.md` contract, read and update
-  triggers, aging and cleanup, cross-document movement, task and handoff
-  structure, branch/worktree locality, and archive-entry guidance.
+  document boundaries, the detailed `todo.md` and `handoff.md` contracts, read
+  and update triggers, aging and cleanup, cross-document movement, task and
+  handoff structure, branch/worktree locality, and archive-entry guidance.
 
 Do not load both references in full by default and do not reproduce their
 detailed procedures in working notes.
