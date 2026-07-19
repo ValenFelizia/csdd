@@ -388,11 +388,11 @@ Outcome-specific behavior:
 
 | Situation | Primary representation | Handoff behavior |
 | --- | --- | --- |
-| Transfer | `todo.md` reflects the real executor and claim | Create only when non-obvious state or concrete risk must transfer |
+| Transfer | `todo.md` reflects the real executor and claim | Create only when non-obvious transfer state is needed to mitigate concrete resumption risk at the responsibility boundary |
 | Ready to Land | `todo.md` records `Landing:` and useful `Verification:` | Create only when those fields are insufficient for safe continuation |
 | Blocked | `todo.md` records the state and named blocker | Create only when consequential partial state or an unresolved question creates concrete resumption risk that must survive the boundary |
 | Partial / interrupted | `todo.md` preserves honest task state and scope | Create when a later resumer would otherwise proceed incorrectly or repeat meaningful work |
-| Collision | `todo.md` coordinates scope, overlap, and sequencing | Create only when the collision forces a boundary and leaves non-obvious partial state |
+| Collision | `todo.md` coordinates scope, overlap, and sequencing | Create only when the collision forces a boundary and leaves partial state that creates concrete resumption risk |
 | Completed | Git and `todo.md` record truthful closure | Remove obsolete task handoff state; create separate transfer state only for an active dependent workstream with concrete risk |
 
 Operational rule:
