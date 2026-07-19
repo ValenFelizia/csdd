@@ -10,7 +10,7 @@
   - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`, `.csdd/handoff.md`
   - Target: main
   - Base: `512f3f0`
-  - Updated: 2026-07-18
+  - Updated: 2026-07-19
   - Issue: #4
   - Landing: Branch `design/t-020-boundary-driven-handoffs` pushed; pending human review and PR against `main`
   - Verification: `git diff --check` clean; only the five allowed paths changed; scoped stale-rule search and acceptance-scenario map against issue #4 passed; T-018/T-019 lifecycle and TODO semantics preserved; no handoff entry (todo + diff suffice)

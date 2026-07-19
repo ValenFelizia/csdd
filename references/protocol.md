@@ -390,7 +390,7 @@ Outcome-specific behavior:
 | --- | --- | --- |
 | Transfer | `todo.md` reflects the real executor and claim | Create only when non-obvious state or concrete risk must transfer |
 | Ready to Land | `todo.md` records `Landing:` and useful `Verification:` | Create only when those fields are insufficient for safe continuation |
-| Blocked | `todo.md` records the state and named blocker | Create only when consequential partial state, risk, or an unresolved question must survive |
+| Blocked | `todo.md` records the state and named blocker | Create only when consequential partial state or an unresolved question creates concrete resumption risk that must survive the boundary |
 | Partial / interrupted | `todo.md` preserves honest task state and scope | Create when a later resumer would otherwise proceed incorrectly or repeat meaningful work |
 | Collision | `todo.md` coordinates scope, overlap, and sequencing | Create only when the collision forces a boundary and leaves non-obvious partial state |
 | Completed | Git and `todo.md` record truthful closure | Remove obsolete task handoff state; create separate transfer state only for an active dependent workstream with concrete risk |
@@ -489,10 +489,11 @@ A persisted Ready to Land task:
 
 - MUST include `Landing:` with the pending PR, commit, action, or landing path;
 - SHOULD include concise `Verification:` evidence;
-- MUST preserve enough verification state in the task so landing does not
-  require unnecessary repeated work; create or update `handoff.md` only when
-  `Landing:` and `Verification:` are insufficient for safe continuation under
-  [Boundary-driven handoffs](#boundary-driven-handoffs);
+- MUST treat `Landing:` and `Verification:` as the primary verification
+  surface, and MAY create or update `handoff.md` only when those fields are
+  insufficient for safe continuation under [Boundary-driven
+  handoffs](#boundary-driven-handoffs), so landing does not require unnecessary
+  repeated work;
 - MUST NOT use `Landed:`, because the changes are not yet reachable from
   `Target`.
 
@@ -560,8 +561,9 @@ merge. Landing authority remains a separate human, project, or harness policy.
 `Blocked` retains `Scope` only when partial work or safe continuation needs
 protection. Otherwise it MUST release `Scope` and explain why retention is
 unnecessary. Named blockers stay in `todo.md`. Create or update `handoff.md`
-only when consequential partial state or concrete resumption risk must survive
-under [Boundary-driven handoffs](#boundary-driven-handoffs); do not invent a
+only when consequential partial state or an unresolved question creates
+concrete resumption risk that must survive the boundary under
+[Boundary-driven handoffs](#boundary-driven-handoffs); do not invent a
 second scope-release rule beyond [Completed-task
 claims](document-contracts.md#completed-task-claims) and the closing behavior
 below.
@@ -772,7 +774,7 @@ task in the Ready to Land state. It is not a completed outcome.
 | Completed | Verify the result; for repository-modifying work, confirm the changes are landed and reachable from `Target`, with no unlanded task changes and no unresolved unattributed changes remaining inside `Scope`; record `Landed` when required; reconcile repository and durable docs; move or mark the task completed and release active scope; remove obsolete handoff state. Create a handoff only when a separate active dependent workstream has its own concrete transfer risk. |
 | Ready to Land | Persist the Ready to Land task state when verified work remains unlanded at a session, responsibility, or coordination boundary; keep the claim honest; update `handoff.md` only when `Landing:` and `Verification:` are insufficient for safe continuation. Omit task persistence only when landing completes in the same uninterrupted operation. |
 | Partial | Keep the task honestly active with current scope and a useful checkpoint; update `handoff.md` only when both a boundary and concrete resumption risk exist. |
-| Blocked | Move or mark the task blocked and name the blocker or decision needed in `todo.md`; update `handoff.md` only for consequential partial state or concrete resumption risk; retain `Scope` only when partial work or safe continuation needs protection, otherwise release it and explain why. |
+| Blocked | Move or mark the task blocked and name the blocker or decision needed in `todo.md`; update `handoff.md` only when consequential partial state or an unresolved question creates concrete resumption risk that must survive the boundary; retain `Scope` only when partial work or safe continuation needs protection, otherwise release it and explain why. |
 | Interrupted | Record an honest active checkpoint in `todo.md`; create or update `handoff.md` only when concrete resumption risk must survive; if implementation is finished but unlanded, close as Ready to Land rather than implying completion; do not retain a misleading claim. |
 | Trivial | Verify the change. Do not create a task, handoff, decision, archive entry, or other CSDD update unless the work discovered a material conflict or changed durable truth. |
 

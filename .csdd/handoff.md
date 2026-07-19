@@ -3,7 +3,7 @@
 > Create or update a handoff only at a real execution boundary with concrete
 > resumption risk for a later agent or session. Neither boundary nor risk alone
 > is enough. Keep entries compact and task-first; presentation is configurable.
-> Remove or replace when the risk is consumed—never retain as history.
+> Remove or replace when the handoff is consumed—never retain as history.
 
 <!--
 Use one current entry per task or workstream (`## T-001 — Title` when a task ID

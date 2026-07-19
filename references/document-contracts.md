@@ -71,7 +71,7 @@ rules appear in document fields and edit behavior.
 | `.csdd/specs.md` | What must be true? | Warm | Durable, revised as project intent changes |
 | `.csdd/todo.md` | What work exists now, and who is accountable and executing? | Hot | Current operational cycle |
 | `.csdd/decisions.md` | What consequential choice was made, and why? | Warm | Durable until superseded |
-| `.csdd/handoff.md` | What must a later agent or session know to cross this boundary safely? | Hot | Transient, replaced or removed when the risk is consumed |
+| `.csdd/handoff.md` | What must a later agent or session know to cross this boundary safely? | Hot | Transient, replaced or removed when the handoff is consumed |
 
 Projects MAY omit `.csdd/archive/`. When present, it is standardized cold
 context, not a fifth primary document. Its read policy is defined in
@@ -757,9 +757,10 @@ Relevant boundaries include:
 - a collision forces a workstream to pause, sequence, or transfer;
 - an active dependent workstream needs non-obvious transfer state.
 
-A successful self-contained task MAY omit a handoff. A live collision resolved
-during uninterrupted work is coordinated in `todo.md` without creating a
-handoff.
+A successful self-contained task does not create a handoff unless a separate
+active dependent workstream independently satisfies both boundary and concrete
+resumption risk. A live collision resolved during uninterrupted work is
+coordinated in `todo.md` without creating a handoff.
 
 ### Concrete risk requirement
 
