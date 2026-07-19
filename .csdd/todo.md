@@ -4,17 +4,6 @@
 
 ## Ready to Land
 
-- [ ] T-020 — Make handoffs boundary-driven
-  - Owner: valen
-  - Agent: cursor/t-020-boundary-driven-handoffs
-  - Scope: `references/protocol.md`, `references/document-contracts.md`, `SKILL.md`, `.csdd/handoff.md`
-  - Target: main
-  - Base: `512f3f0`
-  - Updated: 2026-07-19
-  - Issue: #4
-  - Landing: PR #13 against `main`; pending human review and merge
-  - Verification: `git diff --check` clean; only the five allowed paths changed; scoped stale-rule search and acceptance-scenario map against issue #4 passed; T-018/T-019 lifecycle and TODO semantics preserved; no handoff entry (todo + diff suffice)
-
 ## Blocked
 
 ## Pending
@@ -41,6 +30,13 @@
 
 Retention: 5
 
+- [x] T-020 — Make handoffs boundary-driven
+  - Owner: valen
+  - Scope: released
+  - Updated: 2026-07-19
+  - Landed: PR #13 @ `d0883fb`
+  - Note: Boundary-driven handoffs: boundary + concrete risk, replaceable snapshots, remove-or-replace consumption.
+
 - [x] T-019 — Standardize TODO states, grouping, and retention
   - Owner: valen
   - Updated: 2026-07-18
@@ -61,5 +57,3 @@ Retention: 5
   - Note: Capture qualitative v0.1 usage across four real projects and derive the evidence base for v0.2.0.
 
 - [x] T-016 — v0.1.0 launch
-
-- [x] T-015 — README and public documentation
