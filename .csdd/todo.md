@@ -4,21 +4,6 @@
 
 ## Ready to Land
 
-- [ ] T-021 — Add the `/csdd init` adoption workflow
-  - Owner: valen
-  - Agent: cursor/t-021-csdd-init-adoption
-  - Scope:
-    - `references/protocol.md`
-    - `references/document-contracts.md`
-    - `SKILL.md`
-  - Target: main
-  - Base: `452ba3a`
-  - Updated: 2026-07-20
-  - Issue: #5
-  - Landing: PR #16
-  - Verification: `git diff --check` clean; only principal Scope plus `.csdd/todo.md` changed; classifier order is Ambiguous or conflicting → Absent → Already initialized → Recognizable older → Partial or malformed after usable root resolution; unusable `.csdd` and competing roots block before absence; pre-write revalidation reclassifies from the beginning; failure cleanup separated from structural success; four-filename presence alone does not classify malformed state as initialized; issue #5 acceptance scenarios 1–14 mapped; DEC-002/DEC-004 and T-018/T-019/T-020 invariants intact; no templates/README/migration/eval edits
-  - Note: Initialize `.csdd/` from an existing repository without copying documentation blindly or inventing project truth.
-
 ## Blocked
 
 ## Pending
@@ -40,6 +25,13 @@
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-021 — Add the `/csdd init` adoption workflow
+  - Owner: valen
+  - Scope: released
+  - Updated: 2026-07-20
+  - Landed: PR #16 @ `5c3efc2`
+  - Note: Instruction-first `/csdd init` adoption workflow with mutually exclusive destination classification, pre-write revalidation, and failure-versus-success separation.
 
 - [x] T-020 — Make handoffs boundary-driven
   - Owner: valen
@@ -66,5 +58,3 @@ Retention: 5
   - Scope: released
   - Updated: 2026-07-17
   - Note: Capture qualitative v0.1 usage across four real projects and derive the evidence base for v0.2.0.
-
-- [x] T-016 — v0.1.0 launch
