@@ -77,6 +77,201 @@ Projects MAY omit `.csdd/archive/`. When present, it is standardized cold
 context, not a fifth primary document. Its read policy is defined in
 [Optional archive and cold history](protocol.md#optional-archive-and-cold-history).
 
+## Initialization
+
+This section owns the exact `/csdd init` operational contract. Conceptual
+lifecycle, root rules, discovery stopping criteria, and safety invariants live
+in [Initialization and adoption](protocol.md#initialization-and-adoption).
+Templates that present the generated documents remain owned by later template
+and migration work; this contract defines required structure and behavior.
+
+### State classification
+
+Before writing, classify the destination:
+
+| State discovered | Required behavior |
+| --- | --- |
+| Absent state — no canonical `.csdd/` primary documents | Proceed with initialization |
+| Already initialized — all four primary documents exist | Do not overwrite; report that CSDD is already initialized and surface any validation concerns |
+| Partial or malformed state — only some canonical documents or invalid structure exist | Do not modify; report incomplete or malformed CSDD state and offer a separate repair path |
+| Recognizable older state — existing layout follows an older CSDD contract | Do not migrate; direct the user to the migration workflow |
+| Ambiguous or conflicting destination — unclear project root, competing roots, or destination paths that conflict with pre-existing content | Stop and request clarification; never overwrite conflicting content |
+
+`init` initializes previously absent CSDD state only. It MUST NOT repair,
+normalize, upgrade, migrate, or complete existing CSDD state. Successful
+initialization MUST NOT imply permission for later repair, enrichment,
+migration, staging, commit, push, or other repository actions.
+
+### Allowed evidence sources
+
+Initialization MAY use:
+
+- explicit human and project instructions;
+- canonical project documentation;
+- README files and maintained technical guides;
+- manifests, schemas, configuration, CI, and tests;
+- code as evidence of current repository reality.
+
+Code and tests MAY support descriptive current truth. They MUST NOT
+independently authorize promoting observed implementation into a durable
+requirement, constraint, invariant, stable interface, rationale, priority,
+task, or accepted decision. Tests are stronger evidence of expected behavior
+when they clearly exercise an acceptance or contract boundary; incidental
+implementation tests do not make internal details normative.
+
+The agent MUST:
+
+- persist only claims supported by identifiable evidence;
+- omit or describe as a gap any claim whose durability cannot be established;
+- surface material contradictions instead of silently choosing a source;
+- never invent content to make a template look complete.
+
+Evidence, non-invention, preservation, and Scope rules take precedence over
+document completeness. Targeted code and test inspection validates candidate
+claims; repository size alone MUST NOT require exhaustive scanning.
+
+### Progressive discovery and stopping
+
+Follow the progressive discovery sequence and material stopping criterion in
+[Progressive evidence-guided discovery](protocol.md#progressive-evidence-guided-discovery).
+Deepen only when a material contradiction, unclear boundary, safety
+constraint, public interface, persistence contract, or referenced-but-unread
+source could change the resulting CSDD state. Generated output, vendored
+dependencies, build artifacts, coverage, irrelevant snapshots, repetitive
+internals, source-code TODO comments, broad issue history, and Git history
+without a concrete question are outside default discovery.
+
+### Generated structure
+
+A successful new initialization creates one coherent patch containing only
+these four primary documents directly under the canonical root:
+
+```text
+.csdd/
+|-- specs.md
+|-- todo.md
+|-- decisions.md
+`-- handoff.md
+```
+
+Do not create `.csdd/archive/` by default. Do not create version files,
+databases, extra canonical documents, or harness-specific metadata. Do not
+modify `AGENTS.md`, `CLAUDE.md`, README files, source code, configuration, or
+unrelated project files as part of initialization. Do not stage, commit, push,
+or open a pull request without separate authority.
+
+### Document-specific initialization behavior
+
+#### `specs.md`
+
+- Populate only consequential project truth supported by evidence.
+- Descriptive current reality MAY be included when useful, but MUST NOT be
+  phrased as durable intent without supporting authority.
+- Empty or sparse sections are valid.
+- Unknowns and contradictions belong in the initialization report until the
+  human supplies authoritative clarification; they MUST NOT become invented
+  pseudo-specifications.
+
+#### `todo.md`
+
+- Create the six canonical H2 state headings in order: In Progress, Ready to
+  Land, Blocked, Pending, Deferred, Recently Completed.
+- Declare `Retention: 5`.
+- Start without invented tasks, ownership, executors, scopes, priorities,
+  dependencies, completed work, or an initialization self-task.
+- Do not import issues, roadmaps, source-code TODO comments, or documentation
+  wish lists automatically.
+
+#### `decisions.md`
+
+- Start without a fictional template decision.
+- Do not infer rationale or accepted direction from implementation alone.
+
+#### `handoff.md`
+
+- Start without an active handoff entry.
+- Initialization alone does not establish a boundary with concrete resumption
+  risk.
+
+### Coherent patch and failure cleanup
+
+Initialization MUST behave as one logical adoption transaction:
+
+1. record which destination paths existed before the attempt;
+2. complete discovery and prepare the intended content before writing;
+3. create the four primary documents as one coherent patch;
+4. validate the resulting structure and content;
+5. report completion only when the structural postconditions hold.
+
+On failure:
+
+- remove only files safely attributable to the current initialization attempt;
+- remove `.csdd/` only when the current attempt created it and it is empty
+  after safe cleanup;
+- never delete, restore, reset, or overwrite pre-existing content;
+- never discard unrelated working-tree changes;
+- if safe cleanup is impossible, report the exact partial state and do not
+  claim initialization completed.
+
+Unrelated dirty working-tree state MUST be preserved. Existing or conflicting
+content in the target `.csdd/` paths blocks automatic initialization.
+
+### Questions and post-initialization enrichment
+
+Initialization MUST NOT require a pre-write interview merely to make generated
+documents appear complete.
+
+Ask before writing only when a real blocker exists, such as:
+
+- ambiguous project root;
+- partial, old, malformed, or conflicting CSDD state;
+- destination conflicts;
+- insufficient permissions;
+- a contradiction that prevents even a minimal honest initialization.
+
+Missing requirements, decisions, tasks, or detailed specifications are normally
+non-blocking. Initialize the truthful minimum, report the gaps, and offer an
+optional follow-up conversation in which the human can clarify intent and
+authorize enrichment. That follow-up is not part of initialization success and
+MUST route new truth to the correct canonical document.
+
+### Completion semantics
+
+Successful initialization certifies coherent structural adoption, not
+completeness of project knowledge. A sparse `specs.md`, empty operational
+documents, and explicitly documented gaps are valid outcomes. The agent MUST
+NOT invent claims, broaden Scope, continue discovery without material
+justification, or answer unresolved questions on the human's behalf merely to
+satisfy postconditions.
+
+Hard structural completion conditions are:
+
+- one unambiguous canonical root;
+- previously absent CSDD state;
+- all four primary documents created coherently;
+- canonical document structure validates;
+- generated content respects evidence and non-invention rules;
+- no pre-existing or unrelated content was modified;
+- any failure cleanup was safely completed.
+
+Knowledge coverage is reported, not graded as a completion gate.
+
+### Required user-facing result
+
+The final response SHOULD state:
+
+- the initialized project root;
+- files created;
+- principal evidence sources inspected;
+- project truth persisted;
+- sections deliberately left empty and why;
+- material contradictions, uncertainties, or inspection limits;
+- whether unrelated dirty state was observed and preserved;
+- that no staging, commit, push, PR, migration, or unrelated edit occurred;
+- that initialization confirms valid structure rather than exhaustive project
+  knowledge;
+- an optional offer to review and fill the reported gaps with the human.
+
 ## `specs.md`
 
 ### Contract

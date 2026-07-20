@@ -4,13 +4,24 @@
 
 ## Ready to Land
 
+- [ ] T-021 — Add the `/csdd init` adoption workflow
+  - Owner: valen
+  - Agent: cursor/t-021-csdd-init-adoption
+  - Scope:
+    - `references/protocol.md`
+    - `references/document-contracts.md`
+    - `SKILL.md`
+  - Target: main
+  - Base: `452ba3a`
+  - Updated: 2026-07-20
+  - Issue: #5
+  - Landing: branch `design/t-021-csdd-init-adoption` → open PR to `main` after review; do not merge until accepted
+  - Verification: `git diff --check` clean; only principal Scope plus `.csdd/todo.md` changed; new anchors `#initialization-and-adoption`, `#progressive-evidence-guided-discovery`, `#initialization`, `#csdd-init-fast-path` resolve; issue #5 acceptance scenarios 1–14 mapped to contract text; DEC-002/DEC-004 preserved (instruction-first, SKILL as router); T-018/T-019/T-020 lifecycle, TODO, and handoff invariants intact; no templates/README/migration/eval edits
+  - Note: Initialize `.csdd/` from an existing repository without copying documentation blindly or inventing project truth.
+
 ## Blocked
 
 ## Pending
-
-- [ ] T-021 — Add the `/csdd init` adoption workflow
-  - Owner: valen
-  - Note: Initialize `.csdd/` from an existing repository without copying documentation blindly or inventing project truth.
 
 - [ ] T-022 — Update templates and write the v0.1 to v0.2 migration guide
   - Owner: valen

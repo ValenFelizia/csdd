@@ -672,6 +672,118 @@ Work that awaits required review or landing remains active—typically
 Non-repository work may complete without Git landing evidence when no
 repository change was in scope.
 
+## Initialization and adoption
+
+`/csdd init` is the canonical user-facing name for adopting CSDD in a
+previously non-CSDD project. It is a portable workflow name, not a requirement
+that every harness register a native slash command. Equivalent explicit skill
+or natural-language invocations that unambiguously request initialization are
+sufficient. The protocol remains harness-agnostic and instruction-first: it
+MUST NOT require a CLI executable, script, hook, plugin, MCP service, runtime
+dependency, or harness-specific adapter.
+
+Initialization requires explicit human intent. Agents MUST NOT silently
+initialize CSDD during unrelated work.
+
+### Initialization versus other workflows
+
+`init` creates previously absent CSDD state. It does not repair, normalize,
+upgrade, or migrate existing CSDD state.
+
+| Discovered condition | Required conceptual response |
+| --- | --- |
+| No canonical CSDD state | Proceed with initialization |
+| All four primary documents already present | Do not overwrite; report already initialized |
+| Partial or malformed canonical state | Do not complete or repair via `init` |
+| Recognizable older CSDD contract | Do not migrate via `init` |
+| Ambiguous root or conflicting destination | Stop; request clarification |
+
+Successful initialization MUST NOT imply permission for later repair,
+enrichment, migration, staging, commit, push, or other repository actions.
+Exact state classification and operational behavior live in the
+[Initialization](document-contracts.md#initialization) contract.
+
+### Canonical root
+
+Initialization MUST establish one unambiguous project root before writing.
+One repository has one canonical root `.csdd/`.
+
+- In a Git worktree, the current worktree root is canonical. Invocation from a
+  subdirectory MUST NOT create a nested `.csdd/`.
+- A monorepo uses one repository-root `.csdd/`. Component-specific truth MAY
+  use sections or workstreams inside the canonical documents, not package-local
+  competing roots.
+- A genuinely nested Git repository or submodule is an independent root when
+  invocation occurs inside that repository.
+- Outside Git, initialization MAY proceed only when the human has identified an
+  unambiguous project directory.
+- Unrelated dirty working-tree state does not independently block
+  initialization. Existing or conflicting content in the target `.csdd/` paths
+  does.
+
+### Progressive evidence-guided discovery
+
+Initialization is an exceptional deep-orientation task and MAY consume
+substantial context, but repository size alone MUST NOT require exhaustive
+inspection.
+
+Discovery SHOULD map the project root and Git state, project instructions,
+first-level structure, documentation, manifests, workspace files,
+configuration, CI, schemas, tests, entrypoints, and any CSDD-like state; read
+the most authoritative relevant sources; inspect code and tests selectively to
+validate candidate claims; and stop when every discovered source likely to
+materially change the initial project-level state has been inspected,
+candidate durable claims have been validated, contradictions have been
+resolved or surfaced, and further inspection would add only redundant evidence
+or lower-level implementation detail.
+
+Deepen discovery when a material contradiction, unclear project or component
+boundary, safety constraint, public interface, persistence contract, or
+referenced-but-unread source could change the resulting CSDD state. Generated
+output, vendored dependencies, build artifacts, coverage, irrelevant
+snapshots, repetitive internals, source-code TODO comments, broad issue
+history, and Git history without a concrete question are outside default
+discovery.
+
+### Implementation evidence versus durable intent
+
+Code and tests MAY evidence current repository behavior. They MUST NOT
+independently authorize promoting observed implementation into a durable
+requirement, constraint, invariant, stable interface, rationale, priority,
+task, or accepted decision. Persist only claims supported by identifiable
+evidence. Omit or describe as a gap any claim whose durability cannot be
+established. Surface material contradictions instead of silently choosing a
+source. Never invent content to make a template look complete.
+
+Evidence, non-invention, preservation, and Scope rules take precedence over
+document completeness. Exact allowed sources, contradiction handling, and
+document-local generation rules are in
+[Initialization](document-contracts.md#initialization).
+
+### Structural adoption versus knowledge completeness
+
+Successful initialization certifies coherent structural adoption of the four
+primary documents, not completeness of project knowledge. Sparse documents,
+empty operational sections, and explicitly reported gaps are valid. The agent
+MUST NOT invent claims, broaden Scope, continue discovery without material
+justification, or answer unresolved questions on the human's behalf merely to
+satisfy postconditions.
+
+### Safety invariants
+
+Initialization MUST:
+
+- create only the four primary documents under the canonical root as one
+  coherent patch;
+- preserve pre-existing and unrelated working-tree state;
+- on failure, remove only artifacts safely attributable to the current attempt;
+- not create `.csdd/archive/` by default;
+- not invent tasks, ownership, decisions, or handoff entries;
+- not modify instruction files, README files, source, configuration, or
+  unrelated project files as part of initialization;
+- not stage, commit, push, open a pull request, merge, install, or write
+  outside the initialization destination without separate authority.
+
 ## Initial skill operational contract
 
 The initial CSDD skill is a concise operational router over this protocol and
@@ -688,11 +800,16 @@ The skill is applicable when either:
 - the user or project instructions explicitly require CSDD.
 
 An existing `.csdd/` is sufficient evidence that work in that repository is
-CSDD-aware, but not that every task requires reading CSDD documents. If CSDD is
-explicitly requested but the canonical state is missing or malformed, the
-agent MUST surface that condition and follow the requested initialization or
-repair scope; it MUST NOT silently invent an alternative layout. Without
-either signal, the skill need not enter the CSDD lifecycle.
+CSDD-aware, but not that every task requires reading CSDD documents. Explicit
+initialization intent with an absent `.csdd/` is also a valid skill entry path;
+follow [Initialization and adoption](#initialization-and-adoption) and the
+[Initialization](document-contracts.md#initialization) contract. If CSDD is
+explicitly requested but the canonical state is missing, partial, malformed,
+old, or conflicting, the agent MUST surface that condition and follow only the
+requested workflow—initialization, repair, or migration—without silently
+inventing an alternative layout or overwriting existing state. `init` never
+repairs or migrates. Without either signal, the skill need not enter the CSDD
+lifecycle.
 
 Bootstrap SHOULD inspect repository status, project instructions, the `.csdd/`
 shape, and the task's apparent target before hydrating project state. This is
@@ -794,6 +911,8 @@ does not redefine them.
 `SKILL.md` SHOULD contain only the operational fast path:
 
 - applicability signals and canonical `.csdd/` discovery;
+- the concise `/csdd init` recognition and safety route for explicit
+  initialization intent;
 - the context-level classifier and minimal read-routing table;
 - the essential orient, overlap-check, claim, execute, reconcile, and close
   sequence;
@@ -806,21 +925,21 @@ does not redefine them.
 
 Detailed protocol knowledge remains in `references/` and is loaded
 progressively. This document owns principles, full lifecycle semantics
-including the Git-aware task lifecycle, hydration rationale, concurrency and
-stale-claim handling, branch and worktree baseline reconciliation,
-contradiction resolution, knowledge promotion, archive policy, limitations, and
-validation scenarios.
+including the Git-aware task lifecycle, initialization and adoption,
+hydration rationale, concurrency and stale-claim handling, branch and
+worktree baseline reconciliation, contradiction resolution, knowledge
+promotion, archive policy, limitations, and validation scenarios.
 [document-contracts.md](document-contracts.md) owns exact document boundaries,
-read and update triggers, aging, cross-document movement, examples,
-branch/worktree locality evidence, and archive-entry structure. Templates
-remain in `assets/templates/`.
+the initialization contract, read and update triggers, aging, cross-document
+movement, examples, branch/worktree locality evidence, and archive-entry
+structure. Templates remain in `assets/templates/`.
 
 An agent SHOULD load only the referenced section needed for the current
 decision. It SHOULD consult document contracts before making a non-obvious
 document update or resolving a boundary or aging question, and consult the
 deeper protocol sections for collaborative, conflicting, stale, branch/worktree,
-or historical cases. The skill MUST remain usable for levels 0 and 1 without
-forcing either reference to be read in full.
+initialization, or historical cases. The skill MUST remain usable for levels 0
+and 1 without forcing either reference to be read in full.
 
 ## Concurrency model
 

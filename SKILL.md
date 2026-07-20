@@ -17,11 +17,46 @@ memory, authenticated identity, reliable locking, or automatic synchronization.
   requires reading it.
 - Apply CSDD when the user or project instructions explicitly require it, even
   when state is absent or malformed. Surface the condition, follow only the
-  requested initialization or repair scope, and do not invent another layout.
+  requested initialization, repair, or migration workflow, and do not invent
+  another layout or overwrite existing state.
+- An absent `.csdd/` plus explicit initialization intent is a valid skill entry
+  path. Use the [`/csdd init` fast path](#csdd-init-fast-path). Existing,
+  partial, old, or conflicting state is not silently overwritten; `init` never
+  repairs or migrates.
 - Do not silently initialize CSDD for unrelated work.
 - Before hydrating CSDD state, inspect repository status, relevant project
 instructions, the canonical `.csdd/` shape, and the task's apparent target.
 Treat this as discovery, not permission to read every document.
+
+### `/csdd init` fast path
+
+`/csdd init` is the canonical user-facing workflow name, not a guaranteed native
+slash command. Equivalent explicit skill or natural-language requests to
+initialize CSDD are sufficient. No CLI, script, hook, plugin, MCP, or
+harness-specific adapter is required.
+
+When the user explicitly requests initialization:
+
+1. Confirm explicit human intent; never initialize during unrelated work.
+2. Resolve one unambiguous canonical root. In a Git worktree, use the worktree
+   root—do not create a nested `.csdd/` from a subdirectory. Outside Git,
+   proceed only when the human identified an unambiguous project directory.
+3. Classify destination state. Absent → proceed. Already complete, partial,
+   old, ambiguous, or conflicting → stop without overwrite and report the
+   correct next path (already initialized, separate repair, or migration).
+4. Discover progressively from authoritative evidence; stop at the material
+   criterion. Code and tests may evidence current behavior but do not invent
+   durable requirements, decisions, tasks, or rationale.
+5. Create only `.csdd/specs.md`, `.csdd/todo.md`, `.csdd/decisions.md`, and
+   `.csdd/handoff.md` as one coherent patch. Keep `todo.md` headings and
+   `Retention: 5`; invent no tasks, decisions, handoffs, or archive.
+6. Structural success does not require complete specifications. Preserve
+   unrelated dirty state; on failure clean up only artifacts from this attempt.
+   Report gaps and offer optional human enrichment.
+
+For non-obvious initialization behavior, load [Initialization and
+adoption](references/protocol.md#initialization-and-adoption) and
+[Initialization](references/document-contracts.md#initialization).
 
 ## Choose the minimum hydration level
 
@@ -241,13 +276,15 @@ review note when completion has not yet been earned.
 Load only the section relevant to the current question:
 
 - Use [the protocol](references/protocol.md) for principles, hydration semantics,
-  lifecycle, boundary-driven handoffs, TODO structure and retention, concurrency,
-  stale claims, branch/worktree baseline reconciliation, contradiction handling,
-  archive policy, and validation scenarios.
+  lifecycle, initialization and adoption, boundary-driven handoffs, TODO
+  structure and retention, concurrency, stale claims, branch/worktree baseline
+  reconciliation, contradiction handling, archive policy, and validation
+  scenarios.
 - Use [the document contracts](references/document-contracts.md) for exact
-  document boundaries, the detailed `todo.md` and `handoff.md` contracts, read
-  and update triggers, aging and cleanup, cross-document movement, task and
-  handoff structure, branch/worktree locality, and archive-entry guidance.
+  document boundaries, the initialization contract, the detailed `todo.md` and
+  `handoff.md` contracts, read and update triggers, aging and cleanup,
+  cross-document movement, task and handoff structure, branch/worktree
+  locality, and archive-entry guidance.
 
 Do not load both references in full by default and do not reproduce their
 detailed procedures in working notes.
