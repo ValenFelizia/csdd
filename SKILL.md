@@ -38,19 +38,23 @@ harness-specific adapter is required.
 When the user explicitly requests initialization:
 
 1. Confirm explicit human intent; never initialize during unrelated work.
-2. Resolve one unambiguous canonical root. In a Git worktree, use the worktree
-   root—do not create a nested `.csdd/` from a subdirectory. Outside Git,
-   proceed only when the human identified an unambiguous project directory.
-3. Classify destination with mutually exclusive classes. Only Absent (no
-   `.csdd/` path) may proceed. Already initialized requires all four primary
-   documents plus valid current structure—not filenames alone. Recognizable
-   older, Partial or malformed, and Ambiguous or conflicting stop without
-   overwrite and route to reporting, migration, repair, or clarification.
+2. Resolve one unambiguous canonical root and confirm the destination is usable
+   for classification. In a Git worktree, use the worktree root—do not create a
+   nested `.csdd/` from a subdirectory. Outside Git, proceed only when the
+   human identified an unambiguous project directory. Competing roots or an
+   unusable `.csdd` path (for example a regular file) are Ambiguous or
+   conflicting—stop before evaluating Absent.
+3. Classify by first-match precedence after root and destination conflicts are
+   ruled out: Ambiguous or conflicting → stop; Absent (path does not exist) →
+   proceed; Already initialized (four docs plus valid current structure) →
+   report; Recognizable older → migration; Partial or malformed → repair. Only
+   Absent may write. Filenames alone do not count as initialized.
 4. Discover progressively from authoritative evidence; stop at the material
    criterion. Code and tests may evidence current behavior but do not invent
    durable requirements, decisions, tasks, or rationale.
-5. Immediately before writing, revalidate root and Absent destination against
-   the recorded preflight state; stop without writing if it changed.
+5. Immediately before writing, revalidate root and destination against the
+   recorded preflight state; reclassify from the beginning and stop unless
+   still unambiguously Absent.
 6. Create only `.csdd/specs.md`, `.csdd/todo.md`, `.csdd/decisions.md`, and
    `.csdd/handoff.md` as one coherent patch. Keep `todo.md` headings and
    `Retention: 5`; invent no tasks, decisions, handoffs, or archive.

@@ -688,17 +688,23 @@ initialize CSDD during unrelated work.
 ### Initialization versus other workflows
 
 `init` creates previously absent CSDD state. It does not repair, normalize,
-upgrade, or migrate existing CSDD state. Destination classes are mutually
-exclusive; only Absent may proceed through `init`.
+upgrade, or migrate existing CSDD state. Only Absent may proceed through
+`init`.
 
-| Discovered condition | Required conceptual response |
-| --- | --- |
-| Absent — the canonical `.csdd/` path does not exist | Proceed with initialization |
-| Already initialized — all four primary documents exist and the minimum current canonical structure validates | Do not overwrite; report already initialized |
-| Recognizable older state — existing CSDD state follows an older contract | Do not migrate via `init`; direct to migration |
-| Partial or malformed — `.csdd/` exists but is neither valid current state nor recognizable older state | Do not complete or repair via `init` |
-| Ambiguous or conflicting — competing roots, unusable `.csdd` destination, or another conflict that prevents safe classification | Stop; request clarification |
+Before classifying Absent or later states, resolve one unambiguous canonical
+root and confirm the destination is usable for classification. Destination
+classes are then mutually exclusive by first-match precedence in this order:
 
+| Order | Discovered condition | Required conceptual response |
+| --- | --- | --- |
+| 1 | Ambiguous or conflicting — competing or unresolved roots, unusable `.csdd` destination, or another conflict that prevents safe classification | Stop; request clarification; do not write |
+| 2 | Absent — the canonical `.csdd/` path does not exist | Proceed with initialization |
+| 3 | Already initialized — all four primary documents exist and the minimum current canonical structure validates | Do not overwrite; report already initialized |
+| 4 | Recognizable older state — existing CSDD state follows an older contract | Do not migrate via `init`; direct to migration |
+| 5 | Partial or malformed — `.csdd/` exists but is neither valid current state nor recognizable older state | Do not complete or repair via `init` |
+
+An ambiguous or unusable destination MUST block before absence is evaluated. An
+unusable `.csdd` path (for example a regular file) MUST NOT classify as Absent.
 The presence of all four primary filenames alone MUST NOT classify a malformed
 current layout as already initialized. Every non-Absent class remains
 non-destructive and routes to already-initialized reporting, migration,
@@ -782,9 +788,9 @@ Initialization MUST:
 - create only the four primary documents under the canonical root as one
   coherent patch;
 - revalidate the destination immediately before writing: confirm the
-  canonical root, recheck that `.csdd/` remains absent, compare against the
-  recorded preflight state, and stop without writing if the destination
-  changed or became ambiguous or conflicting;
+  canonical root and that the destination remains usable, then reclassify
+  from the beginning against the recorded preflight state; stop without
+  writing unless the destination is still unambiguously Absent;
 - preserve pre-existing and unrelated working-tree state;
 - on failure, remove only artifacts safely attributable to the current attempt;
 - treat a failed attempt as failed even when cleanup succeeds—successful

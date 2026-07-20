@@ -16,7 +16,7 @@
   - Updated: 2026-07-20
   - Issue: #5
   - Landing: branch `design/t-021-csdd-init-adoption` → open PR to `main` after review; do not merge until accepted
-  - Verification: `git diff --check` clean; only principal Scope plus `.csdd/todo.md` changed; mutually exclusive Absent / Already initialized / Recognizable older / Partial or malformed / Ambiguous or conflicting classifier aligned across protocol, contracts, and SKILL; pre-write destination revalidation required after discovery; failure cleanup separated from structural success; four-filename presence alone does not classify malformed state as initialized; issue #5 acceptance scenarios 1–14 mapped; DEC-002/DEC-004 and T-018/T-019/T-020 invariants intact; no templates/README/migration/eval edits
+  - Verification: `git diff --check` clean; only principal Scope plus `.csdd/todo.md` changed; classifier order is Ambiguous or conflicting → Absent → Already initialized → Recognizable older → Partial or malformed after usable root resolution; unusable `.csdd` and competing roots block before absence; pre-write revalidation reclassifies from the beginning; failure cleanup separated from structural success; four-filename presence alone does not classify malformed state as initialized; issue #5 acceptance scenarios 1–14 mapped; DEC-002/DEC-004 and T-018/T-019/T-020 invariants intact; no templates/README/migration/eval edits
   - Note: Initialize `.csdd/` from an existing repository without copying documentation blindly or inventing project truth.
 
 ## Blocked
