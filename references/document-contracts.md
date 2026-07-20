@@ -87,15 +87,22 @@ and migration work; this contract defines required structure and behavior.
 
 ### State classification
 
-Before writing, classify the destination:
+Before writing, classify the destination. Classes are mutually exclusive; apply
+them in this order so a later class cannot absorb an earlier match:
 
 | State discovered | Required behavior |
 | --- | --- |
-| Absent state — no canonical `.csdd/` primary documents | Proceed with initialization |
-| Already initialized — all four primary documents exist | Do not overwrite; report that CSDD is already initialized and surface any validation concerns |
-| Partial or malformed state — only some canonical documents or invalid structure exist | Do not modify; report incomplete or malformed CSDD state and offer a separate repair path |
-| Recognizable older state — existing layout follows an older CSDD contract | Do not migrate; direct the user to the migration workflow |
-| Ambiguous or conflicting destination — unclear project root, competing roots, or destination paths that conflict with pre-existing content | Stop and request clarification; never overwrite conflicting content |
+| Absent — the canonical `.csdd/` path does not exist | Proceed with initialization |
+| Already initialized — all four primary documents exist and the minimum current canonical structure validates | Do not overwrite; report that CSDD is already initialized and surface any validation concerns |
+| Recognizable older state — existing CSDD state can be identified as following an older contract | Do not migrate; direct the user to the migration workflow |
+| Partial or malformed — `.csdd/` exists but the state is neither valid current state nor recognizable older state | Do not modify; report incomplete or malformed CSDD state and offer a separate repair path |
+| Ambiguous or conflicting — competing roots, `.csdd` is not a usable directory, or another destination conflict prevents safe classification | Stop and request clarification; never overwrite conflicting content |
+
+Only Absent may proceed through `init`. The presence of all four primary
+filenames alone MUST NOT classify malformed current state as already
+initialized. Every other class remains non-destructive and routes to
+already-initialized reporting, migration, repair, or clarification as
+applicable.
 
 `init` initializes previously absent CSDD state only. It MUST NOT repair,
 normalize, upgrade, migrate, or complete existing CSDD state. Successful
@@ -199,9 +206,13 @@ Initialization MUST behave as one logical adoption transaction:
 
 1. record which destination paths existed before the attempt;
 2. complete discovery and prepare the intended content before writing;
-3. create the four primary documents as one coherent patch;
-4. validate the resulting structure and content;
-5. report completion only when the structural postconditions hold.
+3. immediately before creating `.csdd/`, revalidate the canonical root, recheck
+   that `.csdd/` remains Absent, compare the destination with the recorded
+   preflight state, and reclassify—stop without writing if the destination
+   changed or became Ambiguous or conflicting;
+4. create the four primary documents as one coherent patch;
+5. validate the resulting structure and content;
+6. report completion only when the structural postconditions hold.
 
 On failure:
 
@@ -210,8 +221,13 @@ On failure:
   after safe cleanup;
 - never delete, restore, reset, or overwrite pre-existing content;
 - never discard unrelated working-tree changes;
-- if safe cleanup is impossible, report the exact partial state and do not
-  claim initialization completed.
+- a failed initialization attempt remains failed even when cleanup succeeds;
+- successful cleanup only restores the pre-attempt state and does not convert
+  failure into successful initialization;
+- completion requires a coherent subsequent attempt that satisfies all
+  structural postconditions;
+- if cleanup is unsafe or incomplete, report the exact partial state and do
+  not claim initialization completed.
 
 Unrelated dirty working-tree state MUST be preserved. Existing or conflicting
 content in the target `.csdd/` paths blocks automatic initialization.
@@ -247,14 +263,16 @@ satisfy postconditions.
 Hard structural completion conditions are:
 
 - one unambiguous canonical root;
-- previously absent CSDD state;
+- previously Absent CSDD state through the pre-write revalidation;
 - all four primary documents created coherently;
 - canonical document structure validates;
 - generated content respects evidence and non-invention rules;
-- no pre-existing or unrelated content was modified;
-- any failure cleanup was safely completed.
+- no pre-existing or unrelated content was modified.
 
-Knowledge coverage is reported, not graded as a completion gate.
+Safe failure cleanup is not a structural success condition. Cleanup that
+succeeds after a failed attempt restores the pre-attempt state only; it does
+not satisfy completion. Knowledge coverage is reported, not graded as a
+completion gate.
 
 ### Required user-facing result
 
