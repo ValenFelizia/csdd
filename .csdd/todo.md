@@ -13,7 +13,7 @@
   - Updated: 2026-07-21
   - Issue: #6
   - Depends on: T-018, T-019, T-020, T-021
-  - Landing: branch `design/t-022-v02-templates-migration` → review → PR → merge to `main`
+  - Landing: PR #17 against main; pending human review and merge
   - Verification: `git diff --check` clean; principal template/docs paths plus `.csdd/todo.md` changed; `assets/templates/archive-index.md` deleted (no archive template under `assets/templates/`); four primary templates match init contract (six TODO headings + `Retention: 5`, no fictional DEC/tasks/handoffs); migration guide is conservative in-place and does not create archive; README makes `/csdd init` primary; SKILL routes recognizable v0.1 to the guide with explicit intent; optional archive contract intact in protocol/document-contracts; Status/`v0.1.0`/Versioning/evals unchanged; `protocol.md` untouched.
 
 ## Blocked
