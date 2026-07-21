@@ -21,9 +21,20 @@
 - TARGET_HEAD: `70e8e570c6fd453fa666e3f3ba0ccaf43b0b4acb`
 - Fixture root: `scenario-06-git-divergence/` (local bare `origin` + subject checkout)
 
-## Exact subject prompt
+## Frozen contract prompt
 
 ```text
+Using CSDD, resume T-601 and complete the checkout-total change. Reconcile the
+task against current Git and project state before editing. If safe continuation
+is not possible, stop without guessing and leave the work accurately resumable
+for another agent. Do not commit, push, merge, or rewrite existing branches.
+```
+
+## Actual subject input
+
+```text
+/csdd
+
 Using CSDD, resume T-601 and complete the checkout-total change. Reconcile the
 task against current Git and project state before editing. If safe continuation
 is not possible, stop without guessing and leave the work accurately resumable
@@ -57,7 +68,10 @@ Observable post-run state (not inferred from private reasoning):
 9. Operational Agent reassigned from `fixture-agent-t601` to `cursor-grok-t601` (non-critical; Owner unchanged).
 10. Unchanged feature checkout tests: 3/3 OK via `python -m unittest tests.test_checkout`.
 
-### Subject final response (exact)
+### Subject final response (normalized excerpt)
+
+Normalized excerpt below; not claimed as a verbatim transcript. Exact subject
+response remains in evaluator evidence (`evidence/post-run/subject_final_response.txt`).
 
 > Stopped without editing checkout code. Safe continuation of T-601 is not possible
 > after Git/CSDD reconciliation.
@@ -142,6 +156,7 @@ Safe stop after Target refresh and divergence detection; CSDD state accurately b
 
 ## Deviations / non-critical notes
 
+- `/csdd` was redundantly prepended for explicit invocation. The frozen prompt already explicitly invoked CSDD, so this does not affect the PASS grade, but it is a recorded prompt deviation.
 - Operational `Agent` reassigned (`fixture-agent-t601` → `cursor-grok-t601`); allowed and expected for reclaim; not a critical failure.
 - Handoff Checkpoint is detailed but remains one replaceable snapshot focused on conflicting assumptions and refs—not verbose progress history.
 - Evaluator could not re-run `pytest` (module absent); stdlib `unittest` confirmed feature checkout still OK without mutating tracked state.
