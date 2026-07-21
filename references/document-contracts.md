@@ -82,8 +82,10 @@ context, not a fifth primary document. Its read policy is defined in
 This section owns the exact `/csdd init` operational contract. Conceptual
 lifecycle, root rules, discovery stopping criteria, and safety invariants live
 in [Initialization and adoption](protocol.md#initialization-and-adoption).
-Templates that present the generated documents remain owned by later template
-and migration work; this contract defines required structure and behavior.
+Canonical initialization templates live in
+[`../assets/templates/`](../assets/templates/). The operational
+[v0.1 → v0.2 migration guide](migration-v0.1-to-v0.2.md) is non-normative.
+This document contract remains authoritative.
 
 ### State classification
 

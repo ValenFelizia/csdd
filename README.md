@@ -24,16 +24,15 @@ evaluation suite.
 
 ## Core documents
 
-A CSDD-enabled repository uses a canonical `.csdd/` directory:
+A CSDD-enabled repository uses a canonical `.csdd/` directory with four
+primary documents:
 
 ```text
 .csdd/
 ├── specs.md
 ├── todo.md
 ├── decisions.md
-├── handoff.md
-└── archive/
-    └── index.md
+└── handoff.md
 ```
 
 ### `specs.md`
@@ -68,12 +67,11 @@ survive the implementation session.
 Only the current resumable state that another agent could otherwise
 misunderstand, repeat, or lose.
 
-### `archive/`
+### Optional `archive/`
 
-Optional cold context containing semantic summaries of completed phases or
-superseded project context.
-
-The archive is not part of default hydration.
+Projects may add optional cold context containing semantic summaries of
+completed phases or superseded project context. The archive is not part of
+initial adoption or default hydration.
 
 ## Principles
 
@@ -153,6 +151,9 @@ Collaborative:
 bootstrap → orient → claim → execute → reconcile → handoff
 ```
 
+In this lifecycle, **Bootstrap** means detecting CSDD state and project
+instructions at session start. It is not synonymous with `/csdd init`.
+
 Closure must be truthful:
 
 - completed;
@@ -165,8 +166,27 @@ Obsolete claims and handoffs should not survive completed work.
 
 ## Quick start
 
-Copy the templates from [`assets/templates`](assets/templates) into a
-repository-level `.csdd/` directory.
+### Initialize with `/csdd init`
+
+`/csdd init` is the primary adoption path for a repository that does not yet
+have CSDD state. It is a portable workflow name, not a guaranteed native slash
+command. Equivalent explicit skill or natural-language requests to initialize
+CSDD are sufficient.
+
+Install or link this repository as a skill in your coding-agent harness, then
+ask the agent to initialize CSDD, for example:
+
+```text
+/csdd init
+```
+
+or:
+
+```text
+Initialize CSDD in this repository.
+```
+
+A successful initialization creates only the four primary documents:
 
 ```text
 your-project/
@@ -174,15 +194,23 @@ your-project/
 │   ├── specs.md
 │   ├── todo.md
 │   ├── decisions.md
-│   ├── handoff.md
-│   └── archive/
-│       └── index.md
+│   └── handoff.md
 └── ...
 ```
 
-Install or link this repository as a skill in your coding-agent harness.
+The skill also applies when a repository already contains `.csdd/`. Existing
+recognizable v0.1 projects should follow the
+[v0.1 → v0.2 migration guide](references/migration-v0.1-to-v0.2.md) rather than
+running `/csdd init`.
 
-Invoke it using the syntax supported by that harness, for example:
+### Manual alternative
+
+As a secondary alternative, copy the initialization templates from
+[`assets/templates`](assets/templates) into a repository-level `.csdd/`
+directory. Prefer `/csdd init` when an agent can run the adoption workflow.
+
+For ordinary work after adoption, invoke the skill using the syntax supported
+by your harness, for example:
 
 ```text
 /csdd
@@ -197,8 +225,6 @@ $csdd
 
 Resume T-201.
 ```
-
-The skill also applies when a repository already contains `.csdd/`.
 
 ## Example task
 
@@ -230,7 +256,8 @@ When completed:
 │   └── templates/
 ├── references/
 │   ├── protocol.md
-│   └── document-contracts.md
+│   ├── document-contracts.md
+│   └── migration-v0.1-to-v0.2.md
 ├── evals/
 │   ├── scenarios/
 │   ├── runs/
@@ -241,7 +268,8 @@ When completed:
 - [`SKILL.md`](SKILL.md) is the operational router.
 - [`references/protocol.md`](references/protocol.md) defines the full protocol.
 - [`references/document-contracts.md`](references/document-contracts.md) defines document semantics.
-- [`assets/templates`](assets/templates) contains bootstrap templates.
+- [`references/migration-v0.1-to-v0.2.md`](references/migration-v0.1-to-v0.2.md) is the operational v0.1 → v0.2 migration guide.
+- [`assets/templates`](assets/templates) contains initialization templates.
 - [`evals`](evals) contains reusable scenarios and recorded runs.
 
 ## Evaluation

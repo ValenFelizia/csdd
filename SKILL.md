@@ -22,7 +22,11 @@ memory, authenticated identity, reliable locking, or automatic synchronization.
 - An absent `.csdd/` plus explicit initialization intent is a valid skill entry
   path. Use the [`/csdd init` fast path](#csdd-init-fast-path). Existing,
   partial, old, or conflicting state is not silently overwritten; `init` never
-  repairs or migrates.
+  repairs or migrates. `init` is Absent-only.
+- When recognizable older v0.1 state is detected, point to
+  [migration-v0.1-to-v0.2.md](references/migration-v0.1-to-v0.2.md). Migration
+  requires explicit relevant intent; do not silently migrate an unrelated
+  project.
 - Do not silently initialize CSDD for unrelated work.
 - Before hydrating CSDD state, inspect repository status, relevant project
 instructions, the canonical `.csdd/` shape, and the task's apparent target.
@@ -47,7 +51,9 @@ When the user explicitly requests initialization:
 3. Classify by first-match precedence after root and destination conflicts are
    ruled out: Ambiguous or conflicting → stop; Absent (path does not exist) →
    proceed; Already initialized (four docs plus valid current structure) →
-   report; Recognizable older → migration; Partial or malformed → repair. Only
+   report; Recognizable older → point to
+   [migration-v0.1-to-v0.2.md](references/migration-v0.1-to-v0.2.md) (requires
+   explicit relevant intent; never silent); Partial or malformed → repair. Only
    Absent may write. Filenames alone do not count as initialized.
 4. Discover progressively from authoritative evidence; stop at the material
    criterion. Code and tests may evidence current behavior but do not invent
@@ -294,6 +300,9 @@ Load only the section relevant to the current question:
   `handoff.md` contracts, read and update triggers, aging and cleanup,
   cross-document movement, task and handoff structure, branch/worktree
   locality, and archive-entry guidance.
+- Use [the v0.1 → v0.2 migration guide](references/migration-v0.1-to-v0.2.md)
+  only when recognizable older v0.1 state is present and migration intent is
+  explicit.
 
 Do not load both references in full by default and do not reproduce their
 detailed procedures in working notes.
