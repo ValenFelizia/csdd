@@ -2,15 +2,22 @@
 
 ## In Progress
 
+- [ ] T-023 — Add real-world-derived v0.2 evaluation scenarios
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: evals/scenarios/06-git-divergence.md, evals/scenarios/07-landing-todo-handoff.md, evals/scenarios/08-existing-repo-init.md, evals/README.md, .csdd/todo.md
+  - Target: main
+  - Base: 65b7ef68a8b7887a843ec535c490aa79b1e10f9e
+  - Updated: 2026-07-21
+  - Issue: #7
+  - Note: Validate Git races, lifecycle truthfulness, TODO hygiene, handoff boundaries, and existing-repository initialization. Depends on T-022.
+  - Checkpoint: scenarios 06–08 frozen as pre-run contracts; execution, grading, and result recording remain before Ready to Land.
+
 ## Ready to Land
 
 ## Blocked
 
 ## Pending
-
-- [ ] T-023 — Add real-world-derived v0.2 evaluation scenarios
-  - Owner: valen
-  - Note: Validate Git races, lifecycle truthfulness, TODO hygiene, handoff boundaries, and existing-repository initialization. Depends on T-022.
 
 - [ ] T-024 — Prepare and release CSDD v0.2.0
   - Owner: valen
