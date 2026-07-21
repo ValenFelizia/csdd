@@ -5,13 +5,13 @@
 - [ ] T-023 — Add real-world-derived v0.2 evaluation scenarios
   - Owner: valen
   - Agent: cursor-grok-4.5
-  - Scope: evals/scenarios/06-git-divergence.md, evals/scenarios/07-landing-todo-handoff.md, evals/scenarios/08-existing-repo-init.md, evals/README.md, .csdd/todo.md
+  - Scope: evals/scenarios/06-git-divergence.md, evals/scenarios/07-landing-todo-handoff.md, evals/scenarios/08-existing-repo-init.md, evals/README.md, .csdd/todo.md, evals/scenarios/01-trivial-edit.md, evals/scenarios/02-session-resume.md, evals/scenarios/03-overlapping-scopes.md, evals/scenarios/04-stale-claim.md, evals/scenarios/05-phase-archive.md, evals/runs/01-trivial-edit.md, evals/runs/02-session-resume.md, evals/runs/03-overlapping-scopes.md, evals/runs/04-stale-claim.md, evals/runs/05-phase-archive.md
   - Target: main
   - Base: 65b7ef68a8b7887a843ec535c490aa79b1e10f9e
   - Updated: 2026-07-21
   - Issue: #7
   - Note: Validate Git races, lifecycle truthfulness, TODO hygiene, handoff boundaries, and existing-repository initialization. Depends on T-022.
-  - Checkpoint: scenarios 06–08 frozen as pre-run contracts; execution, grading, and result recording remain before Ready to Land.
+  - Checkpoint: scenarios 06–08 frozen as pre-run contracts; historical reports 01–05 normalized under evals/runs/; execution, grading, and result recording for 06–08 remain before Ready to Land.
 
 ## Ready to Land
 

@@ -13,8 +13,10 @@ behavior across fresh coding-agent sessions.
 - **Run reports** record actual execution evidence and grades. Store them under
   `evals/runs/`. Require the actual fixture commit and skill commit in each
   report.
-- Scenarios 01–05 are retained as historical reports in their current locations
-  under `evals/scenarios/`. T-023 does not reorganize them.
+- Evaluations 01–05 predate the contract/report split. Their combined historical
+  reports now live under `evals/runs/`. No separate frozen pre-run contracts
+  exist for those historical evaluations.
+- Scenarios 06–08 are the reusable pre-run contracts under `evals/scenarios/`.
 
 ## Evaluation Roles
 
