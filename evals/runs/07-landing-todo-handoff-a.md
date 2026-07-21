@@ -69,8 +69,6 @@ Observable post-run state (not inferred from private reasoning):
 > T-701 → Ready to Land. Still verified only on origin/feature/t-701-sku-normalization @ 1de9fb6; catalog on main is still baseline. Moved out of In Progress, set Landing: / Verification:, reconciled Base to the current main tip.
 >
 > Retention: Inserted T-702 newest-first and evicted T-706 so Recently Completed stays at 5.
->
-> Boundaries
 
 ## Post-run state and diffs
 
