@@ -4,13 +4,21 @@
 
 ## Ready to Land
 
+- [ ] T-022 — Update templates and write the v0.1 to v0.2 migration guide
+  - Owner: valen
+  - Agent: cursor/t-022-v02-templates-migration
+  - Scope: `assets/templates/specs.md`, `assets/templates/todo.md`, `assets/templates/decisions.md`, `assets/templates/handoff.md`, `assets/templates/archive-index.md`, `references/migration-v0.1-to-v0.2.md`, `README.md`, `SKILL.md`, `references/document-contracts.md`, `.csdd/todo.md`
+  - Target: main
+  - Base: `3f198f6a8ebf4571b1bbaf952228b8677d37bd28`
+  - Updated: 2026-07-21
+  - Issue: #6
+  - Depends on: T-018, T-019, T-020, T-021
+  - Landing: branch `design/t-022-v02-templates-migration` → review → PR → merge to `main`
+  - Verification: `git diff --check` clean; principal template/docs paths plus `.csdd/todo.md` changed; `assets/templates/archive-index.md` deleted (no archive template under `assets/templates/`); four primary templates match init contract (six TODO headings + `Retention: 5`, no fictional DEC/tasks/handoffs); migration guide is conservative in-place and does not create archive; README makes `/csdd init` primary; SKILL routes recognizable v0.1 to the guide with explicit intent; optional archive contract intact in protocol/document-contracts; Status/`v0.1.0`/Versioning/evals unchanged; `protocol.md` untouched.
+
 ## Blocked
 
 ## Pending
-
-- [ ] T-022 — Update templates and write the v0.1 to v0.2 migration guide
-  - Owner: valen
-  - Note: Apply accepted lifecycle, TODO, handoff, and initialization contracts. Depends on T-018 through T-021.
 
 - [ ] T-023 — Add real-world-derived v0.2 evaluation scenarios
   - Owner: valen
