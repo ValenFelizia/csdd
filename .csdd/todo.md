@@ -4,6 +4,17 @@
 
 ## Ready to Land
 
+- [ ] T-025 — Add a one-command global installation path for the CSDD skill
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: `docs/installation.md`, `evidence/t-025-installation.md`, `README.md`, `.csdd/specs.md`, `.csdd/decisions.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `061ca5e`
+  - Updated: 2026-07-22
+  - Issue: #14
+  - Landing: Branch `distribution/t-025-global-installation` pushed; open PR against `main` after review
+  - Verification: Isolated-HOME CLI add/reinstall/update/remove and project `.csdd/` preservation passed; Cursor 3.12.30 and Codex Desktop new-session discovery passed against development checkout at `~/.agents/skills/csdd` ref `7594550` (see `evidence/t-025-installation.md`)
+
 ## Blocked
 
 ## Pending

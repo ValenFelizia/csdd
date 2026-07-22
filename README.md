@@ -169,15 +169,27 @@ Obsolete claims and handoffs should not survive completed work.
 
 ## Quick start
 
-### Initialize with `/csdd init`
+### Install the skill (Codex and Cursor)
+
+Install CSDD globally with the Agent Skills CLI so Codex and Cursor can
+discover it:
+
+```bash
+npx skills add ValenFelizia/csdd --skill csdd --agent codex cursor -g -y
+```
+
+This installs the skill under `~/.agents/skills/csdd`. It does **not** create
+project `.csdd/` files. Full install, verify, update, and uninstall steps are
+in [`docs/installation.md`](docs/installation.md).
+
+### Initialize a project with `/csdd init`
 
 `/csdd init` is the primary adoption path for a repository that does not yet
 have CSDD state. It is a portable workflow name, not a guaranteed native slash
 command. Equivalent explicit skill or natural-language requests to initialize
-CSDD are sufficient.
+CSDD are sufficient. Skill installation and `/csdd init` are separate steps.
 
-Install or link this repository as a skill in your coding-agent harness, then
-ask the agent to initialize CSDD, for example:
+After the skill is installed, ask the agent to initialize CSDD, for example:
 
 ```text
 /csdd init
@@ -255,6 +267,8 @@ When completed:
 ```text
 .
 ├── SKILL.md
+├── docs/
+│   └── installation.md
 ├── assets/
 │   └── templates/
 ├── references/
@@ -269,6 +283,7 @@ When completed:
 ```
 
 - [`SKILL.md`](SKILL.md) is the operational router.
+- [`docs/installation.md`](docs/installation.md) is the global skill installation guide.
 - [`references/protocol.md`](references/protocol.md) defines the full protocol.
 - [`references/document-contracts.md`](references/document-contracts.md) defines document semantics.
 - [`references/migration-v0.1-to-v0.2.md`](references/migration-v0.1-to-v0.2.md) is the operational v0.1 → v0.2 migration guide.

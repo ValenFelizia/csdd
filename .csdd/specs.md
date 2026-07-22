@@ -51,3 +51,19 @@ The authoritative conceptual protocol is defined in:
 - Document semantics: `references/document-contracts.md`
 - Distributed project templates: `assets/templates/`
 - Runtime project state: `.csdd/`
+
+## Distribution (non-normative for protocol semantics)
+
+These distribution facts do not change the v0.2 protocol rules in
+`references/`. They describe how the skill itself is obtained.
+
+- Agent Skills (`npx skills`) is the standard distribution mechanism for the
+  CSDD skill.
+- Current explicit install targets are Codex and Cursor only.
+- The skill installs globally to the universal location `~/.agents/skills/csdd`.
+- Runtime required for execution: `SKILL.md`, `references/**`, and
+  `assets/templates/**`. The CLI may also copy additional repository files;
+  those extras are distributed but not required at runtime.
+- Installing the skill and adopting CSDD in a project (`/csdd init` creating
+  `.csdd/`) are distinct operations. Skill install/update/remove must not be
+  treated as creating or deleting project `.csdd/` state.
