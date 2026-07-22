@@ -4,6 +4,17 @@
 
 ## Ready to Land
 
+- [ ] T-026 — Add automated structural and repository validation in CI
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: `.github/workflows/validate.yml`, `scripts/validate_repository.py`, `tests/test_repository_validation.py`, `README.md`, `.csdd/specs.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `18154fd`
+  - Updated: 2026-07-22
+  - Issue: #21
+  - Landing: PR #32 against `main` from `validation/t-026-structural-ci`
+  - Verification: Local `py -3.13 -m unittest discover -s tests -v` (19 OK); `py -3.13 scripts/validate_repository.py` exit 0; `git diff --check` clean; invalid fixtures return exit ≠ 0 with `file=`/`rule=`/`expected=`; GitHub Actions workflow `CSDD validation` / job `validate` SUCCESS on PR #32 (run 29965362069)
+
 ## Blocked
 
 ## Pending

@@ -67,3 +67,17 @@ These distribution facts do not change the v0.2 protocol rules in
 - Installing the skill and adopting CSDD in a project (`/csdd init` creating
   `.csdd/`) are distinct operations. Skill install/update/remove must not be
   treated as creating or deleting project `.csdd/` state.
+
+## Structural validation (non-normative for protocol semantics)
+
+These facts describe repository tooling. They do not change the v0.2 protocol
+rules in `references/`.
+
+- The repository provides reproducible structural validation for the skill
+  package, shipped templates, and relative Markdown links.
+- CI and contributors run the same validation logic locally and in GitHub
+  Actions.
+- Validation is offline: it must not depend on network access or model output.
+- Failures identify the file, violated rule, and expected condition.
+- Passing CI does not prove harness compatibility or semantic/protocol
+  correctness; qualitative evidence remains in `evals/`.
