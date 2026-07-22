@@ -335,13 +335,73 @@ class RepositoryValidationTests(unittest.TestCase):
             diagnostics = VALIDATOR.validate_repository(root)
             self.assertEqual(diagnostics, [])
 
-    def test_broken_link_in_evals_is_ignored(self):
+    def test_broken_link_in_snapshot_dirs_is_detected(self):
+        cases = (
+            ("evals/broken.md", "evals"),
+            ("evidence/broken.md", "evidence"),
+            (".csdd/broken.md", ".csdd"),
+        )
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             build_valid_repo(root)
-            write(root / "evals" / "broken.md", "# X\n\n[y](missing.md)\n")
+            for rel, label in cases:
+                with self.subTest(dir=label):
+                    path = root / rel
+                    write(path, "# X\n\n[y](missing.md)\n")
+                    diagnostics = VALIDATOR.validate_repository(root)
+                    self.assert_has_rule(diagnostics, "links.target", rel)
+                    path.unlink()
+
+    def test_protocol_relative_url_is_ignored(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            write(
+                root / "README.md",
+                "# CSDD\n\n[CDN](//example.com/file.md)\n",
+            )
             diagnostics = VALIDATOR.validate_repository(root)
             self.assertEqual(diagnostics, [])
+            rules = {d.rule for d in diagnostics}
+            self.assertNotIn("links.escape", rules)
+            self.assertNotIn("links.target", rules)
+
+    def test_valid_reference_definition(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            write(
+                root / "README.md",
+                "# CSDD\n\n"
+                "See [protocol][proto].\n\n"
+                "[proto]: references/protocol.md\n",
+            )
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assertEqual(diagnostics, [])
+
+    def test_missing_reference_definition_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            write(
+                root / "README.md",
+                "# CSDD\n\n"
+                "See [missing][gone].\n\n"
+                "[gone]: no-such-file.md\n",
+            )
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assert_has_rule(diagnostics, "links.target", "README.md")
+
+    def test_link_escaping_repository_root(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            write(
+                root / "README.md",
+                "# CSDD\n\n[escape](../../outside.md)\n",
+            )
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assert_has_rule(diagnostics, "links.escape", "README.md")
 
 
 if __name__ == "__main__":

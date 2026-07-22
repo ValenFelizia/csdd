@@ -62,9 +62,6 @@ REF_DEF_RE = re.compile(
 FENCE_RE = re.compile(r"^(```|~~~)")
 HEADING_RE = re.compile(r"^(#{1,6})[ \t]+(.+?)\s*$")
 
-# Link scan covers shipped docs/runtime only (not project ops / eval evidence).
-LINK_SKIP_TOP_LEVEL = frozenset({".csdd", "evals", "evidence"})
-
 
 @dataclass(frozen=True)
 class Diagnostic:
@@ -122,8 +119,6 @@ def iter_markdown_files(root: Path) -> list[Path]:
             continue
         parts = path.resolve().relative_to(root.resolve()).parts
         if ".git" in parts:
-            continue
-        if parts and parts[0] in LINK_SKIP_TOP_LEVEL:
             continue
         files.append(path)
     return files
@@ -591,6 +586,9 @@ def is_external_or_ignored_url(url: str) -> bool:
     if url.startswith("#"):
         return False
     parsed = urlparse(url)
+    # Protocol-relative and other authority-bearing URLs (e.g. //cdn.example/x).
+    if parsed.netloc:
+        return True
     if parsed.scheme in ("http", "https", "mailto", "ftp", "ftps", "data"):
         return True
     if parsed.scheme and parsed.scheme not in ("", "file"):

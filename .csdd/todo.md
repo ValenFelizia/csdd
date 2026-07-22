@@ -10,7 +10,7 @@
   - Base: `18154fd`
   - Updated: 2026-07-22
   - Issue: #21
-  - Note: Local validation approved (`unittest` + `validate_repository.py`). CI pending a PR run. Next safe action: commit/push and open PR to execute the workflow.
+  - Note: Checkpoint published on `validation/t-026-structural-ci`; local validation approved. Real GitHub Actions CI still pending a PR. Next safe action: open PR to execute the workflow.
 
 ## Ready to Land
 
