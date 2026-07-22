@@ -2,6 +2,8 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-026 — Add automated structural and repository validation in CI
   - Owner: valen
   - Agent: cursor-grok-4.5
@@ -10,9 +12,8 @@
   - Base: `18154fd`
   - Updated: 2026-07-22
   - Issue: #21
-  - Note: Checkpoint published on `validation/t-026-structural-ci`; local validation approved. Real GitHub Actions CI still pending a PR. Next safe action: open PR to execute the workflow.
-
-## Ready to Land
+  - Landing: PR #32 against `main` from `validation/t-026-structural-ci`
+  - Verification: Local `py -3.13 -m unittest discover -s tests -v` (19 OK); `py -3.13 scripts/validate_repository.py` exit 0; `git diff --check` clean; invalid fixtures return exit ≠ 0 with `file=`/`rule=`/`expected=`; GitHub Actions workflow `CSDD validation` / job `validate` SUCCESS on PR #32 (run 29965362069)
 
 ## Blocked
 
