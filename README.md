@@ -25,6 +25,9 @@ adoption workflow, v0.2 primary templates plus a v0.1 → v0.2 migration guide,
 and real-world-derived evaluation scenarios 06–08. Field Report 001 is the
 evidence source for the milestone.
 
+Dimensional harness compatibility notes:
+[`docs/compatibility.md`](docs/compatibility.md).
+
 ## Core documents
 
 A CSDD-enabled repository uses a canonical `.csdd/` directory with four
@@ -268,7 +271,8 @@ When completed:
 .
 ├── SKILL.md
 ├── docs/
-│   └── installation.md
+│   ├── installation.md
+│   └── compatibility.md
 ├── assets/
 │   └── templates/
 ├── references/
@@ -284,6 +288,7 @@ When completed:
 
 - [`SKILL.md`](SKILL.md) is the operational router.
 - [`docs/installation.md`](docs/installation.md) is the global skill installation guide.
+- [`docs/compatibility.md`](docs/compatibility.md) is the canonical dimensional compatibility matrix.
 - [`references/protocol.md`](references/protocol.md) defines the full protocol.
 - [`references/document-contracts.md`](references/document-contracts.md) defines document semantics.
 - [`references/migration-v0.1-to-v0.2.md`](references/migration-v0.1-to-v0.2.md) is the operational v0.1 → v0.2 migration guide.

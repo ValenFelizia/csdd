@@ -2,6 +2,16 @@
 
 ## In Progress
 
+- [ ] T-027 — Publish an evidence-backed agent compatibility matrix
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: `docs/compatibility.md`, `evidence/t-027-compatibility.md`, `README.md`, `.csdd/specs.md`, `.csdd/todo.md`
+  - Target: main
+  - Base: `e2c91873f18acb22b6f9ac7ee19056e8223dd6d1`
+  - Updated: 2026-07-22
+  - Issue: #24
+  - Checkpoint: Documentary matrix and T-027 test procedure drafted; new manual campaign still pending. Next safe action: review the contract, publish this checkpoint, then execute only the frozen tests.
+
 ## Ready to Land
 
 ## Blocked
