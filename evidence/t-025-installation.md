@@ -243,40 +243,59 @@ Documentary points used in the installation guide:
   those targets are claimed.
 - No `.skillignore` / install-time filter is offered by the current CLI.
 
-## C. Manual smoke tests pending (new sessions)
+## C. Manual smoke tests (new sessions)
 
-Do **not** treat these as passed. Fill in after the human runs them against
-the intended install (clean CLI install on a normal profile, or the
-development checkout used only when that distinction is recorded).
+These smoke tests verify **discovery in a new client session** against the
+**development checkout** already present at the global skills path
+(`~/.agents/skills/csdd`). They are **not** clean CLI
+add/reinstall/update/remove evidence; that lifecycle was exercised separately
+in an isolated HOME (section A).
+
+Both runs used CSDD ref `7594550a2dbf83d3690b7b7e7de9c2c6682d6599`, global
+scope, source mode: development checkout.
 
 ### C.1 Cursor — new session discovery
 
 | Field | Value |
 | --- | --- |
-| Client version | _pending_ |
-| Date | _pending_ |
-| Test location | _pending_ (clean install path vs development checkout at `~/.agents/skills/csdd`) |
-| Result | _pending_ (pass / fail) |
-| Observations | _pending_ |
+| Client version | `3.12.30` (`63a2996a10d9e476b6c28e951dd7691d9c0cf480`, x64) |
+| Date | 2026-07-22 |
+| CSDD ref | `7594550a2dbf83d3690b7b7e7de9c2c6682d6599` |
+| Scope | global |
+| Source mode | development checkout at `~/.agents/skills/csdd` |
+| Result | **pass** |
 
-Procedure:
+Observations:
 
-1. Ensure `csdd` is visible via `npx skills list -g` and required files exist.
-2. Start a **new** Cursor chat/session (do not reuse a session started before install).
-3. Confirm the skill is discoverable/attachable as `csdd`.
-4. Optionally invoke CSDD against a repository with existing `.csdd/` state.
+- Skill discovered at `C:\Users\Valen\.agents\skills\csdd\SKILL.md`.
+- Name: `csdd`.
+- Main heading: “Collaborative Spec-Driven Development”.
+- Checkout HEAD matched the tested CSDD ref.
+- Loaded from the user global skills scope, not from the workspace.
+- The Study Tracker project was not CSDD-aware (no `.csdd/`).
+- Harness listing truncated the description to
+  “Apply Collaborative Spec-Driven De...”.
+- No load errors or unexpected behavior.
 
 ### C.2 Codex — new session discovery
 
 | Field | Value |
 | --- | --- |
-| Client version | _pending_ |
-| Date | _pending_ |
-| Test location | _pending_ (clean install path vs development checkout at `~/.agents/skills/csdd`) |
-| Result | _pending_ (pass / fail) |
-| Observations | _pending_ |
+| Client / surface | Codex Desktop |
+| Client version | Not reported by harness |
+| Date | 2026-07-22 |
+| CSDD ref | `7594550a2dbf83d3690b7b7e7de9c2c6682d6599` |
+| Scope | global |
+| Source mode | development checkout at `~/.agents/skills/csdd` |
+| Result | **pass** |
 
-Procedure: same as Cursor, in a new Codex session.
+Observations:
+
+- Skill `csdd` loaded correctly.
+- Main heading: “Collaborative Spec-Driven Development”.
+- Workspace was not CSDD-aware (`.csdd/` absent).
+- The harness shell exposed a sandbox path instead of the configured workspace
+  path. Recorded as an environment observation, not a CSDD discovery failure.
 
 ## D. Not executed / out of scope here
 
@@ -287,22 +306,23 @@ Procedure: same as Cursor, in a new Codex session.
 | Install of unpublished branch tip from GitHub | Not applicable — T-025 docs not yet on `main` |
 | Claiming harnesses beyond Codex and Cursor | Out of scope for T-025 |
 
-## E. Verdict for automated/CLI evidence
+## E. Verdict
 
 | Check | Result |
 | --- | --- |
-| One-command global install (Codex + Cursor) | Pass (isolated HOME) |
-| Managed path `~/.agents/skills/csdd` | Pass |
-| Runtime files present | Pass |
-| Full snapshot minus `.git` distributed | Pass (observed) |
-| Reinstall without duplicates | Pass |
-| Update when already current | Pass |
-| Uninstall removes managed copy | Pass |
-| Project `.csdd/` preserved | Pass |
+| One-command global install (Codex + Cursor) | Pass (isolated HOME, section A) |
+| Managed path `~/.agents/skills/csdd` | Pass (isolated HOME) |
+| Runtime files present | Pass (isolated HOME) |
+| Full snapshot minus `.git` distributed | Pass (isolated HOME) |
+| Reinstall without duplicates | Pass (isolated HOME) |
+| Update when already current | Pass (isolated HOME) |
+| Uninstall removes managed copy | Pass (isolated HOME) |
+| Project `.csdd/` preserved | Pass (isolated HOME) |
 | Dev checkout not mutated by CLI tests | Pass |
-| New Cursor session discovery | **Pending** (section C.1) |
-| New Codex session discovery | **Pending** (section C.2) |
+| New Cursor session discovery | Pass (section C.1; development checkout on global path) |
+| New Codex session discovery | Pass (section C.2; development checkout on global path) |
 
-Overall: CLI contract evidence is sufficient to document the installation
-path. T-025 remains **In Progress** until both manual session smoke tests are
-recorded as satisfactory.
+Overall: CLI lifecycle evidence (isolated HOME) and new-session discovery
+smoke tests (development checkout at the global path, ref `7594550`) are both
+recorded as satisfactory. Session discovery here is **not** evidence of a
+clean CLI install on the current user profile.
