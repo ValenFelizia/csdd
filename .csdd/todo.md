@@ -4,17 +4,6 @@
 
 ## Ready to Land
 
-- [ ] T-026 — Add automated structural and repository validation in CI
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: `.github/workflows/validate.yml`, `scripts/validate_repository.py`, `tests/test_repository_validation.py`, `README.md`, `.csdd/specs.md`, `.csdd/todo.md`
-  - Target: `main`
-  - Base: `18154fd`
-  - Updated: 2026-07-22
-  - Issue: #21
-  - Landing: PR #32 against `main` from `validation/t-026-structural-ci`
-  - Verification: Local `py -3.13 -m unittest discover -s tests -v` (19 OK); `py -3.13 scripts/validate_repository.py` exit 0; `git diff --check` clean; invalid fixtures return exit ≠ 0 with `file=`/`rule=`/`expected=`; GitHub Actions workflow `CSDD validation` / job `validate` SUCCESS on PR #32 (run 29965362069)
-
 ## Blocked
 
 ## Pending
@@ -24,6 +13,15 @@
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-026 — Add automated structural and repository validation in CI
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: released
+  - Updated: 2026-07-22
+  - Issue: #21
+  - Landed: PR #32 @ `d016d23`
+  - Note: Offline stdlib validator, unittest suite, and least-privilege GitHub Actions workflow landed; CI SUCCESS on PR #32.
 
 - [x] T-025 — Add a one-command global installation path for the CSDD skill
   - Owner: valen
@@ -56,10 +54,3 @@ Retention: 5
   - Updated: 2026-07-21
   - Landed: PR #17 @ `39f0f82`
   - Note: Materialized v0.2 primary templates, removed archive template, and added conservative v0.1 → v0.2 migration guide with README/SKILL routing.
-
-- [x] T-021 — Add the `/csdd init` adoption workflow
-  - Owner: valen
-  - Scope: released
-  - Updated: 2026-07-20
-  - Landed: PR #16 @ `5c3efc2`
-  - Note: Instruction-first `/csdd init` adoption workflow with mutually exclusive destination classification, pre-write revalidation, and failure-versus-success separation.
