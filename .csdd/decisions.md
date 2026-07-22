@@ -100,3 +100,48 @@ references.
 Embedding the complete protocol in `SKILL.md` was rejected because it would
 raise context cost for trivial and local work and duplicate authoritative
 material.
+
+## DEC-005 — Distribute CSDD through the standard Agent Skills CLI
+
+- Status: accepted
+- Date: 2026-07-22
+
+### Context
+
+T-025 / issue #14 needs a one-command global installation path for the CSDD
+skill without inventing packaging infrastructure. The Agent Skills CLI
+(`npx skills`, currently `1.5.20`) already installs from GitHub into
+`~/.agents/skills`, and Codex and Cursor both consume that universal location.
+The CLI copies the versioned repository snapshot excluding `.git` and does not
+currently offer `.skillignore` or an equivalent install-time filter.
+
+### Decision
+
+- Adopt the standard Agent Skills ecosystem as the distribution path.
+- Do not create a custom installer, registry, manifest, or bootstrap for v0.2.1.
+- Keep `SKILL.md` at the repository root for now.
+- Accept that the CLI distributes the full snapshot (minus `.git`), including
+  files beyond the runtime set (`SKILL.md`, `references/**`,
+  `assets/templates/**`).
+- Reconsider repository layout or filtering only if a real cost appears or the
+  CLI gains official filtering support.
+
+### Rationale
+
+The smallest durable path is to document and verify the existing CLI contract
+for Codex and Cursor rather than maintain parallel packaging. Explicit
+`--agent codex cursor` avoids unintended installs to other detected agents
+while still using one shared global copy.
+
+### Consequences
+
+Installation docs must separate skill install from `/csdd init`, warn against
+hand-editing the managed copy, and record evidence without claiming untested
+harnesses. Development checkouts that live at `~/.agents/skills/csdd` must not
+be overwritten casually by `skills add` / `update` / `remove`.
+
+### Alternatives Considered
+
+A custom installer or trimmed package tree was rejected for now: it adds
+maintenance cost without fixing a demonstrated blocker, and the CLI already
+provides the required happy path.
