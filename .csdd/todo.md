@@ -4,17 +4,6 @@
 
 ## Ready to Land
 
-- [ ] T-025 — Add a one-command global installation path for the CSDD skill
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: `docs/installation.md`, `evidence/t-025-installation.md`, `README.md`, `.csdd/specs.md`, `.csdd/decisions.md`, `.csdd/todo.md`
-  - Target: `main`
-  - Base: `061ca5e`
-  - Updated: 2026-07-22
-  - Issue: #14
-  - Landing: Branch `distribution/t-025-global-installation` pushed; open PR against `main` after review
-  - Verification: Isolated-HOME CLI add/reinstall/update/remove and project `.csdd/` preservation passed; Cursor 3.12.30 and Codex Desktop new-session discovery passed against development checkout at `~/.agents/skills/csdd` ref `7594550` (see `evidence/t-025-installation.md`)
-
 ## Blocked
 
 ## Pending
@@ -24,6 +13,15 @@
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-025 — Add a one-command global installation path for the CSDD skill
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: released
+  - Updated: 2026-07-22
+  - Issue: #14
+  - Landed: PR #31 @ `8ed582b`
+  - Note: Global Agent Skills install path for Codex/Cursor documented and verified; evidence in `evidence/t-025-installation.md`.
 
 - [x] T-024 — Prepare and release CSDD v0.2.0
   - Owner: valen
@@ -54,10 +52,3 @@ Retention: 5
   - Updated: 2026-07-20
   - Landed: PR #16 @ `5c3efc2`
   - Note: Instruction-first `/csdd init` adoption workflow with mutually exclusive destination classification, pre-write revalidation, and failure-versus-success separation.
-
-- [x] T-020 — Make handoffs boundary-driven
-  - Owner: valen
-  - Scope: released
-  - Updated: 2026-07-19
-  - Landed: PR #13 @ `d0883fb`
-  - Note: Boundary-driven handoffs: boundary + concrete risk, replaceable snapshots, remove-or-replace consumption.
