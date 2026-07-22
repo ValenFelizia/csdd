@@ -2,6 +2,39 @@
 
 All notable changes to CSDD will be documented in this file.
 
+## [0.2.0] — 2026-07-21
+
+### Added
+
+- Real-world Field Report 001 as the evidence source for the v0.2 milestone.
+- Git-aware task lifecycle with truthful landing semantics (`Landing:`,
+  `Verification:`, and `Landed:` only when reachable from `Target`).
+- Six canonical TODO states, Ready-to-Land fields, and bounded Recently
+  Completed retention.
+- Boundary-driven, replaceable handoffs that exist only when a real execution
+  boundary has concrete resumption risk.
+- Explicit Absent-only `/csdd init` adoption workflow with mutually exclusive
+  destination classification and pre-write revalidation.
+- v0.2 primary templates (`specs.md`, `todo.md`, `decisions.md`, `handoff.md`)
+  and a conservative v0.1 → v0.2 migration guide.
+- Real-world-derived evaluation scenarios 06–08 covering Git divergence and
+  live collision, landing/TODO/handoff truthfulness, and existing-repository
+  initialization.
+
+### Validated
+
+- Scenarios 06–08 Run A all passed.
+- No critical failures were found.
+- Run B was not warranted under the T-023 campaign rule.
+
+### Known limitations
+
+- Evaluations remain manual.
+- Harness and model coverage remains limited.
+- Explicit invocation has more evidence than implicit activation.
+- CSDD does not provide distributed locking, shared runtime memory, or
+  automatic synchronization.
+
 ## [0.1.0] — 2026-07-12
 
 ### Added
@@ -44,4 +77,3 @@ All notable changes to CSDD will be documented in this file.
 - Harness and model coverage is limited.
 - Explicit invocation has greater coverage than implicit activation.
 - CSDD does not provide global locks or shared runtime memory.
-

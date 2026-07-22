@@ -4,13 +4,21 @@
 
 ## Ready to Land
 
+- [ ] T-024 — Prepare and release CSDD v0.2.0
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: README.md, changelog.md, .csdd/todo.md
+  - Target: main
+  - Base: 48392103334a0eacfbd401b577ffc3eb385825ed
+  - Updated: 2026-07-21
+  - Issue: #8
+  - Note: Release only after migration documentation and v0.2 evaluations are complete.
+  - Landing: release/t-024-v0.2.0 → main; PR pending
+  - Verification: README/changelog aligned to v0.2.0; consistency audit passed (templates, migration link, evals 06–08 Run A). Tag and GitHub Release remain explicitly post-merge.
+
 ## Blocked
 
 ## Pending
-
-- [ ] T-024 — Prepare and release CSDD v0.2.0
-  - Owner: valen
-  - Note: Release only after migration documentation and v0.2 evaluations are complete.
 
 ## Deferred
 
