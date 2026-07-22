@@ -2,6 +2,16 @@
 
 ## In Progress
 
+- [ ] T-026 — Add automated structural and repository validation in CI
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: `.github/workflows/validate.yml`, `scripts/validate_repository.py`, `tests/test_repository_validation.py`, `README.md`, `.csdd/specs.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `18154fd`
+  - Updated: 2026-07-22
+  - Issue: #21
+  - Note: Local validation approved (`unittest` + `validate_repository.py`). CI pending a PR run. Next safe action: commit/push and open PR to execute the workflow.
+
 ## Ready to Land
 
 ## Blocked

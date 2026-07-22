@@ -311,6 +311,22 @@ under the campaign rule.
 See [`evals/results.md`](evals/results.md) for the complete matrix and
 limitations.
 
+## Structural validation
+
+Run the same offline checks locally that CI runs:
+
+```bash
+python -m unittest discover -s tests -v
+python scripts/validate_repository.py
+```
+
+Structural validation verifies machine-checkable repository contracts such as
+`SKILL.md` frontmatter, the T-025 runtime file boundary, the four primary
+templates, canonical `todo.md` template headings and Retention, and relative
+Markdown links. It is deterministic and does not use the network or model
+output. Passing these checks does not replace the qualitative evaluations in
+[`evals/`](evals).
+
 ## Non-goals and limitations
 
 CSDD is not:
