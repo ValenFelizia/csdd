@@ -18,9 +18,12 @@ what is active, what was decided, and what remains unfinished.
 
 CSDD is experimental.
 
-The `v0.1.0` release defines the initial protocol, document contracts,
-templates, adaptive hydration rules, coordination semantics, and manual
-evaluation suite.
+The current release is `v0.2.0`. It builds on the `v0.1.0` protocol foundation
+with a Git-aware task lifecycle, six canonical TODO states and bounded
+retention, boundary-driven replaceable handoffs, an Absent-only `/csdd init`
+adoption workflow, v0.2 primary templates plus a v0.1 → v0.2 migration guide,
+and real-world-derived evaluation scenarios 06–08. Field Report 001 is the
+evidence source for the milestone.
 
 ## Core documents
 
@@ -276,15 +279,19 @@ When completed:
 
 The manual evaluation suite covers:
 
-- trivial fast-path execution;
-- session resume from durable state;
-- overlapping write scopes;
-- evidence-based stale-claim reconciliation;
-- phase closure and semantic archival;
+- scenarios 01–05 as historical evaluations: trivial fast path, session resume,
+  overlapping write scopes, evidence-based stale-claim reconciliation, and
+  phase closure with semantic archival;
+- scenario 06: Git divergence and live collision;
+- scenario 07: landing truthfulness, TODO retention, and handoff cleanup;
+- scenario 08: existing-repository initialization.
 
-The suite found protocol defects involving human ownership, completed scopes,
-historical agent metadata, and duplicated durable truth. The rules were updated
-and the same fixtures were rerun successfully.
+Scenarios 01–05 found protocol defects involving human ownership, completed
+scopes, historical agent metadata, and duplicated durable truth. The rules were
+updated and the same fixtures were rerun successfully.
+
+Scenarios 06–08 Run A passed with no critical failures. Run B was not warranted
+under the campaign rule.
 
 See [`evals/results.md`](evals/results.md) for the complete matrix and
 limitations.
