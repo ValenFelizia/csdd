@@ -4,18 +4,6 @@
 
 ## Ready to Land
 
-- [ ] T-024 — Prepare and release CSDD v0.2.0
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: README.md, changelog.md, .csdd/todo.md
-  - Target: main
-  - Base: 48392103334a0eacfbd401b577ffc3eb385825ed
-  - Updated: 2026-07-21
-  - Issue: #8
-  - Note: Release only after migration documentation and v0.2 evaluations are complete.
-  - Landing: release/t-024-v0.2.0 → main; PR pending
-  - Verification: README/changelog aligned to v0.2.0; consistency audit passed (templates, migration link, evals 06–08 Run A). Tag and GitHub Release remain explicitly post-merge.
-
 ## Blocked
 
 ## Pending
@@ -25,6 +13,15 @@
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-024 — Prepare and release CSDD v0.2.0
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: released
+  - Updated: 2026-07-21
+  - Issue: #8
+  - Landed: PR #22 @ `9bf9609`
+  - Note: Published v0.2.0 from `9bf9609` at https://github.com/ValenFelizia/csdd/releases/tag/v0.2.0; scenarios 06–08 Run A passed with no critical failures; no remaining release blockers.
 
 - [x] T-023 — Add real-world-derived v0.2 evaluation scenarios
   - Owner: valen
@@ -53,9 +50,3 @@ Retention: 5
   - Updated: 2026-07-19
   - Landed: PR #13 @ `d0883fb`
   - Note: Boundary-driven handoffs: boundary + concrete risk, replaceable snapshots, remove-or-replace consumption.
-
-- [x] T-019 — Standardize TODO states, grouping, and retention
-  - Owner: valen
-  - Updated: 2026-07-18
-  - Landed: PR #12 @ `7fb098c`
-  - Note: Standardized canonical TODO states, grouping, Deferred behavior, Ready to Land presentation, and bounded retention.
