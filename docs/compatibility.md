@@ -40,10 +40,16 @@ Initial support set for v0.2.1 readiness: **Codex** and **Cursor** only. Other
 harnesses are out of scope here unless listed as **not tested** with no
 positive claim.
 
-Cells below reflect **inherited evidence only** at the T-027 documentary
-checkpoint (plus contract corrections). They are not a new manual campaign.
-Procedure, frozen fixtures, and evaluation rules live in
+Cells below reflect the **T-027 manual campaign** (4/4 PASS) plus retained
+inherited **partial** install/discovery evidence. Procedure, frozen fixtures,
+and evaluation rules live in
 [`evidence/t-027-compatibility.md`](../evidence/t-027-compatibility.md).
+
+Shared campaign provenance (behavioral cells): CSDD ref
+`d2640af0641addb656cc8110fb445cae1b4694d3`; skills CLI `1.5.20`; skill source
+mode `development checkout`; profile mode `live user profile`; OS Windows 11;
+model `not recorded`; Cursor `3.12.30`; Codex harness version
+`not user-visible`.
 
 ### Shared provenance keys
 
@@ -73,25 +79,25 @@ part of the reason for partial.
 
 | Dimension | Status | Evidence / notes |
 | --- | --- | --- |
-| Global install via Agent Skills CLI | **partial** | H1 shows the CLI `add`/`update`/`remove` lifecycle for `--agent codex cursor` into a shared managed path inside an **isolated profile** ([T-025 §A](../evidence/t-025-installation.md#a-evidence-executed-in-this-environment)). Agents were not linked there. This does **not** prove a CLI-managed copy on the path/link consumed by live Codex → remains partial. |
+| Global install via Agent Skills CLI | **partial** | H1 shows the CLI `add`/`update`/`remove` lifecycle for `--agent codex cursor` into a shared managed path inside an **isolated profile** ([T-025 §A](../evidence/t-025-installation.md#a-evidence-executed-in-this-environment)). Agents were not linked there. T-027 campaign did **not** prove CLI-managed copy → live Codex consumption → remains partial. |
 | Discovery in a new session | **partial** | New Codex Desktop session discovered `csdd` from a **development checkout** on the live global path ([T-025 §C.2](../evidence/t-025-installation.md#c-manual-smoke-tests-new-sessions)). Skill source mode: development checkout; profile mode: live user profile. Client version: `not recorded`. Not CLI-managed → discovery. |
-| Explicit invocation | **not tested** | No Codex record of an explicit `/csdd` / `$csdd` / equivalent workflow run under T-027 provenance. |
-| Implicit activation | **not tested** | No isolated new-session run of the frozen implicit prompt. Not a release blocker. |
-| `/csdd init` or equivalent natural request | **not tested** | No Codex init run recorded. Scenario 08 Run A is Cursor-only. |
-| Representative workflow in an existing CSDD-aware project | **not tested** | No Codex existing-project workflow run recorded under T-027 dimensions. |
-| Relevant Git / branch / worktree visibility | **not tested** | No Codex-specific Git/worktree visibility evidence recorded for this matrix. |
+| Explicit invocation | **verified** | Frozen `$csdd` / `$csdd init` succeeded under T-027 provenance: [Fixture A](../evals/runs/t027-02-codex-fixture-a.md), [Fixture B](../evals/runs/t027-04-codex-fixture-b.md). |
+| Implicit activation | **not tested** | Frozen implicit prompt not executed. Not a release blocker. |
+| `/csdd init` or equivalent natural request | **verified** | Fixture A Absent-only `$csdd init` PASS ([t027-02](../evals/runs/t027-02-codex-fixture-a.md)). |
+| Representative workflow in an existing CSDD-aware project | **verified** | Fixture B T-901 workflow PASS ([t027-04](../evals/runs/t027-04-codex-fixture-b.md)). |
+| Relevant Git / branch / worktree visibility | **verified** | Fixture A Git root/status and Fixture B feature branch + parallel `main` worktree observed ([t027-02](../evals/runs/t027-02-codex-fixture-a.md), [t027-04](../evals/runs/t027-04-codex-fixture-b.md)). |
 
 ### Cursor
 
 | Dimension | Status | Evidence / notes |
 | --- | --- | --- |
-| Global install via Agent Skills CLI | **partial** | Same H1 isolated-profile CLI lifecycle as Codex ([T-025 §A](../evidence/t-025-installation.md#a-evidence-executed-in-this-environment)). Shared path mechanics proven; live Cursor path/link consumption of a CLI-managed copy not shown (dev checkout occupies the live global path) → partial. |
+| Global install via Agent Skills CLI | **partial** | Same H1 isolated-profile CLI lifecycle as Codex ([T-025 §A](../evidence/t-025-installation.md#a-evidence-executed-in-this-environment)). Shared path mechanics proven; live Cursor path/link consumption of a CLI-managed copy not shown (dev checkout occupies the live global path). T-027 campaign did not close that gap → partial. |
 | Discovery in a new session | **partial** | New Cursor session discovered `csdd` from a **development checkout** on the live global path ([T-025 §C.1](../evidence/t-025-installation.md#c-manual-smoke-tests-new-sessions)). Client `3.12.30`. Skill source mode: development checkout; profile mode: live user profile. Not CLI-managed → discovery. |
-| Explicit invocation | **partial** | Explicit `/csdd` used successfully in Cursor evals (e.g. [Scenario 06 Run A](../evals/runs/06-git-divergence-a.md), skill `65b7ef6`). OS / client / installer / skill source mode / profile mode: `not recorded`. Narrow historical claim only; not re-run under current `main` / CLI-managed install for T-027. |
-| Implicit activation | **not tested** | No isolated new-session run of the frozen implicit prompt. Not a release blocker. |
-| `/csdd init` or equivalent natural request | **partial** | Explicit `/csdd init` PASS in Cursor ([Scenario 08 Run A](../evals/runs/08-existing-repo-init-a.md), skill `65b7ef6`, 2026-07-21). OS / client / installer / skill source mode / profile mode: `not recorded`. Historical eval evidence; not a new T-027 run and not CLI-managed end-to-end. |
-| Representative workflow in an existing CSDD-aware project | **partial** | Cursor Scenario 06 Run A exercised Git-aware resume/stop on a CSDD-aware fixture ([run](../evals/runs/06-git-divergence-a.md)). Same `not recorded` provenance gaps as other historical cells; not revalidated on Fixture B / current ref. |
-| Relevant Git / branch / worktree visibility | **partial** | Cursor Scenario 06 Run A observed branch/worktree/Target refresh behavior ([run](../evals/runs/06-git-divergence-a.md); also earlier stale-claim Git inspection in [Scenario 04](../evals/runs/04-stale-claim.md)). Provenance gaps `not recorded` as in H5; does not prove every Git surface or Codex parity. |
+| Explicit invocation | **verified** | Frozen `/csdd` / `/csdd init` succeeded under T-027 provenance: [Fixture A](../evals/runs/t027-01-cursor-fixture-a.md), [Fixture B](../evals/runs/t027-03-cursor-fixture-b.md). |
+| Implicit activation | **not tested** | Frozen implicit prompt not executed. Not a release blocker. |
+| `/csdd init` or equivalent natural request | **verified** | Fixture A Absent-only `/csdd init` PASS ([t027-01](../evals/runs/t027-01-cursor-fixture-a.md)). |
+| Representative workflow in an existing CSDD-aware project | **verified** | Fixture B T-901 workflow PASS ([t027-03](../evals/runs/t027-03-cursor-fixture-b.md)). |
+| Relevant Git / branch / worktree visibility | **verified** | Fixture A Git root/status and Fixture B feature branch + parallel `main` worktree observed ([t027-01](../evals/runs/t027-01-cursor-fixture-a.md), [t027-03](../evals/runs/t027-03-cursor-fixture-b.md)). |
 
 ## How to read the matrix
 
@@ -115,10 +121,13 @@ part of the reason for partial.
   that Codex or Cursor consumed that managed copy.
 - Structural validation / CI ([T-026](https://github.com/ValenFelizia/csdd/issues/21))
   checks repository contracts offline. Green CI is not harness compatibility.
-- Historical eval runs use older skill commits, explicit invocation, and
-  incomplete provenance. They must not be presented as a fresh T-027 campaign.
+- Historical eval runs (pre-campaign) use older skill commits and incomplete
+  provenance; the T-027 campaign records supersede them for behavioral cells
+  marked **verified** above.
 - Implicit activation is optional evidence for v0.2.1 and is not a release
   blocker when left **not tested**.
+- Model strings were `not recorded` for campaign subject sessions; Codex
+  harness version was `not user-visible`.
 
 ## Reverification triggers
 

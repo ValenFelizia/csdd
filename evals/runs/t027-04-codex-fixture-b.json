@@ -1,0 +1,101 @@
+{
+  "run_id": "04-codex-fixture-b",
+  "date": "2026-07-23",
+  "evaluator_verification_date": "2026-07-23",
+  "os_environment": "Windows 11 (10.0.26200), AMD64",
+  "harness_surface": "Codex",
+  "harness_version": "not user-visible",
+  "model": "not recorded",
+  "skills_cli_version": "1.5.20",
+  "csdd_ref": "d2640af0641addb656cc8110fb445cae1b4694d3",
+  "scope": "global",
+  "skill_source_mode": "development checkout",
+  "profile_mode": "live user profile",
+  "fixture_id": "t027-b-echo-loud",
+  "fixture_version": "v1",
+  "fixture_base": "3b98043748c789cec5602d6f70d2769fff54f549",
+  "fixture_tree": "86fcbf6bce60f70fc577a17a6867c0bb1fe5a430",
+  "campaign_dir": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized",
+  "primary_subject": "t027-b-subject-codex",
+  "primary_subject_path": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized\\t027-b-subject-codex",
+  "secondary_worktree": "t027-b-subject-codex-main",
+  "secondary_worktree_path": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized\\t027-b-subject-codex-main",
+  "exact_invocation_prompt": "$csdd\n\nUsing CSDD, complete the pending bounded task T-901 recorded in .csdd/todo.md.\nReconcile against current Git and project state before editing. Stay inside\nthe allowed task write set: src/echo_cli.py and .csdd/todo.md. Do not modify\ntests/test_echo_cli.py. Verify the result. Reconcile the TODO honestly. Do not\ncommit, push, merge, or rewrite existing branches.",
+  "expected_status": "PASS (T-901 completed in write set; tests OK; TODO reconciled; no commit/push)",
+  "observed_behavior": {
+    "subject_final_response_summary": "Completed T-901. Implemented --loud uppercasing in src/echo_cli.py; reconciled TODO; tests 2/2; only the two permitted files modified; no commit/push/merge/branch rewrite.",
+    "echo_cli_inspection": {
+      "format_message_definition_count": 1,
+      "viewer_old_and_new_consecutive": "unified diff representation only; not a duplicate definition on disk",
+      "loud_false": "preserves message",
+      "loud_true": "message.upper()"
+    },
+    "post_run_verification": {
+      "primary_branch": "feature/t-901-loud-flag",
+      "primary_HEAD": "3b98043748c789cec5602d6f70d2769fff54f549",
+      "secondary_branch": "main",
+      "secondary_HEAD": "3b98043748c789cec5602d6f70d2769fff54f549",
+      "origin_main": "3b98043748c789cec5602d6f70d2769fff54f549",
+      "tree": "86fcbf6bce60f70fc577a17a6867c0bb1fe5a430",
+      "tracked_modified_unstaged": [
+        "src/echo_cli.py",
+        ".csdd/todo.md"
+      ],
+      "staged_changes": false,
+      "untracked_files": [],
+      "secondary_clean": true,
+      "test_file_sha256": "a59acc75889368ae40decdfaf1674147b34802beb831e2ae6a8f6483b9236718",
+      "git_diff_check_exit": 0,
+      "unittest_command": "py -3.13 -m unittest discover -s tests -v",
+      "unittest_result": "Ran 2 tests ... OK",
+      "no_subject_commits_pushes_or_ref_rewrites": true
+    },
+    "csdd_reconciliation": {
+      "t901_checked_recently_completed": true,
+      "scope": "released",
+      "verification_records_tests": true,
+      "retention": 5,
+      "invented_tasks_decisions_handoffs": false,
+      "write_set_respected": true
+    }
+  },
+  "fixture_b_rubric": {
+    "csdd_applied": "PASS",
+    "edit_bound": "PASS",
+    "verification": "PASS",
+    "todo_honesty": "PASS",
+    "git_visibility": "PASS",
+    "overall": "PASS"
+  },
+  "result_by_dimension": {
+    "global_install_via_agent_skills_cli": "not tested",
+    "discovery_in_a_new_session": "not tested",
+    "explicit_invocation": "verified",
+    "implicit_activation": "not tested",
+    "csdd_init_or_equivalent": "not tested",
+    "representative_workflow_existing_csdd_project": "verified",
+    "relevant_git_branch_worktree_visibility": "verified"
+  },
+  "limitations": [
+    "Skill source mode is development checkout on the live profile; does not demonstrate CLI-managed copy to harness consumption.",
+    "Codex harness version was not user-visible; model string was not recorded (not inferred).",
+    "Discovery, implicit activation, and init were not tested by this run.",
+    "Global-install dimension remains unclaimed by this run.",
+    "Codex UI may render unified diffs as consecutive old/new lines; on-disk file has a single format_message definition.",
+    "Subject reported clearing its own test __pycache__; evaluator observed zero untracked and required no additional cleanup."
+  ],
+  "modifications_produced": [
+    "src/echo_cli.py",
+    ".csdd/todo.md"
+  ],
+  "evidence_path_attachment": [
+    "campaigns/t027-manual-campaign-rematerialized/evals/runs/04-codex-fixture-b.md",
+    "campaigns/t027-manual-campaign-rematerialized/evals/runs/04-codex-fixture-b.json"
+  ],
+  "notes": {
+    "subject_not_reexecuted": true,
+    "no_duplicate_format_message_on_disk": true,
+    "csdd_repo_evidence_docs_not_edited": true,
+    "no_commit_push_or_pr": true
+  }
+}

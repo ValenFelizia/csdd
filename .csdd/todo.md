@@ -2,17 +2,19 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-027 — Publish an evidence-backed agent compatibility matrix
   - Owner: valen
   - Agent: cursor-grok-4.5
-  - Scope: `docs/compatibility.md`, `evidence/t-027-compatibility.md`, `README.md`, `.csdd/specs.md`, `.csdd/todo.md`
+  - Scope: `docs/compatibility.md`, `evidence/t-027-compatibility.md`, `.csdd/todo.md`, `evals/runs/t027-01-cursor-fixture-a.md`, `evals/runs/t027-01-cursor-fixture-a.json`, `evals/runs/t027-02-codex-fixture-a.md`, `evals/runs/t027-02-codex-fixture-a.json`, `evals/runs/t027-03-cursor-fixture-b.md`, `evals/runs/t027-03-cursor-fixture-b.json`, `evals/runs/t027-04-codex-fixture-b.md`, `evals/runs/t027-04-codex-fixture-b.json`
   - Target: main
-  - Base: `e2c91873f18acb22b6f9ac7ee19056e8223dd6d1`
-  - Updated: 2026-07-22
+  - Base: `d2640af0641addb656cc8110fb445cae1b4694d3`
+  - Updated: 2026-07-23
   - Issue: #24
-  - Checkpoint: Fixture B normalized (T-901 Pending, fixed write set, single per-harness recipe); manual campaign still pending. Next safe action: review, then execute frozen Fixture A/B tests only.
-
-## Ready to Land
+  - Landing: pending commit/push/PR
+  - Verification: four T-027 campaign runs PASS (Cursor/Codex × Fixture A/B); public matrix updated consistently; local `unittest` + `validate_repository.py` + `git diff --check` expected green before land
+  - Note: Campaign 4/4 PASS under development checkout / live profile. Global install and Discovery remain **partial**; Implicit activation **not tested**. Model not recorded; Codex harness version not user-visible.
 
 ## Blocked
 

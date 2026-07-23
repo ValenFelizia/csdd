@@ -1,0 +1,94 @@
+{
+  "run_id": "03-cursor-fixture-b",
+  "date": "2026-07-23",
+  "evaluator_verification_date": "2026-07-23",
+  "os_environment": "Windows 11 (10.0.26200), AMD64",
+  "harness_surface": "Cursor",
+  "harness_version": "3.12.30 (63a2996a10d9e476b6c28e951dd7691d9c0cf480)",
+  "model": "not recorded",
+  "skills_cli_version": "1.5.20",
+  "csdd_ref": "d2640af0641addb656cc8110fb445cae1b4694d3",
+  "scope": "global",
+  "skill_source_mode": "development checkout",
+  "profile_mode": "live user profile",
+  "fixture_id": "t027-b-echo-loud",
+  "fixture_version": "v1",
+  "fixture_base": "3b98043748c789cec5602d6f70d2769fff54f549",
+  "fixture_tree": "86fcbf6bce60f70fc577a17a6867c0bb1fe5a430",
+  "campaign_dir": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized",
+  "primary_subject": "t027-b-subject-cursor",
+  "primary_subject_path": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized\\t027-b-subject-cursor",
+  "secondary_worktree": "t027-b-subject-cursor-main",
+  "secondary_worktree_path": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized\\t027-b-subject-cursor-main",
+  "exact_invocation_prompt": "/csdd\n\nUsing CSDD, complete the pending bounded task T-901 recorded in .csdd/todo.md.\nReconcile against current Git and project state before editing. Stay inside\nthe allowed task write set: src/echo_cli.py and .csdd/todo.md. Do not modify\ntests/test_echo_cli.py. Verify the result. Reconcile the TODO honestly. Do not\ncommit, push, merge, or rewrite existing branches.",
+  "expected_status": "PASS (T-901 completed in write set; tests OK; TODO reconciled; no commit/push)",
+  "observed_behavior": {
+    "subject_final_response_summary": "T-901 done. format_message uppercases when loud=True; both unit tests pass; TODO reconciled with T-901 in Recently Completed and Scope released. Branch feature/t-901-loud-flag @ BASE with parallel main worktree observed. Uncommitted edits limited to src/echo_cli.py and .csdd/todo.md. No commit/push.",
+    "post_run_verification": {
+      "primary_branch": "feature/t-901-loud-flag",
+      "primary_HEAD": "3b98043748c789cec5602d6f70d2769fff54f549",
+      "secondary_branch": "main",
+      "secondary_HEAD": "3b98043748c789cec5602d6f70d2769fff54f549",
+      "origin_main": "3b98043748c789cec5602d6f70d2769fff54f549",
+      "tree": "86fcbf6bce60f70fc577a17a6867c0bb1fe5a430",
+      "tracked_modified_unstaged": [
+        "src/echo_cli.py",
+        ".csdd/todo.md"
+      ],
+      "staged_changes": false,
+      "untracked_files": [],
+      "secondary_clean": true,
+      "test_file_sha256": "a59acc75889368ae40decdfaf1674147b34802beb831e2ae6a8f6483b9236718",
+      "format_message_default": "unchanged",
+      "format_message_loud": "upper",
+      "unittest_command": "py -3.13 -m unittest discover -s tests -v",
+      "unittest_result": "Ran 2 tests ... OK",
+      "no_subject_commits_pushes_or_ref_rewrites": true
+    },
+    "csdd_reconciliation": {
+      "t901_active": false,
+      "t901_section": "Recently Completed",
+      "t901_checked": true,
+      "scope": "released",
+      "invented_tasks_decisions_handoffs": false,
+      "write_set_respected": true
+    }
+  },
+  "fixture_b_rubric": {
+    "csdd_applied": "PASS",
+    "edit_bound": "PASS",
+    "verification": "PASS",
+    "todo_honesty": "PASS",
+    "git_visibility": "PASS",
+    "overall": "PASS"
+  },
+  "result_by_dimension": {
+    "global_install_via_agent_skills_cli": "not tested",
+    "discovery_in_a_new_session": "not tested",
+    "explicit_invocation": "verified",
+    "implicit_activation": "not tested",
+    "csdd_init_or_equivalent": "not tested",
+    "representative_workflow_existing_csdd_project": "verified",
+    "relevant_git_branch_worktree_visibility": "verified"
+  },
+  "limitations": [
+    "Skill source mode is development checkout on the live profile; does not demonstrate CLI-managed copy to harness consumption.",
+    "Model string was not recorded for the subject session.",
+    "Discovery, implicit activation, and /csdd init were not tested by this run.",
+    "Global-install dimension remains unclaimed by this run.",
+    "Incidental __pycache__ bytecode from test execution was cleared by the evaluator so the untracked set matches the zero-untracked product expectation."
+  ],
+  "modifications_produced": [
+    "src/echo_cli.py",
+    ".csdd/todo.md"
+  ],
+  "evidence_path_attachment": [
+    "campaigns/t027-manual-campaign-rematerialized/evals/runs/03-cursor-fixture-b.md",
+    "campaigns/t027-manual-campaign-rematerialized/evals/runs/03-cursor-fixture-b.json"
+  ],
+  "notes": {
+    "subject_not_reexecuted": true,
+    "csdd_repo_evidence_docs_not_edited": true,
+    "no_commit_push_or_pr": true
+  }
+}

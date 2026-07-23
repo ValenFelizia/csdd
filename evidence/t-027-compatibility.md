@@ -3,15 +3,16 @@
 Issue: [#24](https://github.com/ValenFelizia/csdd/issues/24)
 Branch: `evidence/t-027-compatibility-matrix`
 Task: T-027
-Checkpoint: **documentary correction** — Fixture B normalized (Pending T-901,
-fixed write set, single per-harness recipe); new manual campaign still **not**
-executed.
+Checkpoint: **manual campaign executed** — four Fixture A/B runs (Cursor +
+Codex), **4/4 PASS**, recorded 2026-07-22–2026-07-23 against CSDD ref
+`d2640af0641addb656cc8110fb445cae1b4694d3`.
 
 Public matrix: [`docs/compatibility.md`](../docs/compatibility.md)
 
 This file is the durable test contract and evidence register for T-027. It
-freezes how tests must be run and how inherited evidence may be cited **before**
-any new Cursor/Codex campaign for T-027.
+freezes how tests must be run and how inherited evidence may be cited. The
+manual Cursor/Codex campaign below has been executed; fixtures, prompts, and
+rubrics remain frozen.
 
 ## Status vocabulary (authoritative for T-027)
 
@@ -155,13 +156,15 @@ implied.
 
 ### Honest chain gaps (do not close on paper)
 
-| Desired chain | Inherited status |
+| Desired chain | Status after T-027 campaign |
 | --- | --- |
-| CLI-managed copy on live profile → path/link consumed by Cursor | **not demonstrated** |
-| CLI-managed copy on live profile → path/link consumed by Codex | **not demonstrated** |
+| CLI-managed copy on live profile → path/link consumed by Cursor | **not demonstrated** (install remains **partial**) |
+| CLI-managed copy on live profile → path/link consumed by Codex | **not demonstrated** (install remains **partial**) |
 | Isolated-profile CLI install → harness discovery | **not demonstrated** (no real agent profiles in isolated HOME) |
+| Discovery from CLI-managed copy (either harness) | **not demonstrated** (discovery remains **partial** via development checkout) |
 | Implicit activation (either harness) | **not tested** |
-| Codex explicit init / existing-project workflow / Git visibility | **not tested** |
+| Codex explicit init / existing-project workflow / Git visibility | **demonstrated** in campaign runs t027-02 / t027-04 (see Campaign log) |
+| Cursor explicit init / existing-project workflow / Git visibility | **demonstrated** in campaign runs t027-01 / t027-03 (see Campaign log) |
 
 ---
 
@@ -896,8 +899,27 @@ structural** health. They must not be used to mark any harness behavior cell
 
 ## Campaign log (T-027 new runs)
 
-_No new manual Cursor or Codex runs in this documentary correction._
+Manual campaign directory (working copies):
+`campaigns/t027-manual-campaign-rematerialized/` (outside this repository).
+Durable public records: [`evals/runs/t027-*.md`](../evals/runs/) (+ `.json`).
+
+**Campaign result:** 4/4 PASS (Fixture A × Cursor/Codex; Fixture B × Cursor/Codex).
+
+### Limitations retained after the campaign
+
+- **Global install:** CLI-managed copy → live harness path/link consumption was
+  **not** proven end-to-end; cells remain **partial** (H1 isolated-profile
+  lifecycle only).
+- **Discovery:** positive signal remains from **development checkout** on the
+  live profile (H2/H3 / T-025 §C); not CLI-managed → discovery → **partial**.
+- **Implicit activation:** frozen implicit prompt was **not** executed →
+  **not tested**.
+- **Model:** not recorded for the four subject sessions (not inferred).
+- **Codex harness version:** not user-visible.
 
 | Run ID | Date | Harness | Skill source mode | Profile mode | Dimensions touched | Result summary | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| — | — | — | — | — | — | pending | — |
+| t027-01 | 2026-07-22 | Cursor | development checkout | live user profile | Explicit invocation; `/csdd init`; Git visibility | Fixture A PASS | [md](../evals/runs/t027-01-cursor-fixture-a.md) / [json](../evals/runs/t027-01-cursor-fixture-a.json) |
+| t027-02 | 2026-07-23 | Codex | development checkout | live user profile | Explicit invocation; `$csdd init`; Git visibility | Fixture A PASS | [md](../evals/runs/t027-02-codex-fixture-a.md) / [json](../evals/runs/t027-02-codex-fixture-a.json) |
+| t027-03 | 2026-07-23 | Cursor | development checkout | live user profile | Explicit invocation; existing workflow; Git/worktree visibility | Fixture B PASS | [md](../evals/runs/t027-03-cursor-fixture-b.md) / [json](../evals/runs/t027-03-cursor-fixture-b.json) |
+| t027-04 | 2026-07-23 | Codex | development checkout | live user profile | Explicit invocation; existing workflow; Git/worktree visibility | Fixture B PASS | [md](../evals/runs/t027-04-codex-fixture-b.md) / [json](../evals/runs/t027-04-codex-fixture-b.json) |
