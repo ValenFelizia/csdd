@@ -56,7 +56,7 @@
     "discovery_in_a_new_session": "not tested",
     "explicit_invocation": "verified",
     "implicit_activation": "not tested",
-    "csdd_init": "verified",
+    "csdd_init_or_equivalent": "verified",
     "representative_workflow_existing_csdd_project": "not tested",
     "relevant_git_branch_worktree_visibility": "verified"
   },
