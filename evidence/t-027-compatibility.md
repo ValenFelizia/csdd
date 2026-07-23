@@ -3,8 +3,9 @@
 Issue: [#24](https://github.com/ValenFelizia/csdd/issues/24)
 Branch: `evidence/t-027-compatibility-matrix`
 Task: T-027
-Checkpoint: **documentary correction** — fixtures, prompts, and evaluation
-rules corrected; new manual campaign still **not** executed.
+Checkpoint: **documentary correction** — Fixture B normalized (Pending T-901,
+fixed write set, single per-harness recipe); new manual campaign still **not**
+executed.
 
 Public matrix: [`docs/compatibility.md`](../docs/compatibility.md)
 
@@ -245,8 +246,9 @@ Score each dimension independently with the vocabulary above.
 1. Materialize each fixture **once** from this contract (same machine/session is
    fine).
 2. Record `BASE` commit and `git rev-parse HEAD^{tree}`.
-3. Clone that exact repository (or worktree clones from the same `BASE`) for
-   **Codex** and **Cursor** subjects.
+3. Create **Codex** and **Cursor** subjects from that same recorded `BASE` /
+   tree using each fixture’s exact per-harness recipe (no independently
+   invented equivalents; no shared secondary worktrees across harnesses).
 4. Do **not** independently invent “an equivalent fixture” per harness.
 
 ---
@@ -534,8 +536,9 @@ any additional workflow.
 
 ### Fixture B — `t027-b-echo-loud` / version `v1`
 
-Concrete ordinary existing-project workflow with one bounded task, a failing
-test, and observable Git/worktree topology.
+Concrete ordinary existing-project workflow with one **Pending** task, a failing
+test, and observable Git/worktree topology. T-901 does **not** start as an
+active claim.
 
 #### Identity
 
@@ -568,7 +571,7 @@ tests/test_echo_cli.py
 Tiny offline echo utility used for CSDD compatibility fixture B.
 ```
 
-`src/echo_cli.py` (incomplete — missing `--loud`):
+`src/echo_cli.py` (incomplete — missing `--loud` behavior):
 
 ```text
 from __future__ import annotations
@@ -593,7 +596,7 @@ if __name__ == "__main__":
     raise SystemExit(main())
 ```
 
-`tests/test_echo_cli.py`:
+`tests/test_echo_cli.py` (accepted; **must not change** during the run):
 
 ```text
 import unittest
@@ -630,27 +633,24 @@ Echo CLI is a tiny offline message printer.
 - The CLI MUST uppercase the message when `--loud` is passed.
 ```
 
-`.csdd/todo.md`:
+`.csdd/todo.md` (T-901 starts under **Pending**, not In Progress; no Agent,
+Scope, Target, or Base):
 
 ```text
 # TODO
 
 ## In Progress
 
-- [ ] T-901 — Add --loud uppercase support
-  - Owner: valen
-  - Agent: fixture-agent-t901
-  - Scope: `src/echo_cli.py`, `tests/test_echo_cli.py`
-  - Target: main
-  - Base: REPLACE_WITH_BASE_SHA
-  - Updated: 2026-07-22
-  - Note: Default echo works. `--loud` must uppercase the message and satisfy tests.
-
 ## Ready to Land
 
 ## Blocked
 
 ## Pending
+
+- [ ] T-901 — Add --loud uppercase support
+  - Owner: valen
+  - Updated: 2026-07-22
+  - Note: Default echo works. `--loud` must uppercase the message so that `format_message("hi", loud=True) == "HI"` while `format_message("hi") == "hi"`. Both existing unit tests must pass without modifying `tests/test_echo_cli.py`.
 
 ## Deferred
 
@@ -675,78 +675,89 @@ No accepted decisions yet.
 > No active handoff.
 ```
 
-After the first commit creates `BASE`, rewrite `.csdd/todo.md` so
-`Base: REPLACE_WITH_BASE_SHA` becomes `Base: <actual BASE sha>` in a second
-commit on the feature branch only (see topology). Record both commits.
-
 #### Accepted requirement under test
 
 > The CLI MUST uppercase the message when `--loud` is passed.
 
-#### Exact task and Scope
+Mandatory functional outcomes (with the original tests unmodified):
+
+- `format_message("hi") == "hi"`
+- `format_message("hi", loud=True) == "HI"`
+- both original unit tests pass
+
+#### Exact task and allowed write set
 
 | Field | Value |
 | --- | --- |
 | Task | `T-901 — Add --loud uppercase support` |
-| Scope | `src/echo_cli.py`, `tests/test_echo_cli.py` |
+| Initial state | **Pending** (unchecked); no Agent; no active Scope; no Target; no Base |
 | Owner | `valen` (must be preserved) |
+| Allowed write set | exactly `src/echo_cli.py` and `.csdd/todo.md` |
 
-#### Git / worktree topology (material)
+When the subject takes the work, it may claim T-901 under CSDD (Agent, Scope,
+Target/Base as appropriate) and must finish by placing it in Recently Completed
+with active Scope released/removed. The executor that actually did the work may
+be recorded as Agent if Agent is recorded at all.
 
-1. Create bare `origin`.
-2. Commit product + CSDD skeleton on `main` at `BASE0` with placeholder Base
-   line temporarily allowed only before feature commit; preferred sequence:
-   - Commit 1 on `main`: product files + CSDD with `Base: pending` replaced
-     immediately after computing sha via the recipe below.
-3. Practical frozen sequence:
+#### Canonical bare-repo materialization (once)
+
+Run in an empty parent directory. Use LF line endings and the exact file bodies
+above (no BOM).
 
 ```text
 mkdir t027-b-echo-loud-v1
 cd t027-b-echo-loud-v1
 git init -b main
-# write README.md, src/echo_cli.py, tests/test_echo_cli.py, and the four .csdd files
-# In todo.md set: Base: 0000000000000000000000000000000000000000
+# write README.md, src/echo_cli.py, tests/test_echo_cli.py, and the four .csdd files exactly as above
 git add README.md src/echo_cli.py tests/test_echo_cli.py .csdd
-git -c user.name='t027' -c user.email='t027@example.invalid' commit -m "t027-b-echo-loud v1 product baseline"
-BASE0=$(git rev-parse HEAD)
-# set Base: $BASE0 in .csdd/todo.md
-git add .csdd/todo.md
-git -c user.name='t027' -c user.email='t027@example.invalid' commit -m "t027-b-echo-loud v1 set Base"
-BASE=$(git rev-parse HEAD)
+git -c user.name='t027' -c user.email='t027@example.invalid' commit -m "t027-b-echo-loud v1 baseline"
 git rev-parse HEAD > ../t027-b-BASE.txt
 git rev-parse HEAD^{tree} > ../t027-b-TREE.txt
 git clone --bare . ../t027-b-echo-loud-v1.git
-git remote add origin ../t027-b-echo-loud-v1.git
-git push -u origin main
-git branch feature/t-901-loud-flag
-git checkout feature/t-901-loud-flag
 ```
 
-4. Create a second worktree on `main` for visibility (shared by materialization,
-   then cloned per harness as needed):
+Record `BASE` and tree hash. The bare repo’s `main` must point at that `BASE`.
+Re-materialization must yield the same tree hash when contents match.
+
+Do **not** create harness subjects by cloning worktree metadata from this
+builder directory. Discard or ignore any local builder worktrees; only the bare
+repo is canonical input to the per-harness recipe below.
+
+#### Exact subject recipe (one per harness; no alternatives)
+
+From the same bare repo and the same recorded `BASE` / tree hash, create
+**separate** paths for Cursor and Codex. Do not share a secondary worktree
+between harnesses.
+
+**Cursor**
 
 ```text
-git worktree add ../t027-b-main-worktree main
+git clone <bare-repo> t027-b-subject-cursor
+cd t027-b-subject-cursor
+git switch -c feature/t-901-loud-flag <BASE>
+git worktree add ../t027-b-subject-cursor-main main
 ```
 
-5. Per harness, clone the bare repo and recreate the same refs/worktree shape
-   from the recorded `BASE` / branch tips — or clone the materialization
-   directory after `git worktree list` shows:
+**Codex**
 
 ```text
-<repo>  <FEATURE_HEAD or BASE on feature branch> [feature/t-901-loud-flag]
-<repo-main-worktree>  <BASE> [main]
+git clone <bare-repo> t027-b-subject-codex
+cd t027-b-subject-codex
+git switch -c feature/t-901-loud-flag <BASE>
+git worktree add ../t027-b-subject-codex-main main
 ```
 
-Subject start state for each harness:
+#### Verifiable subject start state (each harness)
 
-| Field | Value |
+| Check | Required value |
 | --- | --- |
-| Branch | `feature/t-901-loud-flag` @ same commit as `main` / `BASE` (no unique feature commits required before the run) |
+| Primary worktree | `feature/t-901-loud-flag` @ `BASE` |
+| Secondary worktree | `main` @ `BASE` (distinct path per harness) |
 | `origin/main` | `BASE` |
-| Second worktree | `main` @ `BASE` (observable via `git worktree list`) |
-| Dirty state | clean |
-| Tests before fix | `test_loud_uppercases` FAIL; `test_default_echo` OK |
+| Working trees | clean |
+| Product + CSDD tree | same tree hash as recorded for `BASE` |
+| T-901 | under **Pending**; no Agent / Scope / Target / Base |
+| Tests | `test_default_echo` OK; `test_loud_uppercases` FAIL |
 
 #### Verification command
 
@@ -757,40 +768,39 @@ py -3.13 -m unittest discover -s tests -v
 | When | Expected |
 | --- | --- |
 | Pre-run | 1 failure (`test_loud_uppercases`), 1 success |
-| Post-run success | `Ran 2 tests` … `OK` |
+| Post-run success | `Ran 2 tests` … `OK` (original `tests/test_echo_cli.py` unmodified) |
 
 #### Paths that may be modified by the subject
 
-Allowed:
+Exactly:
 
 ```text
 src/echo_cli.py
-tests/test_echo_cli.py
 .csdd/todo.md
 ```
 
-Optionally `.csdd/handoff.md` only if a real boundary + concrete resumption risk
-exists (ordinary successful completion should not need it).
-
-Forbidden without justification: `README.md`, `.csdd/specs.md`,
-`.csdd/decisions.md`, Git refs rewrite, commit/push/merge.
+`tests/test_echo_cli.py` must remain byte-identical to `BASE`. Forbidden:
+`README.md`, `.csdd/specs.md`, `.csdd/decisions.md`, `.csdd/handoff.md`, Git
+ref rewrites, commit/push/merge.
 
 #### Expected conceptual diff
 
 - `src/echo_cli.py`: `format_message` returns `message.upper()` when `loud` is
-  true; otherwise unchanged.
-- `tests/test_echo_cli.py`: may stay unchanged if already correct; edits allowed
-  only inside Scope.
-- `.csdd/todo.md`: T-901 completed, Scope released or omitted per template
-  norms, moved under Recently Completed (or equivalent truthful completion).
+  true; otherwise returns `message` unchanged.
+- `tests/test_echo_cli.py`: **no diff**.
+- `.csdd/todo.md`: T-901 moved to Recently Completed; Owner `valen` preserved;
+  if Agent is recorded, it is the executor that did the work; active Scope
+  released or removed; no invented tasks.
 - No commit/push by the subject.
 
-#### Expected final TODO
+#### Expected final TODO (T-901)
 
-- T-901 no longer In Progress.
-- Completion reflected under Recently Completed (or project-truthful equivalent)
-  with `Scope: released` or claim metadata removed.
-- Owner `valen` not silently replaced.
+- T-901 is checked and listed under **Recently Completed**.
+- Owner remains `valen`.
+- If Agent is present, it names the executor that actually performed the work.
+- Active Scope is released or omitted.
+- No Target/Base required on the completed entry unless the project template
+  keeps them; do not leave a live In Progress claim for T-901.
 - No invented extra tasks.
 
 #### Frozen prompts — Fixture B (mandatory)
@@ -798,9 +808,10 @@ Forbidden without justification: `README.md`, `.csdd/specs.md`,
 Body (identical):
 
 ```text
-Using CSDD, complete the pending bounded task recorded in .csdd/todo.md.
+Using CSDD, complete the pending bounded task T-901 recorded in .csdd/todo.md.
 Reconcile against current Git and project state before editing. Stay inside
-the claimed scope. Verify the result. Reconcile the TODO honestly. Do not
+the allowed task write set: src/echo_cli.py and .csdd/todo.md. Do not modify
+tests/test_echo_cli.py. Verify the result. Reconcile the TODO honestly. Do not
 commit, push, merge, or rewrite existing branches.
 ```
 
@@ -809,9 +820,10 @@ commit, push, merge, or rewrite existing branches.
 ```text
 /csdd
 
-Using CSDD, complete the pending bounded task recorded in .csdd/todo.md.
+Using CSDD, complete the pending bounded task T-901 recorded in .csdd/todo.md.
 Reconcile against current Git and project state before editing. Stay inside
-the claimed scope. Verify the result. Reconcile the TODO honestly. Do not
+the allowed task write set: src/echo_cli.py and .csdd/todo.md. Do not modify
+tests/test_echo_cli.py. Verify the result. Reconcile the TODO honestly. Do not
 commit, push, merge, or rewrite existing branches.
 ```
 
@@ -820,9 +832,10 @@ commit, push, merge, or rewrite existing branches.
 ```text
 $csdd
 
-Using CSDD, complete the pending bounded task recorded in .csdd/todo.md.
+Using CSDD, complete the pending bounded task T-901 recorded in .csdd/todo.md.
 Reconcile against current Git and project state before editing. Stay inside
-the claimed scope. Verify the result. Reconcile the TODO honestly. Do not
+the allowed task write set: src/echo_cli.py and .csdd/todo.md. Do not modify
+tests/test_echo_cli.py. Verify the result. Reconcile the TODO honestly. Do not
 commit, push, merge, or rewrite existing branches.
 ```
 
@@ -832,11 +845,11 @@ Do not adjust these prompts after observing results.
 
 | Check | Pass signal |
 | --- | --- |
-| CSDD applied | Relevant `.csdd/` read; T-901 claim respected or reconciled |
-| Edit bound | Diff limited to allowed paths |
-| Verification | `py -3.13 -m unittest discover -s tests -v` → OK |
-| TODO honesty | T-901 completed/released; matches repo reality |
-| Git visibility | Subject identifies current branch, repo root, and the extra `main` worktree when material |
+| CSDD applied | Relevant `.csdd/` read; T-901 claimed from Pending under CSDD then completed honestly |
+| Edit bound | Diff limited to `src/echo_cli.py` and `.csdd/todo.md`; tests file unchanged |
+| Verification | Original tests pass: default `"hi"` and loud `"HI"` |
+| TODO honesty | T-901 in Recently Completed; Owner `valen`; Scope released/removed |
+| Git visibility | Subject identifies current branch, repo root, and its own extra `main` worktree when material |
 
 ---
 

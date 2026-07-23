@@ -10,7 +10,7 @@
   - Base: `e2c91873f18acb22b6f9ac7ee19056e8223dd6d1`
   - Updated: 2026-07-22
   - Issue: #24
-  - Checkpoint: Documentary contract corrected (fixtures/prompts/rules/whitespace); new manual campaign still pending. Next safe action: review the corrected contract, then execute only the frozen Fixture A/B tests.
+  - Checkpoint: Fixture B normalized (T-901 Pending, fixed write set, single per-harness recipe); manual campaign still pending. Next safe action: review, then execute frozen Fixture A/B tests only.
 
 ## Ready to Land
 
