@@ -81,3 +81,21 @@ rules in `references/`.
 - Failures identify the file, violated rule, and expected condition.
 - Passing CI does not prove harness compatibility or semantic/protocol
   correctness; qualitative evidence remains in `evals/`.
+
+## Compatibility claims (non-normative for protocol semantics)
+
+These facts govern how public harness compatibility is stated. They do not
+change the v0.2 protocol rules in `references/`.
+
+- Compatibility claims MUST be dimensional (install, discovery, invocation,
+  init, workflow, Git visibility, and similar), never a single harness-wide
+  boolean.
+- Public cells MUST use explicit states such as `verified`, `partial`,
+  `unsupported`, and `not tested`.
+- Every `verified` claim MUST record harness/surface, version or
+  `not user-visible`, installer version when relevant, exact CSDD ref, date,
+  and a durable evidence link.
+- `not tested` and `partial` MUST remain visible; they are not failure and not
+  success.
+- Installer availability and CI success do not prove harness compatibility.
+- The canonical public matrix lives only in `docs/compatibility.md`.

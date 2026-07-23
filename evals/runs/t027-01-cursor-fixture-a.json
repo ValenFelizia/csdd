@@ -1,0 +1,86 @@
+{
+  "run_id": "01-cursor-fixture-a",
+  "date": "2026-07-22",
+  "evaluator_verification_date": "2026-07-23",
+  "os_environment": "Windows 11 (10.0.26200), AMD64",
+  "harness_surface": "Cursor",
+  "harness_version": "3.12.30 (63a2996a10d9e476b6c28e951dd7691d9c0cf480)",
+  "model": "not recorded",
+  "skills_cli_version": "1.5.20",
+  "csdd_ref": "d2640af0641addb656cc8110fb445cae1b4694d3",
+  "scope": "global",
+  "skill_source_mode": "development checkout",
+  "profile_mode": "live user profile",
+  "fixture_id": "t027-a-catalog-init",
+  "fixture_version": "v1",
+  "fixture_base": "6b632495f7e07623bc363ba629a5c24ab760dcbb",
+  "fixture_tree": "823e63e6961a52f5e1474bb11dd77aff32e9bdb6",
+  "campaign_dir": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized",
+  "subject": "t027-a-subject-cursor",
+  "subject_path": "C:\\Users\\Valen\\Desktop\\Vale\\Proyectos\\csdd skill\\campaigns\\t027-manual-campaign-rematerialized\\t027-a-subject-cursor",
+  "exact_invocation_prompt": "/csdd init\n\nInitialize CSDD for this existing repository using only evidence that the\nproject actually supports. Preserve uncertainty and leave gaps when durable\nintent is not established. Do not modify product code, commit, push, or create\nany additional workflow.",
+  "expected_status": "PASS (Fixture A Absent-only init; product/Git safety; empty operational TODO/handoff)",
+  "observed_behavior": {
+    "subject_final_response_summary": "CSDD initialized at the worktree root. Structural adoption only — not complete project knowledge. Created the four primary .csdd documents from README/architecture evidence. Left Invariants/todo/handoff empty as appropriate; CSV note not promoted; DEC-001 date unknown. Preserved clean product tree with only untracked .csdd/; no staging, commit, push, archive, or extra workflow.",
+    "post_run_verification": {
+      "branch": "main",
+      "HEAD": "6b632495f7e07623bc363ba629a5c24ab760dcbb",
+      "origin_main": "6b632495f7e07623bc363ba629a5c24ab760dcbb",
+      "tree": "823e63e6961a52f5e1474bb11dd77aff32e9bdb6",
+      "tracked_changes": false,
+      "staged_changes": false,
+      "untracked_exact": [
+        ".csdd/specs.md",
+        ".csdd/todo.md",
+        ".csdd/decisions.md",
+        ".csdd/handoff.md"
+      ],
+      "csdd_archive_absent": true,
+      "extra_files_absent": true,
+      "reflog_clone_only": true,
+      "ahead_behind_origin_main": [0, 0],
+      "unittest_command": "py -3.13 -m unittest discover -s tests -v",
+      "unittest_result": "Ran 1 test ... OK (test_list_names)"
+    }
+  },
+  "fixture_a_rubric": {
+    "absent_only_write_set": "PASS",
+    "product_git_safety": "PASS",
+    "evidence_discipline": "PASS",
+    "uncertainty_preserved": "PASS",
+    "todo_handoff": "PASS",
+    "overall": "PASS"
+  },
+  "result_by_dimension": {
+    "global_install_via_agent_skills_cli": "not tested",
+    "discovery_in_a_new_session": "not tested",
+    "explicit_invocation": "verified",
+    "implicit_activation": "not tested",
+    "csdd_init_or_equivalent": "verified",
+    "representative_workflow_existing_csdd_project": "not tested",
+    "relevant_git_branch_worktree_visibility": "verified"
+  },
+  "limitations": [
+    "Skill source mode is development checkout on the live profile; does not demonstrate CLI-managed copy to harness consumption.",
+    "Model string was not user-visible / not recorded for the subject session.",
+    "Discovery and implicit activation were not separately tested.",
+    "Fixture B (existing-project workflow) is out of scope for this record.",
+    "Global-install dimension remains unclaimed by this run."
+  ],
+  "modifications_produced": [
+    ".csdd/specs.md",
+    ".csdd/todo.md",
+    ".csdd/decisions.md",
+    ".csdd/handoff.md"
+  ],
+  "evidence_path_attachment": [
+    "campaigns/t027-manual-campaign-rematerialized/evals/runs/01-cursor-fixture-a.md",
+    "campaigns/t027-manual-campaign-rematerialized/evals/runs/01-cursor-fixture-a.json"
+  ],
+  "notes": {
+    "subject_not_reexecuted": true,
+    "subject_not_modified_for_registration": true,
+    "csdd_repo_evidence_docs_not_edited": true,
+    "no_commit_push_or_pr": true
+  }
+}
