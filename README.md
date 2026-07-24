@@ -1,83 +1,159 @@
 # CSDD
 
-**Collaborative Spec-Driven Development for ephemeral coding agents.**
+**Durable project state for ephemeral coding agents.**
 
-CSDD is a lightweight protocol for preserving and coordinating project state
-across AI coding sessions, agents, harnesses, branches, and worktrees.
+[![Latest release](https://img.shields.io/github/v/release/ValenFelizia/csdd?display_name=tag&sort=semver)](https://github.com/ValenFelizia/csdd/releases/latest)
+[![CSDD validation](https://github.com/ValenFelizia/csdd/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ValenFelizia/csdd/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Status: public beta](https://img.shields.io/badge/status-public%20beta-orange.svg)](#status-and-scope)
 
-Agents are temporary. Project state should not be.
+CSDD is a lightweight, Git-native protocol for preserving and coordinating
+project state across AI coding sessions, agents, harnesses, branches, and
+worktrees.
 
-CSDD externalizes the minimum sufficient project context into small,
-version-controlled documents so that a new agent can understand what is true,
-what is active, what was decided, and what remains unfinished.
+Coding agents are temporary. Their conversations end, context windows reset,
+and parallel sessions do not share reliable state. CSDD keeps the minimum
+sufficient context in four small, version-controlled documents and uses
+[adaptive hydration](#adaptive-hydration) so agents load only what each task
+needs. The next agent can determine what is true, what is active, what was
+decided, and what remains unfinished.
 
-> CSDD does not give agents shared memory. It gives the project durable,
-> inspectable state.
+It is designed for developers who use coding agents on work that must survive
+session boundaries, resume safely, or stay coordinated across concurrent
+branches and worktrees. Trivial work keeps a trivial fast path.
 
-## Status
+> CSDD provides durable and inspectable project state. It does not provide
+> shared runtime memory, distributed locking, or automatic synchronization.
 
-CSDD is experimental.
+## Quick start
 
-The current release is `v0.2.0`. It builds on the `v0.1.0` protocol foundation
-with a Git-aware task lifecycle, six canonical TODO states and bounded
-retention, boundary-driven replaceable handoffs, an Absent-only `/csdd init`
-adoption workflow, v0.2 primary templates plus a v0.1 → v0.2 migration guide,
-and real-world-derived evaluation scenarios 06–08. Field Report 001 is the
-evidence source for the milestone.
+### 1. Install the skill
 
-Dimensional harness compatibility notes:
-[`docs/compatibility.md`](docs/compatibility.md).
+Install CSDD globally for Codex and Cursor with the Agent Skills CLI:
 
-## Core documents
-
-A CSDD-enabled repository uses a canonical `.csdd/` directory with four
-primary documents:
-
-```text
-.csdd/
-├── specs.md
-├── todo.md
-├── decisions.md
-└── handoff.md
+```bash
+npx skills add ValenFelizia/csdd --skill csdd --agent codex cursor -g -y
 ```
 
-### `specs.md`
+This installs the skill under `~/.agents/skills/csdd`. It does **not** create
+or modify `.csdd/` in any project. See the
+[installation guide](docs/installation.md) for prerequisites, verification,
+updates, and uninstall steps.
 
-Durable behavioral truth:
+### 2. Initialize one repository
 
-- requirements;
-- constraints;
-- invariants;
-- interfaces;
-- accepted system behavior.
+Open the repository you want to adopt and explicitly ask the agent to initialize
+CSDD:
 
-### `todo.md`
+```text
+/csdd init
+```
 
-Current operational coordination:
+`/csdd init` is the portable workflow name, not a guaranteed native slash
+command. An equivalent explicit request also works:
 
-- active tasks;
-- human owners;
-- operational agents;
-- write scopes;
-- dependencies;
-- blocked work;
-- a small recently completed window.
+```text
+Initialize CSDD in this repository.
+```
 
-### `decisions.md`
+Installation and initialization are separate operations:
 
-Accepted directions whose rationale, alternatives, or consequences should
-survive the implementation session.
+| Operation | Result |
+| --- | --- |
+| `npx skills add ... -g` | Makes the CSDD skill available to agents |
+| `/csdd init` | Creates CSDD state in the current repository |
 
-### `handoff.md`
+Initialization is Absent-only: it creates state only when the target repository
+does not already contain `.csdd/`. A successful run creates exactly:
 
-Only the current resumable state that another agent could otherwise
-misunderstand, repeat, or lose.
+```text
+your-project/
+└── .csdd/
+    ├── specs.md
+    ├── todo.md
+    ├── decisions.md
+    └── handoff.md
+```
 
-### Optional `archive/`
+### 3. Start using durable project state
 
-Projects may add optional cold context containing semantic summaries of
-completed phases or superseded project context. The archive is not part of
-initial adoption or default hydration.
+Invoke the installed skill using the syntax supported by your harness. For a
+newly initialized repository, a safe first request is:
+
+```text
+/csdd
+
+Inspect this repository and its CSDD state. Tell me which project facts or
+active work should be recorded, without inventing missing information.
+```
+
+The initialized documents may stay sparse. Structural success does not require
+the agent to guess requirements, decisions, tasks, or handoff state.
+
+As a manual fallback, copy the four files from
+[`assets/templates`](assets/templates) into a repository-level `.csdd/`
+directory. Prefer `/csdd init` when an agent can run the adoption workflow.
+
+## The four documents
+
+| Document | Canonical responsibility |
+| --- | --- |
+| [`specs.md`](assets/templates/specs.md) | Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
+| [`todo.md`](assets/templates/todo.md) | Current operational coordination: tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history |
+| [`decisions.md`](assets/templates/decisions.md) | Accepted directions whose rationale, alternatives, or consequences should survive the session |
+| [`handoff.md`](assets/templates/handoff.md) | Only current resumable state that another agent could otherwise misunderstand, repeat, or lose |
+
+Projects may add an optional `.csdd/archive/` for cold semantic summaries of
+completed phases or superseded context. It is not part of initialization or
+default context loading.
+
+## What CSDD does and what it does not do
+
+CSDD helps agents:
+
+- load only the context required for the current task;
+- preserve requirements and decisions outside transient conversations;
+- coordinate human ownership, operational executors, and write scopes;
+- reconcile relevant branch and worktree state before overlapping work;
+- close tasks, release claims, and remove obsolete handoffs truthfully.
+
+CSDD does not provide:
+
+- shared agent memory or authenticated agent identity;
+- distributed locks, consensus, or automatic synchronization;
+- a task scheduler or a replacement for Git;
+- a guarantee that every agent observes every branch or worktree;
+- a substitute for tests, code review, or human project ownership.
+
+## Compatibility and validation
+
+Compatibility is still a work in progress. CSDD currently supports Codex and
+Cursor, but compatibility is dimensional rather than a binary
+supported/unsupported label. See the
+[compatibility matrix](docs/compatibility.md) for current evidence, limitations,
+and validation status.
+
+## Status and scope
+
+CSDD is experimental public-beta software. The latest published version is
+shown by the release badge above; release history is recorded in
+[`changelog.md`](changelog.md).
+
+The v0.2 protocol includes a Git-aware task lifecycle, six canonical TODO
+states with bounded retention, boundary-driven replaceable handoffs, an
+Absent-only initialization workflow, and primary templates.
+
+Before `1.0`, document contracts and workflows may still evolve through
+versioned releases. Current compatibility claims are intentionally narrow and
+evidence-backed.
+
+## Learn more
+
+- [Installation and lifecycle](docs/installation.md)
+- [Agent compatibility matrix](docs/compatibility.md)
+- [Full protocol](references/protocol.md)
+- [Document contracts](references/document-contracts.md)
+- [Evaluation results](evals/results.md)
 
 ## Principles
 
@@ -98,10 +174,10 @@ CSDD does not require every agent to read every project document.
 
 | Level | Use case | Typical context |
 |---|---|---|
-| 0 — Direct | Trivial isolated edits | Target file only |
-| 1 — Local | Small bounded changes | Local files and nearby contracts |
-| 2 — Operational | Multi-file, resumable, or coordinated work | Relevant TODO, handoff, specs, decisions |
-| 3 — Deep | Architecture, contradiction, migration, or phase closure | Broader project and protocol context |
+| 0: Direct | Trivial isolated edits | Target file only |
+| 1: Local | Small bounded changes | Local files and nearby contracts |
+| 2: Operational | Multi-file, resumable, or coordinated work | Relevant TODO, handoff, specs, decisions |
+| 3: Deep | Architecture, contradiction, migration, or phase closure | Broader project and protocol context |
 
 The agent should classify the task before hydrating context.
 
@@ -113,9 +189,9 @@ relevant project state.
 
 CSDD distinguishes:
 
-- **Owner** — the responsible human or team;
-- **Agent** — the current operational executor;
-- **Scope** — the active write boundary.
+- **Owner:** the responsible human or team;
+- **Agent:** the current operational executor;
+- **Scope:** the active write boundary.
 
 Reassigning stale agent execution does not transfer human accountability.
 
@@ -170,80 +246,6 @@ Closure must be truthful:
 
 Obsolete claims and handoffs should not survive completed work.
 
-## Quick start
-
-### Install the skill (Codex and Cursor)
-
-Install CSDD globally with the Agent Skills CLI so Codex and Cursor can
-discover it:
-
-```bash
-npx skills add ValenFelizia/csdd --skill csdd --agent codex cursor -g -y
-```
-
-This installs the skill under `~/.agents/skills/csdd`. It does **not** create
-project `.csdd/` files. Full install, verify, update, and uninstall steps are
-in [`docs/installation.md`](docs/installation.md).
-
-### Initialize a project with `/csdd init`
-
-`/csdd init` is the primary adoption path for a repository that does not yet
-have CSDD state. It is a portable workflow name, not a guaranteed native slash
-command. Equivalent explicit skill or natural-language requests to initialize
-CSDD are sufficient. Skill installation and `/csdd init` are separate steps.
-
-After the skill is installed, ask the agent to initialize CSDD, for example:
-
-```text
-/csdd init
-```
-
-or:
-
-```text
-Initialize CSDD in this repository.
-```
-
-A successful initialization creates only the four primary documents:
-
-```text
-your-project/
-├── .csdd/
-│   ├── specs.md
-│   ├── todo.md
-│   ├── decisions.md
-│   └── handoff.md
-└── ...
-```
-
-The skill also applies when a repository already contains `.csdd/`. Existing
-recognizable v0.1 projects should follow the
-[v0.1 → v0.2 migration guide](references/migration-v0.1-to-v0.2.md) rather than
-running `/csdd init`.
-
-### Manual alternative
-
-As a secondary alternative, copy the initialization templates from
-[`assets/templates`](assets/templates) into a repository-level `.csdd/`
-directory. Prefer `/csdd init` when an agent can run the adoption workflow.
-
-For ordinary work after adoption, invoke the skill using the syntax supported
-by your harness, for example:
-
-```text
-/csdd
-
-Implement the pending password-reset task and verify the result.
-```
-
-or:
-
-```text
-$csdd
-
-Resume T-201.
-```
-
 ## Example task
 
 ```markdown
@@ -277,8 +279,7 @@ When completed:
 │   └── templates/
 ├── references/
 │   ├── protocol.md
-│   ├── document-contracts.md
-│   └── migration-v0.1-to-v0.2.md
+│   └── document-contracts.md
 ├── evals/
 │   ├── scenarios/
 │   ├── runs/
@@ -291,7 +292,6 @@ When completed:
 - [`docs/compatibility.md`](docs/compatibility.md) is the canonical dimensional compatibility matrix.
 - [`references/protocol.md`](references/protocol.md) defines the full protocol.
 - [`references/document-contracts.md`](references/document-contracts.md) defines document semantics.
-- [`references/migration-v0.1-to-v0.2.md`](references/migration-v0.1-to-v0.2.md) is the operational v0.1 → v0.2 migration guide.
 - [`assets/templates`](assets/templates) contains initialization templates.
 - [`evals`](evals) contains reusable scenarios and recorded runs.
 
@@ -331,21 +331,6 @@ templates, canonical `todo.md` template headings and Retention, and relative
 Markdown links. It is deterministic and does not use the network or model
 output. Passing these checks does not replace the qualitative evaluations in
 [`evals/`](evals).
-
-## Non-goals and limitations
-
-CSDD is not:
-
-- shared agent memory;
-- a distributed lock service;
-- a task scheduler;
-- a replacement for Git;
-- a guarantee that every agent observes every branch or worktree;
-- a substitute for tests, code review, or human project ownership.
-
-The current evaluations are manual and cover a limited set of models and
-harnesses. Explicit skill invocation has been tested more extensively than
-implicit activation.
 
 ## Versioning
 
