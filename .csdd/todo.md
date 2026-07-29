@@ -2,17 +2,19 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-032 — Add Antigravity skill installation support
   - Owner: valen
   - Agent: codex-gpt-5.6
   - Scope: `README.md`, `docs/installation.md`, `docs/compatibility.md`, `evidence/t-032-antigravity.md`, `.csdd/todo.md`
   - Target: `main`
-  - Base: `main`
+  - Base: `5104facf1c94661ebb3036a4ced10c67a4b39a27`
   - Updated: 2026-07-29
   - Issue: #34
-  - Note: Implement the verified project-local Antigravity path without claiming untested global or behavioral compatibility.
-
-## Ready to Land
+  - Landing: Draft PR #35 open against `main`; pending review and merge
+  - Verification: Agent Skills CLI 1.5.20 project install and update passed; removal residue documented; 19 unit tests passed; repository validation passed
+  - Note: Antigravity project distribution is partial; global CLI install, discovery, and behavior remain not tested.
 
 ## Blocked
 
