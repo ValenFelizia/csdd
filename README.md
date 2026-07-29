@@ -36,7 +36,18 @@ npx skills add ValenFelizia/csdd --skill csdd --agent codex cursor -g -y
 ```
 
 This installs the skill under `~/.agents/skills/csdd`. It does **not** create
-or modify `.csdd/` in any project. See the
+or modify `.csdd/` in any project.
+
+For Google Antigravity, run the project-local install from the workspace root:
+
+```bash
+npx skills add ValenFelizia/csdd --skill csdd --agent antigravity -y
+```
+
+This installs CSDD under `.agents/skills/csdd` for that workspace, which is
+Antigravity's documented workspace skill location. Do not add `-g` to this
+command until the Agent Skills CLI global target agrees with Antigravity's
+current documented global path. See the
 [installation guide](docs/installation.md) for prerequisites, verification,
 updates, and uninstall steps.
 
@@ -60,7 +71,8 @@ Installation and initialization are separate operations:
 
 | Operation | Result |
 | --- | --- |
-| `npx skills add ... -g` | Makes the CSDD skill available to agents |
+| `npx skills add ... --agent codex cursor -g` | Makes CSDD globally available to Codex and Cursor |
+| `npx skills add ... --agent antigravity` | Makes CSDD available to Antigravity in the current workspace |
 | `/csdd init` | Creates CSDD state in the current repository |
 
 Initialization is Absent-only: it creates state only when the target repository
@@ -127,9 +139,10 @@ CSDD does not provide:
 
 ## Compatibility and validation
 
-Compatibility is still a work in progress. CSDD currently supports Codex and
-Cursor, but compatibility is dimensional rather than a binary
-supported/unsupported label. See the
+Compatibility is still a work in progress. Codex and Cursor have behavioral
+evidence; Antigravity has an initial project-local installation path but no
+recorded discovery or behavioral run yet. Compatibility is dimensional rather
+than a binary supported/unsupported label. See the
 [compatibility matrix](docs/compatibility.md) for current evidence, limitations,
 and validation status.
 
