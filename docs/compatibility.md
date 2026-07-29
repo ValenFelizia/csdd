@@ -34,11 +34,11 @@ Keep these layers distinct:
 
 Installer availability ≠ discovery. Discovery ≠ correct protocol behavior.
 
-## Initial matrix (Codex and Cursor)
+## Evidence-backed matrix
 
-Initial support set for v0.2.1 readiness: **Codex** and **Cursor** only. Other
-harnesses are out of scope here unless listed as **not tested** with no
-positive claim.
+The initial v0.2.1 campaign covered **Codex** and **Cursor**. T-032 adds a
+narrow project-local distribution claim for **Antigravity**; its discovery and
+behavioral dimensions remain **not tested**.
 
 Cells below reflect the **T-027 manual campaign** (4/4 PASS) plus retained
 inherited **partial** install/discovery evidence. Procedure, frozen fixtures,
@@ -99,6 +99,25 @@ part of the reason for partial.
 | Representative workflow in an existing CSDD-aware project | **verified** | Fixture B T-901 workflow PASS ([t027-03](../evals/runs/t027-03-cursor-fixture-b.md)). |
 | Relevant Git / branch / worktree visibility | **verified** | Fixture A Git root/status and Fixture B feature branch + parallel `main` worktree observed ([t027-01](../evals/runs/t027-01-cursor-fixture-a.md), [t027-03](../evals/runs/t027-03-cursor-fixture-b.md)). |
 
+### Antigravity
+
+T-032 provenance: Agent Skills CLI `1.5.20`; date `2026-07-29`; Linux isolated
+workspace; source `ValenFelizia/csdd` from GitHub `main`; exact CSDD commit
+`not recorded`; skill source mode `project-local`; Antigravity harness version
+and model `not recorded`; no Antigravity session was run. See
+[`evidence/t-032-antigravity.md`](../evidence/t-032-antigravity.md).
+
+| Dimension | Status | Evidence / notes |
+| --- | --- | --- |
+| Project install via Agent Skills CLI | **partial** | CLI `1.5.20` installed the real CSDD GitHub source to `.agents/skills/csdd`, matching Antigravity's documented workspace path; required runtime files were present. No Antigravity session consumed the copy and the exact cloned CSDD commit was not retained, so this remains partial ([T-032](../evidence/t-032-antigravity.md#project-local-install-run)). |
+| Global install via Agent Skills CLI | **not tested** | Antigravity documents `~/.gemini/config/skills`, while CLI `1.5.20` encodes `~/.gemini/antigravity/skills`. The global CLI command is not recommended until the mismatch is resolved or verified ([T-032](../evidence/t-032-antigravity.md#global-path-mismatch)). |
+| Discovery in a new session | **not tested** | No Antigravity session was started against the installed project copy. |
+| Explicit invocation | **not tested** | No explicit CSDD request was run in Antigravity. |
+| Implicit activation | **not tested** | No implicit prompt was run in Antigravity. |
+| `/csdd init` or equivalent natural request | **not tested** | Installation and initialization remain separate; no Antigravity initialization run exists. |
+| Representative workflow in an existing CSDD-aware project | **not tested** | No Antigravity behavioral fixture was executed. |
+| Relevant Git / branch / worktree visibility | **not tested** | No Antigravity behavioral fixture was executed. |
+
 ## How to read the matrix
 
 - One cell = one dimension for one harness. Do not collapse install, discovery,
@@ -128,6 +147,9 @@ part of the reason for partial.
   blocker when left **not tested**.
 - Model strings were `not recorded` for campaign subject sessions; Codex
   harness version was `not user-visible`.
+- Antigravity has project-local installer-path evidence only. Its current
+  documented global path disagrees with the path encoded by Agent Skills CLI
+  `1.5.20`, and no discovery or behavioral session has been recorded.
 
 ## Reverification triggers
 
@@ -149,5 +171,6 @@ Record new runs in [`evidence/t-027-compatibility.md`](../evidence/t-027-compati
 - Installation guide: [`docs/installation.md`](installation.md)
 - Installation evidence: [`evidence/t-025-installation.md`](../evidence/t-025-installation.md)
 - Compatibility test contract: [`evidence/t-027-compatibility.md`](../evidence/t-027-compatibility.md)
+- Antigravity distribution evidence: [`evidence/t-032-antigravity.md`](../evidence/t-032-antigravity.md)
 - Structural validation note: repository `.csdd/specs.md` (Structural validation)
   and CI workflows — mechanical only
