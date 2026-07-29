@@ -1,6 +1,6 @@
 # CSDD
 
-**Durable project state for ephemeral coding agents.**
+**Collaborative Spec Driven Development: Durable project state for ephemeral coding agents.**
 
 [![Latest release](https://img.shields.io/github/v/release/ValenFelizia/csdd?display_name=tag&sort=semver)](https://github.com/ValenFelizia/csdd/releases/latest)
 [![CSDD validation](https://github.com/ValenFelizia/csdd/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ValenFelizia/csdd/actions/workflows/validate.yml)
