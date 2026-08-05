@@ -145,3 +145,42 @@ be overwritten casually by `skills add` / `update` / `remove`.
 A custom installer or trimmed package tree was rejected for now: it adds
 maintenance cost without fixing a demonstrated blocker, and the CLI already
 provides the required happy path.
+
+## DEC-006 — Allow the v0.2.1 beta before completing the independent onboarding pilot
+
+- Status: accepted
+- Date: 2026-08-05
+
+### Context
+
+T-029 / issue #28 originally made two independent onboarding attempts a hard
+gate for v0.2.1. After roughly two weeks, one acquaintance had agreed to help
+but had not started, and one low-exposure Reddit recruitment attempt received
+no response. No external onboarding session was completed.
+
+Waiting indefinitely would create a circular dependency: CSDD needs real users
+to validate onboarding, while a small public release is the practical way to
+reach those users. The missing evidence still leaves onboarding risk unknown.
+
+### Decision
+
+- Defer T-029 until an independent adopter agrees to run the frozen onboarding
+  flow or provides equivalent diagnosable onboarding evidence.
+- Allow T-030 to prepare and publish v0.2.1 as an experimental public beta under
+  an explicit exception to the original T-029 release gate.
+- Keep issue #28 open and do not claim that onboarding was externally validated.
+- Use the staged T-031 launch and early adoption to recruit the first pilot
+  participants, without substituting agent self-evaluation for human evidence.
+
+### Rationale
+
+A narrow, reversible beta can expose the onboarding path to real adopters
+without overstating confidence. This preserves the value of the original pilot
+while avoiding an indefinite pre-release stall.
+
+### Consequences
+
+Release notes for v0.2.1 must state that the independent-user pilot is pending.
+No external blocker can be ruled out from zero completed sessions. Any concrete
+install, initialization, destructive-behavior, or first-use blocker reported by
+an adopter receives priority triage and correction before broader promotion.

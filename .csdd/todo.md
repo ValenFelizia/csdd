@@ -4,27 +4,40 @@
 
 ## Ready to Land
 
-- [ ] T-032 — Add Antigravity skill installation support
-  - Owner: valen
-  - Agent: codex-gpt-5.6
-  - Scope: `README.md`, `docs/installation.md`, `docs/compatibility.md`, `evidence/t-032-antigravity.md`, `.csdd/todo.md`
-  - Target: `main`
-  - Base: `5104facf1c94661ebb3036a4ced10c67a4b39a27`
-  - Updated: 2026-07-29
-  - Issue: #34
-  - Landing: Draft PR #35 open against `main`; pending review and merge
-  - Verification: Agent Skills CLI 1.5.20 project install and update passed; removal residue documented; 19 unit tests passed; repository validation passed
-  - Note: Antigravity project distribution is partial; global CLI install, discovery, and behavior remain not tested.
-
 ## Blocked
 
 ## Pending
 
+- [ ] T-030 — Prepare and release CSDD v0.2.1 public beta
+  - Owner: valen
+  - Updated: 2026-08-05
+  - Issue: #29
+  - Depends on: Accepted T-029 release-gate exception in DEC-006
+  - Note: Next accepted work item; claim concrete release scope before implementation.
+
 ## Deferred
+
+- [ ] T-029 — Validate v0.2.1 onboarding with independent users
+  - Owner: valen
+  - Scope: released
+  - Updated: 2026-08-05
+  - Issue: #28
+  - Reason: Two recruitment attempts produced no completed sessions; holding an experimental beta indefinitely would prevent real adopters from providing the missing evidence.
+  - Resume when: An independent adopter agrees to complete the frozen onboarding flow, or a real onboarding report provides equivalent diagnosable evidence.
+  - Note: Zero external onboarding sessions completed; v0.2.1 may proceed under DEC-006 without claiming externally validated onboarding.
 
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-032 — Add Antigravity skill installation support
+  - Owner: valen
+  - Agent: codex-gpt-5.6
+  - Scope: released
+  - Updated: 2026-07-29
+  - Issue: #34
+  - Landed: PR #35 @ `80d26a8`
+  - Note: Added partial project-local Antigravity distribution evidence; global CLI install, discovery, and behavior remain not tested.
 
 - [x] T-027 — Publish an evidence-backed agent compatibility matrix
   - Owner: valen
@@ -61,10 +74,3 @@ Retention: 5
   - Issue: #8
   - Landed: PR #22 @ `9bf9609`
   - Note: Published v0.2.0 from `9bf9609` at https://github.com/ValenFelizia/csdd/releases/tag/v0.2.0; scenarios 06–08 Run A passed with no critical failures; no remaining release blockers.
-
-- [x] T-023 — Add real-world-derived v0.2 evaluation scenarios
-  - Owner: valen
-  - Scope: released
-  - Updated: 2026-07-21
-  - Landed: PR #18 @ `6ec208f`
-  - Note: Added focused v0.2 scenario contracts 06–08, separated historical runs, recorded Run A PASS reports, and evaluation workspace `.gitignore`.
