@@ -145,8 +145,9 @@ not used.
 | Relative link resolution | offline path existence check over `*.md`, `docs/`, `evidence/`, `references/` | **PASS** — 119 links, 0 missing |
 | Protocol drift | `git diff --name-only v0.2.0..caf43db -- SKILL.md references/ assets/templates/` | **PASS** — empty |
 
-CI on the eventual PR / merge SHA is **pending** until those commits exist on
-GitHub.
+PR-head CI for `6c88adc` completed successfully in CSDD validation run
+[#16](https://github.com/ValenFelizia/csdd/actions/runs/31535573679).
+CI on the eventual merge SHA remains pending.
 
 ## 9. Risks and limitations
 
