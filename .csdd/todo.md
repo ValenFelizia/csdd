@@ -4,16 +4,22 @@
 
 ## Ready to Land
 
+- [ ] T-030 — Prepare and release CSDD v0.2.1 public beta
+  - Owner: valen
+  - Agent: cursor-grok-4.5
+  - Scope: `.csdd/todo.md`, `changelog.md`, `evidence/t-030-release-readiness.md`
+  - Target: `main`
+  - Base: `caf43dba97087afeac8e597401cff232fb8430a8`
+  - Updated: 2026-08-11
+  - Issue: #29
+  - Depends on: Accepted T-029 release-gate exception in DEC-006
+  - Landing: `release/t-030-v0.2.1` → `main`; PR pending (Refs #29)
+  - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean; 119 relative links resolve; no `SKILL.md`/`references/`/`assets/templates/` drift since `v0.2.0`
+  - Note: Preparation only. Tag, GitHub Release, post-merge lifecycle checks, and issue closure remain pending. T-029 stays Deferred under DEC-006.
+
 ## Blocked
 
 ## Pending
-
-- [ ] T-030 — Prepare and release CSDD v0.2.1 public beta
-  - Owner: valen
-  - Updated: 2026-08-05
-  - Issue: #29
-  - Depends on: Accepted T-029 release-gate exception in DEC-006
-  - Note: Next accepted work item; claim concrete release scope before implementation.
 
 ## Deferred
 

@@ -2,6 +2,38 @@
 
 All notable changes to CSDD will be documented in this file.
 
+## [0.2.1] — 2026-08-11
+
+### Added
+
+- One-command global installation path for Codex and Cursor via the Agent
+  Skills CLI, with a documented install / verify / update / uninstall lifecycle.
+- Deterministic offline structural validator and unittest suite, wired into a
+  least-privilege GitHub Actions workflow.
+- Evidence-backed dimensional compatibility matrix for Codex and Cursor.
+- Partial project-local Antigravity distribution path and evidence; discovery
+  and behavioral dimensions remain not tested.
+- Public-beta README onboarding polish covering install, Absent-only
+  `/csdd init`, status, and non-guarantees.
+
+### Changed
+
+- No normative changes to the CSDD v0.2 protocol, skill runtime
+  (`SKILL.md`, `references/**`, `assets/templates/**`), or document contracts.
+- Upgrading from v0.2.0 does not require a migration.
+
+### Known limitations
+
+- CSDD remains an experimental public beta.
+- The independent-user onboarding pilot (T-029 / #28) is deferred under
+  DEC-006; zero external sessions were completed. Do not treat onboarding as
+  externally validated.
+- Compatibility remains dimensional: Global install and Discovery stay partial
+  for Codex and Cursor; Implicit activation remains not tested.
+- Antigravity support is limited to partial project-local installation evidence.
+- CSDD does not provide shared runtime memory, distributed locking, or
+  automatic synchronization.
+
 ## [0.2.0] — 2026-07-21
 
 ### Added
