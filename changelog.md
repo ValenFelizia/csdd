@@ -2,7 +2,7 @@
 
 All notable changes to CSDD will be documented in this file.
 
-## [0.2.1] — 2026-08-11
+## [0.2.1] — 2026-09-27
 
 ### Added
 
