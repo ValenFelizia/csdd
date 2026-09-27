@@ -1,11 +1,11 @@
 # T-030 — CSDD v0.2.1 release readiness
 
-Issue: [#29](https://github.com/ValenFelizia/csdd/issues/29)  
-PR: [#38](https://github.com/ValenFelizia/csdd/pull/38)  
-Branch: `release/t-030-v0.2.1`  
-Task: T-030  
-Role: release-preparation evidence and draft release notes  
-Date: 2026-08-11
+- Issue: [#29](https://github.com/ValenFelizia/csdd/issues/29)
+- PR: [#38](https://github.com/ValenFelizia/csdd/pull/38)
+- Branch: `release/t-030-v0.2.1`
+- Task: T-030
+- Role: release-preparation evidence and draft release notes
+- Date: 2026-08-11
 
 This document prepares publication of **CSDD v0.2.1**. It does **not** publish
 the tag or GitHub Release. Tagging, release publication, post-merge lifecycle
