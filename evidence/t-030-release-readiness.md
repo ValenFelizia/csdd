@@ -7,9 +7,8 @@
 - Role: release-preparation evidence and draft release notes
 - Date: 2026-08-11
 
-This document prepares publication of **CSDD v0.2.1**. It does **not** publish
-the tag or GitHub Release. Tagging, release publication, post-merge lifecycle
-checks, and issue closure remain intentionally pending.
+Sections 1–10 record the preparation of **CSDD v0.2.1** on 2026-08-11.
+Section 11 records the verified publication and follow-up on 2026-09-27.
 
 ## 1. Objective and scope
 
@@ -194,30 +193,30 @@ when ready; existing v0.2 project `.csdd/` state remains valid.
   is not tested.
 - No shared runtime memory, distributed locking, or automatic synchronization.
 
-## 11. Post-merge checklist (pending)
+## 11. Post-publication verification — 2026-09-27
 
-Do **not** treat these as done by this preparation PR:
+The reviewed release-preparation PR #38 landed at `0279d53`. PR #39 finalized
+the changelog date and evidence formatting and landed at
+`545a2edfd91da46967cbd9746ba6130ac387ac90` (the release commit).
 
-- [ ] CI green on the merge SHA
-- [ ] Re-run unittest + structural validator from a clean checkout of the merge SHA
-- [ ] Isolated-profile install lifecycle (not the live development checkout):
-  - [ ] install
-  - [ ] reinstall
-  - [ ] update
-  - [ ] list / inspect installed files
-  - [ ] uninstall
-  - [ ] confirm project `.csdd/` preservation
-- [ ] New Cursor session discovery / init smoke
-- [ ] New Codex session discovery / init smoke
-- [ ] Create tag `v0.2.1` on the exact reviewed release commit
-- [ ] Publish GitHub Release `CSDD v0.2.1` (non-draft, non-prerelease, Latest)
-- [ ] Verify remote tag and release
-- [ ] Administrative commit: move T-030 to Recently Completed / release scope
-- [ ] Close issue #29 only after publication and reconciliation are true
-- [ ] Leave issue #28 open in Deferred until real external evidence exists
+| Check | Observed result |
+| --- | --- |
+| Release-commit validation | From a clean detached worktree at `545a2ed`: 19 unittest cases PASS; `scripts/validate_repository.py` PASS; release-range `git diff --check` clean. |
+| CI | Push workflow [run 36350582522](https://github.com/ValenFelizia/csdd/actions/runs/36350582522) completed successfully on `545a2ed`. |
+| Runtime contract | `SKILL.md`, `references/**`, and `assets/templates/**` unchanged since `v0.2.0`. |
+| Isolated install lifecycle | Install, reinstall, update, list/inspect, and uninstall PASS in a disposable profile; project `.csdd/` preserved. |
+| Cursor smoke | New session discovered the installed global skill and initialized an absent `.csdd/` fixture with exactly four canonical files; PASS. |
+| Codex smoke | ChatGPT Windows app loaded `C:\Users\Valentin\.agents\skills\csdd\SKILL.md`; Absent-only fixture created the same four canonical files and no unexpected files; PASS. |
+| Installed runtime match | SHA256 manifests of eight runtime files in the installed skill and the repository at `0279d53` matched; `REAL RUNTIME MATCH PASS`. Runtime files did not change in PR #39. |
+| Remote tag | `refs/tags/v0.2.1` and `refs/heads/main` both resolved to `545a2edfd91da46967cbd9746ba6130ac387ac90` at publication. |
+| GitHub Release | [CSDD v0.2.1](https://github.com/ValenFelizia/csdd/releases/tag/v0.2.1) published 2026-09-27, non-draft, non-prerelease, Latest; source archives available; zero custom assets. |
+
+This follow-up change moves T-030 into Recently Completed in `.csdd/todo.md`.
+Issue #29 is closed after that change lands. Issue #28 / T-029 remains open
+and Deferred under DEC-006, pending independent onboarding evidence.
 
 ## Evidence classification legend
 
 - **Executed here:** observed during T-030 preparation on this branch.
 - **Historical reused:** prior durable evidence accepted without re-running.
-- **Pending post-merge:** required before calling the release complete.
+- **Post-publication:** verified after the release commit and GitHub Release.
