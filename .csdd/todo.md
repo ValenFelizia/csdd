@@ -4,19 +4,6 @@
 
 ## Ready to Land
 
-- [ ] T-030 — Prepare and release CSDD v0.2.1 public beta
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: `.csdd/todo.md`, `changelog.md`, `evidence/t-030-release-readiness.md`
-  - Target: `main`
-  - Base: `caf43dba97087afeac8e597401cff232fb8430a8`
-  - Updated: 2026-08-11
-  - Issue: #29
-  - Depends on: Accepted T-029 release-gate exception in DEC-006
-  - Landing: `release/t-030-v0.2.1` → `main`; PR #38 open (Refs #29)
-  - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean; 119 relative links resolve; no `SKILL.md`/`references/`/`assets/templates/` drift since `v0.2.0`; PR-head CI SUCCESS
-  - Note: Preparation only. Tag, GitHub Release, post-merge lifecycle checks, and issue closure remain pending. T-029 stays Deferred under DEC-006.
-
 ## Blocked
 
 ## Pending
@@ -35,6 +22,15 @@
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-030 — Prepare and release CSDD v0.2.1 public beta
+  - Owner: valen
+  - Scope: released
+  - Updated: 2026-09-27
+  - Issue: #29
+  - Landed: PR #38 @ `0279d53`; PR #39 @ `545a2ed`
+  - Verification: 19 tests and structural validator PASS on release SHA; main push CI SUCCESS; isolated install lifecycle, Cursor/Codex init smokes, and 8-file installed runtime hash match PASS.
+  - Note: Published `v0.2.1` as Latest at `545a2ed`; post-publication evidence in `evidence/t-030-release-readiness.md`. T-029 remains Deferred under DEC-006.
 
 - [x] T-032 — Add Antigravity skill installation support
   - Owner: valen
@@ -71,12 +67,3 @@ Retention: 5
   - Issue: #14
   - Landed: PR #31 @ `8ed582b`
   - Note: Global Agent Skills install path for Codex/Cursor documented and verified; evidence in `evidence/t-025-installation.md`.
-
-- [x] T-024 — Prepare and release CSDD v0.2.0
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: released
-  - Updated: 2026-07-21
-  - Issue: #8
-  - Landed: PR #22 @ `9bf9609`
-  - Note: Published v0.2.0 from `9bf9609` at https://github.com/ValenFelizia/csdd/releases/tag/v0.2.0; scenarios 06–08 Run A passed with no critical failures; no remaining release blockers.
