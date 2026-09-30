@@ -13,6 +13,10 @@ All notable changes to CSDD will be documented in this file.
   visible claims/waiting states and combined retention after verified landing.
 - Reproducible offline integration fixtures comparing the baseline, each
   change separately, and their combination, with separate safety cases.
+- Read-only `/csdd doctor` workflow for diagnosing CSDD state without writing,
+  repairing, or migrating. Structural TODO checks reuse the repository
+  validator's heading and retention rules. Evaluation contracts are scenarios
+  11–13 and have not been executed.
 
 ### Adoption
 

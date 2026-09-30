@@ -106,6 +106,18 @@ As a manual fallback, copy the four files from
 [`assets/templates`](assets/templates) into a repository-level `.csdd/`
 directory. Prefer `/csdd init` when an agent can run the adoption workflow.
 
+### 4. Diagnose existing state
+
+When CSDD state may already exist, ask for a read-only diagnosis:
+
+```text
+/csdd doctor
+```
+
+`/csdd doctor` reports classification, evidence-backed findings, and one next
+step. It does not initialize, repair, migrate, or edit files. The workflow
+contract is [read-only-workflows.md](references/read-only-workflows.md).
+
 ## The four documents
 
 | Document | Canonical responsibility |
