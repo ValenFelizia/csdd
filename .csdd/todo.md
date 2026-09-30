@@ -2,6 +2,17 @@
 
 ## In Progress
 
+- [ ] T-037 — Add a read-only `/csdd status` workflow
+  - Owner: valen
+  - Agent: cursor-grok-4.7
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/read-only-workflows.md`, `README.md`, `changelog.md`, `evals/README.md`, `evals/scenarios/12-status-snapshot.md`, `evals/scenarios/13-status-limits.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `41e1c2a270362a5272da7c903a6d43ce807933aa`
+  - Updated: 2026-09-30
+  - Issue: #26
+  - Depends on: T-036
+  - Note: Derived snapshot only. Scenarios 12–13 are contracts and have not been executed. Review base is `design/t-036-csdd-doctor` until that branch lands on `main`.
+
 ## Ready to Land
 
 - [ ] T-036 — Add a read-only `/csdd doctor` workflow

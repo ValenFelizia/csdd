@@ -10,6 +10,10 @@ All notable changes to CSDD will be documented in this file.
   repairing, or migrating. Structural TODO checks reuse the repository
   validator's heading and retention rules. Evaluation contracts are scenarios
   09–11 and have not been executed.
+- Read-only `/csdd status` workflow that derives a brief operational snapshot
+  from canonical documents and observable Git state. It does not persist a
+  status file. Evaluation contracts are scenarios 12–13 and have not been
+  executed.
 
 ## [0.2.1] — 2026-09-27
 

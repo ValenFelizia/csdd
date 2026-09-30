@@ -1,6 +1,6 @@
 ---
 name: csdd
-description: Apply Collaborative Spec-Driven Development as a lightweight coordination and durable project-state protocol. Use when a repository contains canonical `.csdd/` project-state documents, making it CSDD-aware, when the user or project instructions explicitly require CSDD, or when the user explicitly requests `/csdd doctor`.
+description: Apply Collaborative Spec-Driven Development as a lightweight coordination and durable project-state protocol. Use when a repository contains canonical `.csdd/` project-state documents, making it CSDD-aware, when the user or project instructions explicitly require CSDD, or when the user explicitly requests `/csdd doctor` or `/csdd status`.
 ---
 
 # Collaborative Spec-Driven Development
@@ -95,6 +95,28 @@ doctor during unrelated work.
 Load [Read-only inspection](references/protocol.md#read-only-inspection) and
 [the doctor contract](references/read-only-workflows.md) before emitting
 finding identifiers.
+
+### `/csdd status` fast path
+
+`/csdd status` is the canonical name for a derived, read-only snapshot of what
+is active. It is not a native slash-command requirement, a CLI, or a fifth
+canonical document. Do not run it during unrelated work.
+
+1. Resolve one root and classify it with the same read-only inspection as
+   doctor. Do not write.
+2. If the state is absent, say so. Do not report an initialized empty project.
+3. If tasks cannot be placed under the six canonical states, or the class is
+   partial, malformed, older, ambiguous, or uncertain, do not invent counts.
+   Recommend `/csdd doctor`.
+4. Otherwise report counts, active claims, landing lines, handoff IDs, and
+   retention usage. Point at `.csdd/todo.md` and `.csdd/handoff.md`. Omit full
+   task and handoff bodies unless the user asks for detail, and even then do
+   not paste them.
+5. Say whether inspected scopes overlap, and that this does not prove other
+   worktrees are idle. End with `Nothing was modified.`
+
+Load [the status contract](references/read-only-workflows.md#csdd-status)
+before adding fields the brief snapshot does not already require.
 
 ## Choose the minimum hydration level
 
@@ -320,6 +342,8 @@ Load only the section relevant to the current question:
   policy, and validation scenarios.
 - Use [the doctor contract](references/read-only-workflows.md) only when the
   user explicitly requests `/csdd doctor`.
+- Use [the status contract](references/read-only-workflows.md#csdd-status) only
+  when the user explicitly requests `/csdd status`.
 - Use [the document contracts](references/document-contracts.md) for exact
   document boundaries, the initialization contract, the detailed `todo.md` and
   `handoff.md` contracts, read and update triggers, aging and cleanup,

@@ -12,8 +12,9 @@ contract. Conceptual safety also lives in
 field meaning remain in [document-contracts.md](document-contracts.md). Doctor
 applies those rules; it does not redefine them.
 
-`/csdd status` is a separate, narrower workflow. It may reuse the inspection
-below later. Doctor does not produce a status snapshot and does not create one.
+`/csdd status` is a separate workflow defined in
+[the status section](#csdd-status). It may reuse the inspection below. Doctor
+does not produce a status snapshot and does not store one.
 
 ## Non-goals
 
@@ -280,10 +281,97 @@ Recommend one next step that this workflow does not itself perform.
   checks that ran, and repeat any visibility limitations. Do not call the
   repository safe beyond that evidence.
 
-## Relationship to later workflows
+## `/csdd status`
 
-A derived status workflow may share root resolution, classification, structural
-rules, and Git observation. It must remain a separate user contract: status
-answers what is active, doctor answers whether the inspected state is valid and
-what is wrong. Doctor output is not a status board and must not be stored as
-one.
+`/csdd status` is the canonical user-facing name for a lightweight, read-only
+operational snapshot. It answers what is active now. Doctor answers whether
+the inspected state is valid and what is wrong. The workflows stay separable
+even though status reuses [Shared inspection](#shared-inspection).
+
+Status is a derived view. It MUST point back to `.csdd/todo.md`,
+`.csdd/handoff.md`, and observable Git state. It MUST NOT become a second TODO,
+a handoff surface, a cache, or a persisted status file.
+
+### Invocation
+
+Run status only for an explicit `/csdd status` request or an equivalent
+natural-language request for the current CSDD snapshot. Do not run it during
+ordinary bootstrap or unrelated work. No CLI, script, hook, plugin, or
+harness adapter is required.
+
+### When a snapshot is reliable
+
+Follow shared inspection through classification.
+
+| Classification | Status behavior |
+| --- | --- |
+| Absent | Report that `.csdd/` is absent. Do not print task counts of zero. `/csdd init` remains a separate request. |
+| Current, and every task sits under exactly one canonical state H2 | Derive the snapshot below. |
+| Current, but one or more tasks cannot be placed | Do not invent counts. Recommend `/csdd doctor`. |
+| Partial, malformed, recognizable older, ambiguous, or uncertain | Do not invent counts. State the limitation and recommend `/csdd doctor`. |
+
+Field defects that still leave every task placed, such as a Deferred entry
+missing `Reason:`, do not block counts. Say that structural diagnosis belongs
+to doctor, and do not copy doctor's finding list into the snapshot.
+
+### Brief output
+
+Default output is brief. The wording may vary. Include:
+
+- root, classification, and detected version or `unknown`;
+- the source paths used, at least `.csdd/todo.md` and `.csdd/handoff.md` when
+  they were read;
+- counts for In Progress, Ready to Land, Blocked, Pending, Deferred, and
+  Recently Completed;
+- retention as `used/N`, using the declared `N` or the fallback five when the
+  declaration is absent;
+- one line per active claim that names an `Agent` or a concrete `Scope`: task
+  ID, state, agent, and scope;
+- Ready to Land task IDs with the `Landing:` value only;
+- blocked and deferred task IDs, without their full entries;
+- the number of current handoff entries and the task or workstream IDs they
+  name, without handoff bodies;
+- either `No detected scope overlap in inspected state` or the overlapping
+  task IDs;
+- the sentence that no detected overlap is not proof about uninspected
+  branches, worktrees, or external agents;
+- Git or worktree limitations, including visible divergence that was not
+  fetched;
+- the sentence `Nothing was modified.`
+
+Counts come from the current worktree baseline only. Do not add counts from
+another branch or worktree into the same totals. If another local worktree or
+branch is visible and its CSDD state differs, report that divergence in one
+line and leave the totals on this baseline.
+
+An illustrative shape, not a schema:
+
+```text
+CSDD v0.2
+2 tasks in progress
+1 ready to land
+0 blocked
+1 active handoff
+No detected scope overlap in inspected state
+```
+
+### Detail
+
+Add detail only when the user asks for it. Detail may include one-line titles
+and the canonical file path for each counted task. It still MUST NOT reproduce
+notes, verification writeups, specification sections, decision bodies, or
+handoff narratives. Point at the file instead.
+
+### Safety
+
+Status uses the same read-only Git observation rules as doctor. It MUST NOT
+claim, reassign, reconcile, repair, migrate, initialize, fetch, stage, or
+edit. It MUST NOT write `.csdd/status.md` or any other generated status
+artifact.
+
+## Separable workflows
+
+Doctor and status may share root resolution, classification, structural rules,
+and Git observation. They remain different user contracts. Doctor output is
+not a status board. Status output is not a diagnosis and does not authorize a
+repair.

@@ -113,6 +113,11 @@ Do not add results to `evals/results.md` before execution.
 Scenarios 09–11 are pre-run contracts for `/csdd doctor`. They are not run
 reports. Do not add them to `evals/results.md` before execution.
 
+### T-037 status scenarios (12–13)
+
+Scenarios 12–13 are pre-run contracts for `/csdd status`. They are not run
+reports. Do not add them to `evals/results.md` before execution.
+
 ## Reporting
 
 Store structured reports under `evals/runs/`.
