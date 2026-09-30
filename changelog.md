@@ -2,6 +2,15 @@
 
 All notable changes to CSDD will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Read-only `/csdd doctor` workflow for diagnosing CSDD state without writing,
+  repairing, or migrating. Structural TODO checks reuse the repository
+  validator's heading and retention rules. Evaluation contracts are scenarios
+  09–11 and have not been executed.
+
 ## [0.2.1] — 2026-09-27
 
 ### Added

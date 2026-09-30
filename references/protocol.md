@@ -803,6 +803,26 @@ Initialization MUST:
 - not stage, commit, push, open a pull request, merge, install, or write
   outside the initialization destination without separate authority.
 
+## Read-only inspection
+
+`/csdd doctor` is a portable, read-only diagnostic workflow. It is not a native
+slash-command requirement and not a CLI. Explicit natural-language diagnosis
+requests are sufficient. Ordinary bootstrap and unrelated tasks MUST NOT run it.
+
+Doctor MUST NOT repair, migrate, normalize, delete, stage, commit, fetch, or
+rewrite repository or Git state. Age alone MUST NOT be treated as abandonment.
+Inaccessible branches, worktrees, or tools MUST be reported as limitations and
+MUST NOT be described as repository-wide safety. A recommended fix is not
+permission to apply it.
+
+The exact root, classification, structural rules, finding identifiers, and
+output contract are in
+[read-only-workflows.md](read-only-workflows.md). Structural TODO heading and
+retention checks reuse the rules in `scripts/validate_repository.py` without
+running that package validator against the target project. A later `/csdd
+status` workflow may share this inspection and remains a separate user
+contract.
+
 ## Initial skill operational contract
 
 The initial CSDD skill is a concise operational router over this protocol and
@@ -816,7 +836,8 @@ state, and close honestly. It does not duplicate the detailed protocol in
 The skill is applicable when either:
 
 - the repository contains the canonical `.csdd/` project-state documents; or
-- the user or project instructions explicitly require CSDD.
+- the user or project instructions explicitly require CSDD, including an
+  explicit `/csdd doctor` request.
 
 An existing `.csdd/` is sufficient evidence that work in that repository is
 CSDD-aware, but not that every task requires reading CSDD documents. Explicit
@@ -932,6 +953,7 @@ does not redefine them.
 - applicability signals and canonical `.csdd/` discovery;
 - the concise `/csdd init` recognition and safety route for explicit
   initialization intent;
+- the concise `/csdd doctor` read-only route for explicit diagnosis requests;
 - the context-level classifier and minimal read-routing table;
 - the essential orient, overlap-check, claim, execute, reconcile, and close
   sequence;
@@ -945,9 +967,10 @@ does not redefine them.
 Detailed protocol knowledge remains in `references/` and is loaded
 progressively. This document owns principles, full lifecycle semantics
 including the Git-aware task lifecycle, initialization and adoption,
-hydration rationale, concurrency and stale-claim handling, branch and
-worktree baseline reconciliation, contradiction resolution, knowledge
-promotion, archive policy, limitations, and validation scenarios.
+read-only inspection, hydration rationale, concurrency and stale-claim
+handling, branch and worktree baseline reconciliation, contradiction
+resolution, knowledge promotion, archive policy, limitations, and validation
+scenarios.
 [document-contracts.md](document-contracts.md) owns exact document boundaries,
 the initialization contract, read and update triggers, aging, cross-document
 movement, examples, branch/worktree locality evidence, and archive-entry

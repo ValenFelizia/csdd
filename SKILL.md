@@ -1,6 +1,6 @@
 ---
 name: csdd
-description: Apply Collaborative Spec-Driven Development as a lightweight coordination and durable project-state protocol. Use when a repository contains canonical `.csdd/` project-state documents, making it CSDD-aware, or when the user or project instructions explicitly require CSDD.
+description: Apply Collaborative Spec-Driven Development as a lightweight coordination and durable project-state protocol. Use when a repository contains canonical `.csdd/` project-state documents, making it CSDD-aware, when the user or project instructions explicitly require CSDD, or when the user explicitly requests `/csdd doctor`.
 ---
 
 # Collaborative Spec-Driven Development
@@ -72,6 +72,29 @@ When the user explicitly requests initialization:
 For non-obvious initialization behavior, load [Initialization and
 adoption](references/protocol.md#initialization-and-adoption) and
 [Initialization](references/document-contracts.md#initialization).
+
+### `/csdd doctor` fast path
+
+`/csdd doctor` is the canonical user-facing name for a read-only diagnosis. It
+is not a guaranteed native slash command and it does not require a CLI.
+Equivalent explicit requests to diagnose CSDD state are sufficient. Do not run
+doctor during unrelated work.
+
+1. Resolve one unambiguous canonical root. Competing roots or an unusable
+   `.csdd` path stop classification. Do not create a root.
+2. Classify the destination. Report absent, current, recognizable older,
+   partial, malformed, ambiguous, or uncertain. Do not initialize, repair, or
+   migrate from this workflow.
+3. Apply the structural TODO rules already used for repository templates, plus
+   the todo and handoff field contracts. Cite evidence for every finding. Age
+   alone is not evidence. Unavailable Git or worktree tools are limitations,
+   not passes.
+4. Return passed checks, findings, skipped checks, one next action that this
+   workflow does not perform, and the sentence `Nothing was modified.`
+
+Load [Read-only inspection](references/protocol.md#read-only-inspection) and
+[the doctor contract](references/read-only-workflows.md) before emitting
+finding identifiers.
 
 ## Choose the minimum hydration level
 
@@ -291,10 +314,12 @@ review note when completion has not yet been earned.
 Load only the section relevant to the current question:
 
 - Use [the protocol](references/protocol.md) for principles, hydration semantics,
-  lifecycle, initialization and adoption, boundary-driven handoffs, TODO
-  structure and retention, concurrency, stale claims, branch/worktree baseline
-  reconciliation, contradiction handling, archive policy, and validation
-  scenarios.
+  lifecycle, initialization and adoption, read-only inspection, boundary-driven
+  handoffs, TODO structure and retention, concurrency, stale claims,
+  branch/worktree baseline reconciliation, contradiction handling, archive
+  policy, and validation scenarios.
+- Use [the doctor contract](references/read-only-workflows.md) only when the
+  user explicitly requests `/csdd doctor`.
 - Use [the document contracts](references/document-contracts.md) for exact
   document boundaries, the initialization contract, the detailed `todo.md` and
   `handoff.md` contracts, read and update triggers, aging and cleanup,
