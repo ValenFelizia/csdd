@@ -162,6 +162,8 @@ evidence-backed.
 
 ## Learn more
 
+- [Contributing and change-impact guidance](CONTRIBUTING.md)
+- [Architecture and product boundaries](docs/architecture.md)
 - [Installation and lifecycle](docs/installation.md)
 - [Agent compatibility matrix](docs/compatibility.md)
 - [Full protocol](references/protocol.md)

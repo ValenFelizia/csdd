@@ -4,6 +4,31 @@
 
 ## Ready to Land
 
+- [ ] T-034 — Formalize lightweight architecture and product-scope guardrails
+  - Owner: valen
+  - Agent: codex
+  - Scope: `docs/architecture.md`, `README.md` architecture link
+  - Target: `main`
+  - Base: `4f8e43315e38d002f01ae2ccc869073e6be6166f`
+  - Updated: 2026-09-30
+  - Issue: #37
+  - Landing: `codex/architecture-contribution-guardrails` → `main`; draft PR #43
+  - Verification: 19 unit tests PASS; offline repository validator PASS; current skill, protocol, and templates unchanged.
+  - Note: Contributor design policy only; current protocol contracts and #41/#42 solution choices remain unchanged. README edits are sequenced with T-035 by the same executor.
+
+- [ ] T-035 — Add CSDD contribution guidance and a pull request template
+  - Owner: valen
+  - Agent: codex
+  - Scope: `CONTRIBUTING.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `README.md` contribution link
+  - Target: `main`
+  - Base: `4f8e43315e38d002f01ae2ccc869073e6be6166f`
+  - Updated: 2026-09-30
+  - Issue: #20
+  - Depends on: T-034 architecture guidance
+  - Landing: `codex/architecture-contribution-guardrails` → `main`; draft PR #43
+  - Verification: 19 unit tests PASS; offline repository validator PASS; documentation reviewed against protocol, CI, versioning, and evaluation contracts.
+  - Note: Same-executor sequencing of the shared README; no new workflow or protocol behavior.
+
 ## Blocked
 
 ## Pending
