@@ -2,6 +2,16 @@
 
 ## In Progress
 
+- [ ] T-036 — Add a read-only `/csdd doctor` workflow
+  - Owner: valen
+  - Agent: cursor-grok-4.7
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/read-only-workflows.md`, `README.md`, `changelog.md`, `evals/README.md`, `evals/scenarios/09-doctor-states.md`, `evals/scenarios/10-doctor-false-positives.md`, `evals/scenarios/11-doctor-visibility-limits.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `d30eb30b8f19292fe10ae8cc64d65bd22832e0dc`
+  - Updated: 2026-09-30
+  - Issue: #25
+  - Note: README addition is a new diagnosis section. It does not edit the architecture or contributing links from T-034 and T-035. Scenarios 09–11 are contracts only.
+
 ## Ready to Land
 
 - [ ] T-034 — Formalize lightweight architecture and product-scope guardrails
