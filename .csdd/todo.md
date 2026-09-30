@@ -2,6 +2,8 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-036 — Add a read-only `/csdd doctor` workflow
   - Owner: valen
   - Agent: cursor-grok-4.7
@@ -10,9 +12,9 @@
   - Base: `d30eb30b8f19292fe10ae8cc64d65bd22832e0dc`
   - Updated: 2026-09-30
   - Issue: #25
-  - Note: README addition is a new diagnosis section. It does not edit the architecture or contributing links from T-034 and T-035. Scenarios 09–11 are contracts only.
-
-## Ready to Land
+  - Landing: `design/t-036-csdd-doctor` → `main`; PR #44
+  - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean. Scenarios 09–11 are pre-run contracts and have not been executed.
+  - Note: README addition is a new diagnosis section. It does not edit the architecture or contributing links from T-034 and T-035. `/csdd status` is a separate workflow.
 
 - [ ] T-034 — Formalize lightweight architecture and product-scope guardrails
   - Owner: valen
