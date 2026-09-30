@@ -819,9 +819,10 @@ The exact root, classification, structural rules, finding identifiers, and
 output contract are in
 [read-only-workflows.md](read-only-workflows.md). Structural TODO heading and
 retention checks reuse the rules in `scripts/validate_repository.py` without
-running that package validator against the target project. A later `/csdd
-status` workflow may share this inspection and remains a separate user
-contract.
+running that package validator against the target project. `/csdd status` is
+the derived snapshot in that same reference. It may share this inspection and
+remains a separate user contract: status does not diagnose, and doctor does
+not publish a status board.
 
 ## Initial skill operational contract
 
@@ -837,7 +838,7 @@ The skill is applicable when either:
 
 - the repository contains the canonical `.csdd/` project-state documents; or
 - the user or project instructions explicitly require CSDD, including an
-  explicit `/csdd doctor` request.
+  explicit `/csdd doctor` or `/csdd status` request.
 
 An existing `.csdd/` is sufficient evidence that work in that repository is
 CSDD-aware, but not that every task requires reading CSDD documents. Explicit
@@ -954,6 +955,8 @@ does not redefine them.
 - the concise `/csdd init` recognition and safety route for explicit
   initialization intent;
 - the concise `/csdd doctor` read-only route for explicit diagnosis requests;
+- the concise `/csdd status` read-only route for an explicit operational
+  snapshot;
 - the context-level classifier and minimal read-routing table;
 - the essential orient, overlap-check, claim, execute, reconcile, and close
   sequence;

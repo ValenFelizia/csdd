@@ -5,7 +5,7 @@ behavior across fresh coding-agent sessions.
 
 ## Scenario contracts vs run reports
 
-- **Pre-run scenario contracts** (for example scenarios 06–13) define fixture
+- **Pre-run scenario contracts** (for example scenarios 06–15) define fixture
   shape, the exact subject prompt, expected observable behavior, critical
   failures, and grading notes. They are not evaluation reports and must not
   contain Observed Behavior, PASS/PARTIAL/FAIL results, or invented run
@@ -16,7 +16,7 @@ behavior across fresh coding-agent sessions.
 - Evaluations 01–05 predate the contract/report split. Their combined historical
   reports now live under `evals/runs/`. No separate frozen pre-run contracts
   exist for those historical evaluations.
-- Scenarios 06–13 are the reusable pre-run contracts under `evals/scenarios/`.
+- Scenarios 06–15 are the reusable pre-run contracts under `evals/scenarios/`.
 
 ## Evaluation Roles
 
@@ -111,6 +111,11 @@ Do not add results to `evals/results.md` before execution.
 ### T-036 doctor scenarios (11–13)
 
 Scenarios 11–13 are pre-run contracts for `/csdd doctor`. They are not run
+reports. Do not add them to `evals/results.md` before execution.
+
+### T-037 status scenarios (14–15)
+
+Scenarios 14–15 are pre-run contracts for `/csdd status`. They are not run
 reports. Do not add them to `evals/results.md` before execution.
 
 ## Reporting
