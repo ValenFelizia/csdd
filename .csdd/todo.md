@@ -4,6 +4,31 @@
 
 ## Ready to Land
 
+- [ ] T-036 — Add a read-only `/csdd doctor` workflow
+  - Owner: valen
+  - Agent: cursor-grok-4.7
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/read-only-workflows.md`, `README.md`, `changelog.md`, `evals/README.md`, `evals/scenarios/09-doctor-states.md`, `evals/scenarios/10-doctor-false-positives.md`, `evals/scenarios/11-doctor-visibility-limits.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `d30eb30b8f19292fe10ae8cc64d65bd22832e0dc`
+  - Updated: 2026-09-30
+  - Issue: #25
+  - Landing: `design/t-036-csdd-doctor` → `main`; PR #44
+  - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean. Scenarios 09–11 are pre-run contracts and have not been executed.
+  - Note: README addition is a new diagnosis section. It does not edit the architecture or contributing links from T-034 and T-035. `/csdd status` is T-037.
+
+- [ ] T-037 — Add a read-only `/csdd status` workflow
+  - Owner: valen
+  - Agent: cursor-grok-4.7
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/read-only-workflows.md`, `README.md`, `changelog.md`, `evals/README.md`, `evals/scenarios/12-status-snapshot.md`, `evals/scenarios/13-status-limits.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `41e1c2a270362a5272da7c903a6d43ce807933aa`
+  - Updated: 2026-09-30
+  - Issue: #26
+  - Depends on: T-036
+  - Landing: `design/t-037-csdd-status` → `main`; PR #45
+  - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean. Scenarios 12–13 are pre-run contracts and have not been executed.
+  - Note: Stacked on T-036. Derived snapshot only. Review #44 before merging #45.
+
 - [ ] T-034 — Formalize lightweight architecture and product-scope guardrails
   - Owner: valen
   - Agent: codex
