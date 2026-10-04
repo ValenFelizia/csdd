@@ -50,7 +50,8 @@ def git(root, *args, allow_conflict=False, raw=False):
                 "GIT_COMMON_DIR", "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES"):
         env.pop(key, None)
     result = subprocess.run(
-        ["git", "-c", "core.hooksPath=" + os.devnull, "-c", "commit.gpgsign=false",
+        ["git", "-c", "safe.directory=" + str(Path(root).resolve()),
+         "-c", "core.hooksPath=" + os.devnull, "-c", "commit.gpgsign=false",
          "-c", "tag.gpgsign=false", "-c", "protocol.allow=never", "-C", str(root), *args],
         env=env, text=not raw, encoding=None if raw else "utf-8", capture_output=True, check=False)
     if raw:
