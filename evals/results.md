@@ -10,5 +10,6 @@
 | 07 Landing / TODO / handoff (Run A) | PASS    | —         | PASS  |
 | 08 Existing repo init (Run A) | PASS    | —         | PASS  |
 | [09 Local task identity (Run A)](runs/09-task-identity-a.md) | PASS (9 subjects) | — | PASS |
+| [10 TODO integration (Run A)](runs/10-todo-integration-a.md) | PARTIAL (13 PASS, 1 PARTIAL) | — | PARTIAL |
 
 

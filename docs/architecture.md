@@ -118,6 +118,10 @@ the current repository.
 
 The accepted direction for [#41](https://github.com/ValenFelizia/csdd/issues/41)
 is defined by the [local task identity contract](../references/document-contracts.md#local-task-identity):
-bounded namespaces with optional external relationships. Parallel-PR integration
-under [#42](https://github.com/ValenFelizia/csdd/issues/42) remains separate design
-and evaluation work. Neither direction introduces stronger coordination guarantees.
+bounded namespaces with optional external relationships. The accepted direction
+for [#42](https://github.com/ValenFelizia/csdd/issues/42) combines
+[write economy](../references/document-contracts.md#write-economy) with
+[task-wise landing reconciliation](../references/document-contracts.md#task-wise-landing-reconciliation).
+Its measured scope is recorded in the [scenario 10 run report](../evals/runs/10-todo-integration-a.md);
+neither direction introduces
+stronger coordination guarantees or changes the four-document runtime boundary.

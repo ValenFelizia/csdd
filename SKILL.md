@@ -147,6 +147,14 @@ next counter solely from the current TODO; insufficient history needs a fresh
 coordinated namespace. Optional `Issue:` URLs do not replace or rename local IDs.
 These rules add no tracking requirement to the trivial fast path.
 
+Avoid TODO/handoff writes for reads or unchanged verification; preserve necessary
+claims and waiting states. Batch compatible known changes within one operation,
+without delaying updates across a coordination boundary. For parallel landing,
+reconcile relevant task deltas against base/current target/source, preserving
+unrelated target work and blocking real conflicts. See [Write
+economy](references/document-contracts.md#write-economy) and [Task-wise landing
+reconciliation](references/document-contracts.md#task-wise-landing-reconciliation).
+
 ### `todo.md` fast path
 
 Keep `todo.md` under these fixed H2 headings, including when empty, in this

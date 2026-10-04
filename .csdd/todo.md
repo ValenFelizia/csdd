@@ -4,17 +4,17 @@
 
 ## Ready to Land
 
-- [ ] T-task-identity-001 — Implement stable local task identity with explicit namespaces
+- [ ] T-todo-integration-001 — Reduce shared TODO integration work with task-wise reconciliation
   - Owner: valen
   - Agent: codex
-  - Scope: `SKILL.md`, `references/**` identity guidance, `assets/templates/todo.md`, `docs/architecture.md` identity link, `README.md`, `changelog.md`, `evals/**` identity campaign, `.csdd/specs.md`, `.csdd/decisions.md`
+  - Scope: `SKILL.md`, `references/**` shared-state/landing guidance, `assets/templates/todo.md`, `README.md`, `changelog.md`, `docs/architecture.md`, `evals/**` scenario 10, `.csdd/specs.md`, `.csdd/decisions.md`
   - Target: `main`
-  - Base: `d30eb30b8f19292fe10ae8cc64d65bd22832e0dc`
-  - Updated: 2026-10-03
-  - Issue: https://github.com/ValenFelizia/csdd/issues/41
-  - Landing: Draft PR https://github.com/ValenFelizia/csdd/pull/46 from `codex/task-id-namespaces` to `main`; complete human review and final-head CI before merging. Completion requires reachability from the target.
-  - Verification: 19 unit tests and offline structural validator passed; independent scenario 09 Run A passed all 9 subjects, including history, repair, optional relationships, and safe stops. Both integration orders preserved actual created IDs after explicit TODO conflict resolution; #42 contention remains separate. Final-head CI is tracked on the PR.
-  - Note: task-identity allocation explicitly agreed for the approved #41 line; codex is its sole allocator. Runtime and fixture commits, execution timing, and model/egress limits are recorded in evals/runs/09-task-identity-a.md. No merge or release authorized.
+  - Base: `cd2ff965385e743e9bc622229ebdf07db2faae32`
+  - Updated: 2026-10-04
+  - Issue: https://github.com/ValenFelizia/csdd/issues/42
+  - Landing: Draft PR https://github.com/ValenFelizia/csdd/pull/47 from `codex/todo-task-reconciliation` to `main`; human review and target integration pending.
+  - Verification: 19 unit tests, offline repository validation, and whitespace checks passed. Independent scenario 10: 13 PASS, 1 PARTIAL, zero FAIL; bounded metrics and the partial-case defect are recorded in `evals/runs/10-todo-integration-a.md`. CI results tracked on the PR.
+  - Note: todo-integration coordinated for the human-approved #42 line; codex is the sole project-task allocator. Fixture author edits only scenario/materializer; subjects act only in disposable fixtures. Claims and waiting states remain visible; storage stays in four documents.
 
 ## Blocked
 
@@ -34,6 +34,16 @@
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-task-identity-001 — Implement stable local task identity with explicit namespaces
+  - Owner: valen
+  - Agent: codex
+  - Scope: released
+  - Updated: 2026-10-04
+  - Issue: https://github.com/ValenFelizia/csdd/issues/41
+  - Landed: PR #46 @ `cd2ff96`
+  - Verification: Reviewed PR merged into main; 19 tests, offline validator, and final-head CI passed. Scenario 09: 9 independent subjects PASS.
+  - Note: task-identity namespace remains reserved; evaluation limitations are in evals/runs/09-task-identity-a.md.
 
 - [x] T-035 — Add CSDD contribution guidance and a pull request template
   - Owner: valen
@@ -70,12 +80,3 @@ Retention: 5
   - Issue: #34
   - Landed: PR #35 @ `80d26a8`
   - Note: Added partial project-local Antigravity distribution evidence; global CLI install, discovery, and behavior remain not tested.
-
-- [x] T-027 — Publish an evidence-backed agent compatibility matrix
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: released
-  - Updated: 2026-07-23
-  - Issue: #24
-  - Landed: PR #33 @ `5af4746`
-  - Note: Published the canonical evidence-backed Cursor/Codex compatibility matrix from a 4/4 PASS campaign; Global install and Discovery remain partial, and Implicit activation remains not tested.

@@ -218,3 +218,41 @@ without moving canonical authority. Duplicate repair remains necessary where
 agreements or visibility fail. This decision addresses #41 identity, not #42
 shared-file contention; adopting it does not authorize stronger guarantees,
 runtime infrastructure, or a release.
+
+## DEC-008 — Combine write economy with task-wise landing reconciliation
+
+- Status: accepted
+- Date: 2026-10-04
+
+### Context
+
+Distinct stable IDs do not eliminate shared TODO text contention. The human
+selected fewer unnecessary writes plus per-task reconciliation and authorized
+implementation/evaluation after reviewing the alternatives.
+
+### Decision
+
+Follow [Write economy](../references/document-contracts.md#write-economy) and
+[Task-wise landing reconciliation](../references/document-contracts.md#task-wise-landing-reconciliation)
+as the canonical rules. Keep claims and waiting state visible and preserve the
+current four-document model. Evaluate actual total integration work before
+claiming savings or resolution of #42.
+
+### Rationale and alternatives
+
+Fewer writes alone cannot reconcile divergent task state. Per-task reconciliation
+alone can preserve outcomes but still adds preparation/resolution work. Together,
+minimal updates and coherent closure of compatible verified outcomes can avoid
+redundant state patches. Per-task files would change storage/discovery and remain
+a future option only if evidence warrants another jointly reviewed design.
+
+### Consequences
+
+No migration, central service, lock, automatic tracker synchronization, or custom
+merge driver is required. Safety and meaningful coordination updates take priority
+over lower patch counts. Fresh comparative evaluation must count preparation,
+conflicts, commits, and closure; no universal conflict-free or compatibility claim
+follows from adopting the direction. No merge or release is authorized here.
+
+The tested workload and execution limitations are recorded in the
+[scenario 10 run report](../evals/runs/10-todo-integration-a.md).

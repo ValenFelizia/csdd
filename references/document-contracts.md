@@ -64,6 +64,76 @@ minimal Git contract, and landing examples live in [Git-aware task
 lifecycle](protocol.md#git-aware-task-lifecycle). This contract defines how those
 rules appear in document fields and edit behavior.
 
+### Write economy
+
+Reading, rechecking unchanged evidence, or repeating a successful command MUST
+NOT by itself produce a TODO/handoff patch or refresh `Updated`. Write when an
+operational fact changes: claim/executor/scope, state, blocker, landing path,
+relevant verification, or information needed across a boundary. A changed
+`Base` that requires reconciliation is not a no-op; preserve the required
+refresh evidence. Do not omit necessary coordination to reduce write counts.
+
+Keep unrelated entries byte-for-byte where practical. Do not reformat, sort,
+renumber, compact, or refresh dates on unrelated tasks. Recently Completed
+retention still applies when that section is changed; it is not general cleanup
+on every TODO edit. Do not duplicate verification in a handoff when task fields
+already make continuation safe.
+
+Combine compatible changes already known within one uninterrupted operation in
+one coherent patch. For several authorized independent landings in that same
+operation, verified outcomes MAY be closed together at the first coherent
+checkpoint after they are reachable from `Target`, applying global retention
+once to the combined results. Do not postpone a necessary update across a
+session, responsibility, or coordination boundary merely to batch writes.
+Interrupted integration records the actual landed subset and the honest pending
+state of the remainder. Active claims and delayed `Ready to Land` remain visible.
+
+### Task-wise landing reconciliation
+
+When parallel branches have coordination-only divergence, reconcile their task
+changes against the current target rather than replace a whole TODO snapshot.
+The inputs are the relevant common base, current target state, and source
+changes; inspect relevant working-tree changes as well. A Git merge is a text
+operation, not proof that task identity, scope, lifecycle, or durable truth agree.
+
+1. Resolve `Target` and refresh the Git baseline. Identify the source's relevant
+   task changes by stable ID and their accepted intent/provenance. Ambiguous IDs
+   follow [Local task identity](#local-task-identity) before dependent actions.
+2. Preserve current target entries and apply the source's authorized task delta.
+   An entry absent from an older source snapshot is not a deletion instruction.
+   Account for intentional cancellation and retention separately, with evidence;
+   do not resurrect evicted completed tasks or silently remove new target work.
+3. For an entry changed on both sides, including evidenced removal versus an
+   active/readiness update, compare with the common base. Preserve
+   compatible changes explicitly; conflicting state, ownership, scope, blockers,
+   or landing evidence MUST be reconciled or blocked, not resolved by choosing
+   the source, the target, or a nominally later lifecycle state automatically.
+   Distinct IDs do not make overlapping work compatible. Material specification
+   or decision conflicts require durable-truth reconciliation first.
+4. Carry necessary current dependencies and handoff changes within the authorized
+   boundary. Preserve human accountability and historical executor/provenance.
+   Reconciliation here does not edit another worktree or release its claim.
+5. Check the proposed combined state, relevant product diffs, and scopes before
+   integration. Preserve required active/Ready metadata; do not mark completion
+   on an unmerged source branch. Refresh again if the target changed during
+   preparation; reconcile or block instead of committing a stale combined view.
+6. After actual landing, verify each outcome satisfies the existing completion
+   contract, including verification, required review, clean/attributed scoped
+   state, and reachability from `Target`. Then close the verified tasks and apply
+   retention to current combined state. A
+   textual merge conflict may still need explicit resolution; preparation patches,
+   rebases, resolution commits, and final closure all count as integration work.
+
+For example, target completion of `T-export-alpha-001` and source readiness of
+`T-export-beta-001` are independent changes: preserve alpha's evidenced outcome
+and beta's honest pending landing. If both claim `src/export.py`, resolve that
+overlap even when the TODO merges cleanly.
+
+This is a portable manual/agent procedure, not a required parser, custom merge
+driver, task registry, lock, service, or guarantee of conflict-free Git merges.
+Keep the four-document layout. Reduced writes and task-wise reconciliation are
+complementary; claim improvement only for workloads with measured total savings.
+
 ## Document map
 
 | Document | Primary question | Temperature | Expected lifetime |
