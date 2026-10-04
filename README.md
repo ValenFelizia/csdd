@@ -216,6 +216,21 @@ ignored silently.
 
 Completed tasks release or remove their write scopes.
 
+## Local task IDs and optional issue links
+
+New tracked tasks use IDs such as `T-auth-reset-001`: explicitly agreed
+namespaces separate independent lines of task creation without requiring an
+issue tracker or network connection. Continuing a task preserves its ID.
+Optional `Issue:` URLs relate a task to GitHub, Linear, or another tracker;
+they do not become its identity or enable automatic synchronization.
+
+Existing stable IDs remain valid and can coexist with new IDs. Adoption does
+not renumber tasks or migrate project state. Retention does not release IDs;
+missing counter history requires a fresh coordinated namespace rather than
+guessing. See the [identity contract](references/document-contracts.md#local-task-identity)
+for allocation and duplicate reconciliation. This addition is unreleased;
+it does not change compatibility claims recorded for older skill commits.
+
 ## Branches and worktrees
 
 CSDD documents are version-controlled and therefore branch-local.
