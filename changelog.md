@@ -11,6 +11,8 @@ All notable changes to CSDD will be documented in this file.
 - Offline identity fixtures and a qualitative evaluation scenario.
 - Shared-state write economy and task-wise landing reconciliation, with
   visible claims/waiting states and combined retention after verified landing.
+- Reproducible offline integration fixtures comparing the baseline, each
+  change separately, and their combination, with separate safety cases.
 
 ### Adoption
 

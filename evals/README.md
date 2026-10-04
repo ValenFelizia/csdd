@@ -5,7 +5,7 @@ behavior across fresh coding-agent sessions.
 
 ## Scenario contracts vs run reports
 
-- **Pre-run scenario contracts** (for example scenarios 06–09) define fixture
+- **Pre-run scenario contracts** (for example scenarios 06–10) define fixture
   shape, the exact subject prompt, expected observable behavior, critical
   failures, and grading notes. They are not evaluation reports and must not
   contain Observed Behavior, PASS/PARTIAL/FAIL results, or invented run
@@ -16,7 +16,7 @@ behavior across fresh coding-agent sessions.
 - Evaluations 01–05 predate the contract/report split. Their combined historical
   reports now live under `evals/runs/`. No separate frozen pre-run contracts
   exist for those historical evaluations.
-- Scenarios 06–09 are the reusable pre-run contracts under `evals/scenarios/`.
+- Scenarios 06–10 are the reusable pre-run contracts under `evals/scenarios/`.
 
 ## Evaluation Roles
 
@@ -122,6 +122,17 @@ the evaluator. Use the current harness/model configuration and explicit invocati
 record available configuration metadata and limitations rather than inventing it.
 Keep shared-TODO conflicts separate from identity grades and rerun only for a
 defect or material ambiguity. The historical compatibility matrix is unchanged.
+
+### TODO integration campaign (scenario 10)
+
+[TODO integration](scenarios/10-todo-integration.md) compares write economy and
+task-wise reconciliation separately and together, in both integration orders,
+plus six safety cases. Its [offline materializer](fixtures/todo_integration.py)
+records reproducible local Git seeds and separate committed runtime snapshots.
+Count preparation, refresh, resolution, landing, and closure work; report safety
+and measured savings separately. One subject per case supports bounded findings,
+not universal conflict or overhead guarantees. Keep the four-document storage
+and historical compatibility matrix unchanged.
 
 Store structured reports under `evals/runs/`.
 
