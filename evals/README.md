@@ -5,7 +5,7 @@ behavior across fresh coding-agent sessions.
 
 ## Scenario contracts vs run reports
 
-- **Pre-run scenario contracts** (for example scenarios 06–08) define fixture
+- **Pre-run scenario contracts** (for example scenarios 06–09) define fixture
   shape, the exact subject prompt, expected observable behavior, critical
   failures, and grading notes. They are not evaluation reports and must not
   contain Observed Behavior, PASS/PARTIAL/FAIL results, or invented run
@@ -16,7 +16,7 @@ behavior across fresh coding-agent sessions.
 - Evaluations 01–05 predate the contract/report split. Their combined historical
   reports now live under `evals/runs/`. No separate frozen pre-run contracts
   exist for those historical evaluations.
-- Scenarios 06–08 are the reusable pre-run contracts under `evals/scenarios/`.
+- Scenarios 06–09 are the reusable pre-run contracts under `evals/scenarios/`.
 
 ## Evaluation Roles
 
@@ -109,6 +109,19 @@ Default campaign settings:
 Do not add results to `evals/results.md` before execution.
 
 ## Reporting
+
+### Task identity campaign (scenario 09)
+
+[Task identity](scenarios/09-task-identity.md) evaluates coordinated allocation,
+historical counters, continuity, optional external relationships, explicit
+duplicate repair, and safe stops. Its [offline materializer](fixtures/task_identity.py)
+creates disposable Git repositories and worktrees using Python's standard library
+and Git, without executing or grading agents. Give subjects only their fixture,
+the recorded runtime, and the exact prompt; keep the contract and manifest with
+the evaluator. Use the current harness/model configuration and explicit invocation;
+record available configuration metadata and limitations rather than inventing it.
+Keep shared-TODO conflicts separate from identity grades and rerun only for a
+defect or material ambiguity. The historical compatibility matrix is unchanged.
 
 Store structured reports under `evals/runs/`.
 

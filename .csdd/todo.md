@@ -2,6 +2,8 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-task-identity-001 — Implement stable local task identity with explicit namespaces
   - Owner: valen
   - Agent: codex
@@ -10,9 +12,9 @@
   - Base: `d30eb30b8f19292fe10ae8cc64d65bd22832e0dc`
   - Updated: 2026-10-03
   - Issue: https://github.com/ValenFelizia/csdd/issues/41
-  - Note: task-identity allocation to codex for the human-approved #41 line. Fixture author owns only evals/fixtures/task_identity.py and evals/scenarios/09-task-identity.md; subjects write only disposable fixtures. #42 remains separate.
-
-## Ready to Land
+  - Landing: Open draft PR from `codex/task-id-namespaces` to `main`; complete human review and final-head CI before merging. Completion requires reachability from the target.
+  - Verification: 19 unit tests and offline structural validator passed; independent scenario 09 Run A passed all 9 subjects, including history, repair, optional relationships, and safe stops. Both integration orders preserved actual created IDs after explicit TODO conflict resolution; #42 contention remains separate. Final-head CI is tracked on the PR.
+  - Note: task-identity allocation explicitly agreed for the approved #41 line; codex is its sole allocator. Runtime and fixture commits, execution timing, and model/egress limits are recorded in evals/runs/09-task-identity-a.md. No merge or release authorized.
 
 ## Blocked
 
