@@ -138,6 +138,15 @@ model](references/protocol.md#concurrency-model), [`todo.md` scope
 claims](references/document-contracts.md#scope-and-coordination-claims), and
 [stale claims](references/document-contracts.md#stale-claims).
 
+For new tracked work, use a local `T-<namespace>-<number>` ID with an explicitly
+agreed bounded namespace and one allocator at a time. Preserve existing IDs;
+continuation keeps the same ID. Consult [Local task
+identity](references/document-contracts.md#local-task-identity) when allocating,
+continuing a counter after retention, or reconciling duplicates. Never infer the
+next counter solely from the current TODO; insufficient history needs a fresh
+coordinated namespace. Optional `Issue:` URLs do not replace or rename local IDs.
+These rules add no tracking requirement to the trivial fast path.
+
 ### `todo.md` fast path
 
 Keep `todo.md` under these fixed H2 headings, including when empty, in this

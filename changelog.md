@@ -2,6 +2,21 @@
 
 All notable changes to CSDD will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Compatible local task-ID convention with explicitly coordinated bounded
+  namespaces, optional external issue relationships, and duplicate repair.
+- Offline identity fixtures and a qualitative evaluation scenario.
+
+### Adoption
+
+- Candidate for a compatible minor release; no release is published here.
+- Existing IDs remain valid. No renumbering, automatic migration, fifth primary
+  document, tracker, or runtime service is required. #42 TODO contention remains
+  separate from identity allocation.
+
 ## [0.2.1] — 2026-09-27
 
 ### Added

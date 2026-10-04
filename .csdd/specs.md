@@ -49,6 +49,8 @@ The authoritative conceptual protocol is defined in:
 - Agent Skills entrypoint: `SKILL.md`
 - Conceptual protocol: `references/protocol.md`
 - Document semantics: `references/document-contracts.md`
+- Local identity policy: `references/document-contracts.md#local-task-identity`
+  (canonical allocation, external relationships, and duplicate repair)
 - Distributed project templates: `assets/templates/`
 - Runtime project state: `.csdd/`
 

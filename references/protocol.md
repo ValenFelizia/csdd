@@ -971,6 +971,15 @@ ID, a concise title, and a state represented by placement under exactly one
 canonical state H2. See [TODO structure and
 retention](#todo-structure-and-retention).
 
+Task identity is local to the repository and independent of optional tracker
+relationships. New tracked tasks use explicitly coordinated namespaces for
+independent creation; continuation preserves identity. Existing IDs remain
+valid, and retained or evicted IDs cannot be reused for different tasks. The
+format, allocation, history limitations, and exceptional duplicate-repair
+procedure are owned by [Local task
+identity](document-contracts.md#local-task-identity). This coordination does not
+provide global uniqueness, authentication, locking, or conflict-free merges.
+
 ```markdown
 ## In Progress
 
