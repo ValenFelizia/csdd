@@ -4,6 +4,12 @@ This guide applies only to recognizable CSDD v0.1 state. It is not `/csdd init`,
 not a generic repair workflow, and does not define a `/csdd migrate` command.
 It does not run automatically.
 
+The current [local identity convention](document-contracts.md#local-task-identity)
+is a compatible addition for new tracked tasks. It does not require a separate
+migration or renumber existing tasks, including when applying this v0.1 → v0.2
+guide. Preserve references and do not normalize existing tracker fields merely
+to adopt new IDs.
+
 [`protocol.md`](protocol.md) and [`document-contracts.md`](document-contracts.md)
 remain authoritative. This guide is operational and non-normative.
 

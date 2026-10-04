@@ -399,6 +399,104 @@ CSDD tasks MUST use plain, human-readable Markdown. Each task requires:
 - [ ] T-004 — Define document templates
 ```
 
+### Local task identity
+
+This section owns task-ID allocation, stability, optional external relations,
+and duplicate reconciliation. It adds a compatible convention for new tasks;
+existing stable IDs, including `T-NNN`, remain valid and MUST NOT be renumbered
+merely to match it. Old and new IDs may coexist. No project migration or new
+canonical document is required.
+
+New tasks use `T-<namespace>-<number>`, for example `T-auth-reset-001`.
+The namespace uses lowercase ASCII letters/digits separated by single hyphens,
+starts with a letter, and has no trailing hyphen. Its grammar is
+`[a-z][a-z0-9]*(?:-[a-z0-9]+)*`. The final hyphen separates the counter: a
+positive decimal integer padded to at least three digits (`001`, `002`, …,
+`999`, `1000`); `000` is invalid. IDs are repository-local, not globally unique
+identities or authenticated labels.
+
+#### Namespace and counter allocation
+
+- Before distributing independent task creation, explicitly agree distinct
+  namespaces for bounded lines of work and one operational ID allocator per
+  namespace at a time. Multiple agents may execute existing tasks in that line;
+  they MUST NOT independently mint IDs from a shared counter. Transfer allocation
+  explicitly without changing human `Owner` accountability.
+- Record agreements where they reduce coordination risk, using existing task
+  entries and `Note` fields. Do not add a central registry, placeholder tasks,
+  mandatory metadata, or lifecycle state just to reserve a name. Agreement can
+  occur in the authorized planning interaction before the first task is written.
+- Keep the namespace stable across branch/agent renames. A namespace MUST NOT
+  be recycled for another line of work. Resuming the same task in another branch
+  preserves its full ID; creating independent work needs coordinated allocation.
+- Allocate the next counter above the maximum assigned value evidenced by
+  retained tasks and relevant local Git history or other authoritative project
+  evidence, including IDs removed by retention. Do not calculate the next value
+  from current `todo.md` entries alone or perform an unconditional history scan.
+- When evidence is insufficient to continue safely, the allocator MUST NOT guess
+  or restart the counter. Coordinate a fresh namespace, check it against available evidence,
+  and disclose unavailable history. If no fresh allocation is authorized, stop
+  task creation for that coordination decision. Network access is not required.
+
+Once assigned, a task ID MUST remain stable through changes of title, executor,
+branch, state, and external references, except for the explicit duplicate repair
+below. Retention removal never releases an ID. These rules do not require a task
+entry or ID for trivial work that otherwise needs no CSDD tracking. Coordination
+and visibility remain advisory: a namespace agreement prevents shared-counter
+allocation within the inspected scope, not all collisions in unseen branches.
+
+#### Optional external relationships
+
+`Issue:` MAY contain one or several full URLs to GitHub, Linear, or another
+tracker, separated by commas or listed as Markdown links. It is an explicit
+optional relationship, not the local ID, a required service, or an automatic
+synchronization instruction. Multiple local tasks may reference the same issue.
+Adding, changing, or removing a reference MUST NOT rename the task, and an
+external title or issue number alone MUST NOT determine task identity.
+Existing project reference fields need not be normalized merely for adoption.
+
+```markdown
+- [ ] T-auth-reset-001 — Implement password recovery
+  - Note: auth-reset allocation agreed for this bounded line; allocator codex/auth.
+
+- [ ] T-auth-reset-002 — Verify recovery behavior
+  - Issue: https://github.com/example/project/issues/52, https://linear.app/example/issue/EX-9
+```
+
+The first task requires no tracker. Both remain identifiable offline even if the
+second task's URLs are unavailable or later replaced.
+
+#### Duplicate-ID reconciliation
+
+An identical ID in two branches may be continuity of one task or an allocation
+collision between different tasks. Inspect accepted intent, scope, changes, and
+provenance; equality of title, ID, or external reference is not sufficient proof
+of identity. Unknown identity MUST stop dependent actions until clarified.
+
+For two different tasks sharing an ID:
+
+1. If exactly one task is already integrated into the resolved `Target`, preserve
+   its ID. If neither or both are integrated, there is no unique precedence:
+   stop integration until an explicit agreement identifies which retains it.
+   Do not select by branch age or agent preference.
+2. Assign the other task an ID from an explicitly coordinated namespace/counter.
+   This is a documented exception to stability, not routine renumbering.
+3. Record its former ID, original task identity, source branch, and observed
+   commit in `Note`. The old ambiguous ID stays reserved and is interpretable
+   only with that provenance; it MUST NOT become an unqualified global alias.
+4. Update current task dependencies, handoffs, and operational references within
+   the authorized write boundary. Surface references outside that boundary;
+   do not silently change external trackers or another worktree's live state.
+5. Preserve published commits and historical references. Do not rewrite Git
+   history or mechanically archive an entry to keep a renaming map. When the
+   note leaves the retention window, ordinary Git history retains its provenance.
+
+Follow normal branch/worktree reconciliation and shared-surface editing rules.
+Repairing identity does not resolve overlapping scopes, durable-truth conflicts,
+or textual contention in `todo.md`; each still requires its own reconciliation.
+
+### Collaborative task metadata
+
 For active collaborative work, tasks SHOULD include these fields when relevant:
 
 - `Owner`: the accountable human or team and preferred coordination point;

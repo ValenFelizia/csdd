@@ -116,7 +116,8 @@ it should not become a separately maintained task store. A memory system may
 retrieve CSDD state, but stale retrieved state does not authorize overwriting
 the current repository.
 
-This policy leaves task-ID allocation, external issue aliases, and parallel-PR
-integration mechanisms open to separate design and evaluation. It does not
-select a solution for [#41](https://github.com/ValenFelizia/csdd/issues/41) or
-[#42](https://github.com/ValenFelizia/csdd/issues/42).
+The accepted direction for [#41](https://github.com/ValenFelizia/csdd/issues/41)
+is defined by the [local task identity contract](../references/document-contracts.md#local-task-identity):
+bounded namespaces with optional external relationships. Parallel-PR integration
+under [#42](https://github.com/ValenFelizia/csdd/issues/42) remains separate design
+and evaluation work. Neither direction introduces stronger coordination guarantees.

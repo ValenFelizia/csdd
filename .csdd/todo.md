@@ -4,30 +4,17 @@
 
 ## Ready to Land
 
-- [ ] T-034 — Formalize lightweight architecture and product-scope guardrails
+- [ ] T-task-identity-001 — Implement stable local task identity with explicit namespaces
   - Owner: valen
   - Agent: codex
-  - Scope: `docs/architecture.md`, `README.md` architecture link
+  - Scope: `SKILL.md`, `references/**` identity guidance, `assets/templates/todo.md`, `docs/architecture.md` identity link, `README.md`, `changelog.md`, `evals/**` identity campaign, `.csdd/specs.md`, `.csdd/decisions.md`
   - Target: `main`
-  - Base: `4f8e43315e38d002f01ae2ccc869073e6be6166f`
-  - Updated: 2026-09-30
-  - Issue: #37
-  - Landing: `codex/architecture-contribution-guardrails` → `main`; draft PR #43
-  - Verification: 19 unit tests PASS; offline repository validator PASS; current skill, protocol, and templates unchanged.
-  - Note: Contributor design policy only; current protocol contracts and #41/#42 solution choices remain unchanged. README edits are sequenced with T-035 by the same executor.
-
-- [ ] T-035 — Add CSDD contribution guidance and a pull request template
-  - Owner: valen
-  - Agent: codex
-  - Scope: `CONTRIBUTING.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `README.md` contribution link
-  - Target: `main`
-  - Base: `4f8e43315e38d002f01ae2ccc869073e6be6166f`
-  - Updated: 2026-09-30
-  - Issue: #20
-  - Depends on: T-034 architecture guidance
-  - Landing: `codex/architecture-contribution-guardrails` → `main`; draft PR #43
-  - Verification: 19 unit tests PASS; offline repository validator PASS; documentation reviewed against protocol, CI, versioning, and evaluation contracts.
-  - Note: Same-executor sequencing of the shared README; no new workflow or protocol behavior.
+  - Base: `d30eb30b8f19292fe10ae8cc64d65bd22832e0dc`
+  - Updated: 2026-10-03
+  - Issue: https://github.com/ValenFelizia/csdd/issues/41
+  - Landing: Draft PR https://github.com/ValenFelizia/csdd/pull/46 from `codex/task-id-namespaces` to `main`; complete human review and final-head CI before merging. Completion requires reachability from the target.
+  - Verification: 19 unit tests and offline structural validator passed; independent scenario 09 Run A passed all 9 subjects, including history, repair, optional relationships, and safe stops. Both integration orders preserved actual created IDs after explicit TODO conflict resolution; #42 contention remains separate. Final-head CI is tracked on the PR.
+  - Note: task-identity allocation explicitly agreed for the approved #41 line; codex is its sole allocator. Runtime and fixture commits, execution timing, and model/egress limits are recorded in evals/runs/09-task-identity-a.md. No merge or release authorized.
 
 ## Blocked
 
@@ -47,6 +34,24 @@
 ## Recently Completed
 
 Retention: 5
+
+- [x] T-035 — Add CSDD contribution guidance and a pull request template
+  - Owner: valen
+  - Agent: codex
+  - Scope: released
+  - Updated: 2026-10-03
+  - Issue: #20
+  - Landed: PR #43 @ `d30eb30`
+  - Note: Contribution guide, impact matrix, and PR template reachable from main; historical executor preserved.
+
+- [x] T-034 — Formalize lightweight architecture and product-scope guardrails
+  - Owner: valen
+  - Agent: codex
+  - Scope: released
+  - Updated: 2026-10-03
+  - Issue: #37
+  - Landed: PR #43 @ `d30eb30`
+  - Note: Canonical contributor architecture guidance reachable from main; no runtime change in that PR.
 
 - [x] T-030 — Prepare and release CSDD v0.2.1 public beta
   - Owner: valen
@@ -74,21 +79,3 @@ Retention: 5
   - Issue: #24
   - Landed: PR #33 @ `5af4746`
   - Note: Published the canonical evidence-backed Cursor/Codex compatibility matrix from a 4/4 PASS campaign; Global install and Discovery remain partial, and Implicit activation remains not tested.
-
-- [x] T-026 — Add automated structural and repository validation in CI
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: released
-  - Updated: 2026-07-22
-  - Issue: #21
-  - Landed: PR #32 @ `d016d23`
-  - Note: Offline stdlib validator, unittest suite, and least-privilege GitHub Actions workflow landed; CI SUCCESS on PR #32.
-
-- [x] T-025 — Add a one-command global installation path for the CSDD skill
-  - Owner: valen
-  - Agent: cursor-grok-4.5
-  - Scope: released
-  - Updated: 2026-07-22
-  - Issue: #14
-  - Landed: PR #31 @ `8ed582b`
-  - Note: Global Agent Skills install path for Codex/Cursor documented and verified; evidence in `evidence/t-025-installation.md`.

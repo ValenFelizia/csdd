@@ -184,3 +184,37 @@ Release notes for v0.2.1 must state that the independent-user pilot is pending.
 No external blocker can be ruled out from zero completed sessions. Any concrete
 install, initialization, destructive-behavior, or first-use blocker reported by
 an adopter receives priority triage and correction before broader promotion.
+
+## DEC-007 — Coordinate local task identity with bounded namespaces
+
+- Status: accepted
+- Date: 2026-10-03
+
+### Context
+
+Independent worktrees can mint the same sequential task ID from a shared base.
+The human reviewed namespace, random-ID, external-identity, and landing-time
+alternatives and approved namespace allocation plus optional external relations.
+
+### Decision
+
+Adopt the direction specified by [Local task
+identity](../references/document-contracts.md#local-task-identity), keeping that
+contract as the single source of behavioral rules. Coordinate creation locally
+rather than deriving task identity from a tracker or agent identity.
+
+### Rationale and alternatives
+
+Bounded namespaces keep IDs readable and let explicitly divided lines create
+work offline. The trade-off is coordinated allocation and honest limits on
+unseen branches. Random IDs would reduce allocation coordination but were not
+selected; external IDs as canonical identity would weaken local independence;
+landing-time numbering would destabilize references needed before integration.
+
+### Consequences
+
+Existing projects need no renumbering. Optional tracker relations can evolve
+without moving canonical authority. Duplicate repair remains necessary where
+agreements or visibility fail. This decision addresses #41 identity, not #42
+shared-file contention; adopting it does not authorize stronger guarantees,
+runtime infrastructure, or a release.
