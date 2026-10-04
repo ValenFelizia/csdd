@@ -475,9 +475,10 @@ of identity. Unknown identity MUST stop dependent actions until clarified.
 
 For two different tasks sharing an ID:
 
-1. Preserve the ID of the task already integrated into the resolved `Target`.
-   If neither has that precedence, stop integration until an explicit agreement
-   identifies which retains it. Do not select by branch age or agent preference.
+1. If exactly one task is already integrated into the resolved `Target`, preserve
+   its ID. If neither or both are integrated, there is no unique precedence:
+   stop integration until an explicit agreement identifies which retains it.
+   Do not select by branch age or agent preference.
 2. Assign the other task an ID from an explicitly coordinated namespace/counter.
    This is a documented exception to stability, not routine renumbering.
 3. Record its former ID, original task identity, source branch, and observed

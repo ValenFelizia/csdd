@@ -5,7 +5,7 @@
 - [ ] T-task-identity-001 — Implement stable local task identity with explicit namespaces
   - Owner: valen
   - Agent: codex
-  - Scope: `SKILL.md`, `references/**` identity guidance, `assets/templates/todo.md`, `README.md`, `changelog.md`, `evals/**` identity campaign, `.csdd/specs.md`, `.csdd/decisions.md`
+  - Scope: `SKILL.md`, `references/**` identity guidance, `assets/templates/todo.md`, `docs/architecture.md` identity link, `README.md`, `changelog.md`, `evals/**` identity campaign, `.csdd/specs.md`, `.csdd/decisions.md`
   - Target: `main`
   - Base: `d30eb30b8f19292fe10ae8cc64d65bd22832e0dc`
   - Updated: 2026-10-03
