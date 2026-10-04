@@ -93,7 +93,8 @@ def todo(active="", ready="", blocked="", pending="", completed=""):
 
 def old_completed(numbers):
     return "\n".join(task(f"T-maint-{n:03d}", f"Export maintenance {n}", "released",
-                          "maintenance-author", done=True, updated="2026-10-02")
+                          "maintenance-author", done=True,
+                          updated=DATE if n == 13 else "2026-10-02")
                      for n in numbers)
 
 
