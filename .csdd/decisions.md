@@ -253,3 +253,6 @@ merge driver is required. Safety and meaningful coordination updates take priori
 over lower patch counts. Fresh comparative evaluation must count preparation,
 conflicts, commits, and closure; no universal conflict-free or compatibility claim
 follows from adopting the direction. No merge or release is authorized here.
+
+The tested workload and execution limitations are recorded in the
+[scenario 10 run report](../evals/runs/10-todo-integration-a.md).

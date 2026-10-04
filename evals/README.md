@@ -133,6 +133,7 @@ Count preparation, refresh, resolution, landing, and closure work; report safety
 and measured savings separately. One subject per case supports bounded findings,
 not universal conflict or overhead guarantees. Keep the four-document storage
 and historical compatibility matrix unchanged.
+See [Run A](runs/10-todo-integration-a.md) for observed metrics and limitations.
 
 Store structured reports under `evals/runs/`.
 

@@ -122,5 +122,6 @@ bounded namespaces with optional external relationships. The accepted direction
 for [#42](https://github.com/ValenFelizia/csdd/issues/42) combines
 [write economy](../references/document-contracts.md#write-economy) with
 [task-wise landing reconciliation](../references/document-contracts.md#task-wise-landing-reconciliation).
-Its measured scope belongs in evaluation reports; neither direction introduces
+Its measured scope is recorded in the [scenario 10 run report](../evals/runs/10-todo-integration-a.md);
+neither direction introduces
 stronger coordination guarantees or changes the four-document runtime boundary.

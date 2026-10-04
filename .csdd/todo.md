@@ -2,6 +2,8 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-todo-integration-001 — Reduce shared TODO integration work with task-wise reconciliation
   - Owner: valen
   - Agent: codex
@@ -10,9 +12,9 @@
   - Base: `cd2ff965385e743e9bc622229ebdf07db2faae32`
   - Updated: 2026-10-04
   - Issue: https://github.com/ValenFelizia/csdd/issues/42
+  - Landing: Draft PR from `codex/todo-task-reconciliation` to `main`; human review and target integration pending.
+  - Verification: 19 unit tests, offline repository validation, and whitespace checks passed. Independent scenario 10: 13 PASS, 1 PARTIAL, zero FAIL; bounded metrics and the partial-case defect are recorded in `evals/runs/10-todo-integration-a.md`. CI results tracked on the PR.
   - Note: todo-integration coordinated for the human-approved #42 line; codex is the sole project-task allocator. Fixture author edits only scenario/materializer; subjects act only in disposable fixtures. Claims and waiting states remain visible; storage stays in four documents.
-
-## Ready to Land
 
 ## Blocked
 
