@@ -9,13 +9,15 @@ All notable changes to CSDD will be documented in this file.
 - Compatible local task-ID convention with explicitly coordinated bounded
   namespaces, optional external issue relationships, and duplicate repair.
 - Offline identity fixtures and a qualitative evaluation scenario.
+- Shared-state write economy and task-wise landing reconciliation, with
+  visible claims/waiting states and combined retention after verified landing.
 
 ### Adoption
 
 - Candidate for a compatible minor release; no release is published here.
 - Existing IDs remain valid. No renumbering, automatic migration, fifth primary
-  document, tracker, or runtime service is required. #42 TODO contention remains
-  separate from identity allocation.
+  document, tracker, or runtime service is required. Parallel-integration guidance
+  preserves the same layout and lifecycle; savings remain workload-dependent.
 
 ## [0.2.1] — 2026-09-27
 

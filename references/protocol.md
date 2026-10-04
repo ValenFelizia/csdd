@@ -964,6 +964,20 @@ and 1 without forcing either reference to be read in full.
 
 CSDD coordination is document-based and intentionally lightweight.
 
+### Parallel integration and write economy
+
+Independent implementation scopes can still contend on the shared TODO text.
+Keep active coordination visible while avoiding writes that add no operational
+information. Reconcile each task's relevant changes against the current target
+instead of importing an old branch's entire coordination snapshot. Compatible
+outcomes in one uninterrupted authorized integration operation can be closed in
+one coherent patch after landing; delayed or interrupted work stays honest.
+Exact edit, preservation, conflict, and checkpoint rules are in [Write
+economy](document-contracts.md#write-economy) and [Task-wise landing
+reconciliation](document-contracts.md#task-wise-landing-reconciliation).
+These procedures preserve the Git-aware lifecycle and four primary documents;
+they do not promise automatic or conflict-free merging.
+
 ### Minimum interoperable task structure
 
 Tasks MUST use plain, human-readable Markdown. Each task requires a stable task

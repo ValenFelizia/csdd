@@ -233,6 +233,15 @@ it does not change compatibility claims recorded for older skill commits.
 
 ## Branches and worktrees
 
+Parallel PRs can contend on TODO text even when their task IDs and code scopes
+are distinct. Avoid patches for reads/unchanged checks and keep necessary
+claims and waiting states visible. Reconcile relevant task changes against the
+current target; after landing, close compatible known outcomes coherently and
+apply retention to combined state. See [write economy](references/document-contracts.md#write-economy)
+and [task-wise landing reconciliation](references/document-contracts.md#task-wise-landing-reconciliation).
+The layout and Git-aware lifecycle are unchanged. Git conflicts and preparation
+still count as integration work; savings depend on the workload and evaluation.
+
 CSDD documents are version-controlled and therefore branch-local.
 
 The current worktree is the operational baseline, but it is not proof that no

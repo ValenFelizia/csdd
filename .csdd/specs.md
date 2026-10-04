@@ -51,6 +51,8 @@ The authoritative conceptual protocol is defined in:
 - Document semantics: `references/document-contracts.md`
 - Local identity policy: `references/document-contracts.md#local-task-identity`
   (canonical allocation, external relationships, and duplicate repair)
+- Shared-state integration policy: `references/document-contracts.md#write-economy`
+  and `#task-wise-landing-reconciliation` (canonical minimal writes and per-task preservation)
 - Distributed project templates: `assets/templates/`
 - Runtime project state: `.csdd/`
 

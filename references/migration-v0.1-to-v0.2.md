@@ -10,6 +10,10 @@ migration or renumber existing tasks, including when applying this v0.1 → v0.2
 guide. Preserve references and do not normalize existing tracker fields merely
 to adopt new IDs.
 
+Write economy and task-wise landing reconciliation likewise retain the four
+primary documents and existing task lifecycle. They need no automatic migration,
+new task store, parser, or history rewrite; preserve existing project state.
+
 [`protocol.md`](protocol.md) and [`document-contracts.md`](document-contracts.md)
 remain authoritative. This guide is operational and non-normative.
 
