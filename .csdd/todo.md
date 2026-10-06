@@ -4,6 +4,18 @@
 
 ## Ready to Land
 
+- [ ] T-036 — Add a read-only `/csdd doctor` workflow
+  - Owner: valen
+  - Agent: cursor-grok-4.7
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/read-only-workflows.md`, `README.md`, `changelog.md`, `evals/README.md`, `evals/scenarios/11-doctor-states.md`, `evals/scenarios/12-doctor-false-positives.md`, `evals/scenarios/13-doctor-visibility-limits.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `8f0b9f603ff2a75c7085906aa37f9f4584ad05dc`
+  - Updated: 2026-10-06
+  - Issue: #25
+  - Landing: `design/t-036-csdd-doctor` → `main`; PR #44
+  - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean. Scenarios 11–13 are pre-run contracts and have not been executed.
+  - Note: Rebased onto main after #46/#47. Doctor scenarios renumbered to 11–13. Finding severities and namespaced/duplicate ID checks are part of the doctor contract. `/csdd status` is a separate workflow.
+
 - [ ] T-todo-integration-001 — Reduce shared TODO integration work with task-wise reconciliation
   - Owner: valen
   - Agent: codex
