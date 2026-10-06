@@ -366,17 +366,19 @@ The final response SHOULD state:
   knowledge;
 - an optional offer to review and fill the reported gaps with the human.
 
-## Read-only diagnosis
+## Read-only inspection
 
-`/csdd doctor` inspects canonical documents and observable repository evidence.
-It is not an update trigger, an initialization path, a repair path, or a
-migration path. Running it MUST NOT create or modify `specs.md`, `todo.md`,
-`decisions.md`, `handoff.md`, archive entries, or Git state.
+`/csdd doctor` and `/csdd status` inspect canonical documents and observable
+repository evidence. Neither is an update trigger, an initialization path, a
+repair path, or a migration path. Running either MUST NOT create or modify
+`specs.md`, `todo.md`, `decisions.md`, `handoff.md`, archive entries, a status
+file, or Git state.
 
-The procedure, finding identifiers, and output contract live in
-[read-only-workflows.md](read-only-workflows.md). Field meaning remains in the
-document sections below. Doctor reports contract violations; it does not
-rewrite documents to remove them.
+Doctor reports contract violations. Status derives a brief operational snapshot
+and, when the state cannot be counted reliably, tells the user to run doctor.
+Procedures live in [read-only-workflows.md](read-only-workflows.md). Field
+meaning remains in the document sections below. Neither workflow rewrites
+documents to remove a finding.
 
 ## `specs.md`
 

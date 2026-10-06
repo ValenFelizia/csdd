@@ -16,6 +16,18 @@
   - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean. Scenarios 11–13 are pre-run contracts and have not been executed.
   - Note: Rebased onto main after #46/#47. Doctor scenarios renumbered to 11–13. Finding severities and namespaced/duplicate ID checks are part of the doctor contract. `/csdd status` is a separate workflow.
 
+- [ ] T-037 — Add a read-only `/csdd status` workflow
+  - Owner: valen
+  - Agent: cursor-grok-4.7
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/read-only-workflows.md`, `README.md`, `changelog.md`, `evals/README.md`, `evals/scenarios/14-status-snapshot.md`, `evals/scenarios/15-status-limits.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `b42b7e03d0f28665585312e50acd0def32396c3d`
+  - Updated: 2026-10-06
+  - Issue: #26
+  - Landing: `design/t-037-csdd-status` → `main`; PR #45
+  - Verification: 19 unit tests PASS; `scripts/validate_repository.py` PASS; `git diff --check` clean. Scenarios 14–15 are pre-run contracts and have not been executed.
+  - Note: Rebased onto main after #44 squash-merge. Derived snapshot only; status scenarios are 14–15.
+
 - [ ] T-todo-integration-001 — Reduce shared TODO integration work with task-wise reconciliation
   - Owner: valen
   - Agent: codex
