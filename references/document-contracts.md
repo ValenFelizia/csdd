@@ -25,6 +25,13 @@ v0 paths:
 `-- archive/        # optional
 ```
 
+`.csdd/todo.md` remains a required primary path. It has two mutually exclusive
+valid shapes: the default **local board** (six canonical state H2 headings) and
+an opt-in **external-tracker stub** (`Mode: external` with `Tracker:` and
+`Next:`). The stub contract is defined in
+[External-tracker stub](#external-tracker-stub). Omitting the `todo.md` file is
+never a mode declaration; missing primary files are partial or malformed.
+
 Project-root alternatives and configurable locations are outside v0. In the
 rest of this document, short names such as `todo.md` refer to these canonical
 paths.
@@ -139,7 +146,7 @@ complementary; claim improvement only for workloads with measured total savings.
 | Document | Primary question | Temperature | Expected lifetime |
 | --- | --- | --- | --- |
 | `.csdd/specs.md` | What must be true? | Warm | Durable, revised as project intent changes |
-| `.csdd/todo.md` | What work exists now, and who is accountable and executing? | Hot | Current operational cycle |
+| `.csdd/todo.md` | Local board: what work exists now, and who is accountable and executing? External stub: where is the tracker, and what is the next-action policy? | Hot | Current operational cycle (local board) or until the tracker/policy pointer changes (external stub) |
 | `.csdd/decisions.md` | What consequential choice was made, and why? | Warm | Durable until superseded |
 | `.csdd/handoff.md` | What must a later agent or session know to cross this boundary safely? | Hot | Transient, replaced or removed when the handoff is consumed |
 
@@ -168,9 +175,24 @@ root ambiguity and destination conflicts have been ruled out:
 | --- | --- | --- |
 | 1 | Ambiguous or conflicting — competing or unresolved roots, `.csdd` is not a usable directory, or another destination conflict prevents safe classification | Stop and request clarification; never overwrite conflicting content |
 | 2 | Absent — the canonical `.csdd/` path does not exist | Proceed with initialization |
-| 3 | Already initialized — all four primary documents exist and the minimum current canonical structure validates | Do not overwrite; report that CSDD is already initialized and surface any validation concerns |
+| 3 | Already initialized — all four primary documents exist and the minimum current canonical structure validates for either the local-board or external-stub `todo.md` shape | Do not overwrite; report that CSDD is already initialized and surface any validation concerns |
 | 4 | Recognizable older state — existing CSDD state can be identified as following an older contract | Do not migrate; direct the user to the migration workflow |
 | 5 | Partial or malformed — `.csdd/` exists but the state is neither valid current state nor recognizable older state | Do not modify; report incomplete or malformed CSDD state and offer a separate repair path |
+
+For `todo.md`, minimum current structure means exactly one valid shape:
+
+- **Local board:** the six canonical state H2 headings, each exactly once, in
+  canonical order, with no forbidden state H2, and without `Mode: external`.
+- **External stub:** a recognizable
+  [external-tracker stub](#external-tracker-stub) (`Mode: external` with
+  required `Tracker:` and `Next:`), without the six canonical state H2 headings
+  used as a live board.
+
+Absence of `.csdd/todo.md` when other primaries exist is **partial**, never
+external mode. A mixed shape (`Mode: external` together with canonical state
+H2 headings, or `Mode: external` without required stub fields) is
+**malformed**. Do not infer external mode from GitHub Issues, Linear, or other
+tracker usage alone.
 
 Only Absent may proceed through `init`. An ambiguous or unusable destination
 MUST block before absence is evaluated. An unusable `.csdd` path (for example
@@ -257,6 +279,9 @@ or open a pull request without separate authority.
 
 #### `todo.md`
 
+Default (**local board**), when the human or project does not explicitly request
+external task tracking:
+
 - Create the six canonical H2 state headings in order: In Progress, Ready to
   Land, Blocked, Pending, Deferred, Recently Completed.
 - Declare `Retention: 5`.
@@ -264,6 +289,18 @@ or open a pull request without separate authority.
   dependencies, completed work, or an initialization self-task.
 - Do not import issues, roadmaps, source-code TODO comments, or documentation
   wish lists automatically.
+
+**External-tracker stub** only when the human or project explicitly requests
+external task tracking (GitHub Issues/PRs, Linear, or equivalent) for this
+repository:
+
+- Create `.csdd/todo.md` as an
+  [external-tracker stub](#external-tracker-stub) with `Mode: external`,
+  `Tracker:`, and `Next:`.
+- Do not create the six canonical state H2 headings.
+- Do not invent tasks, owners, agents, scopes, or a mirrored backlog.
+- Do not select this shape because issues or a tracker already exist; absence of
+  explicit intent keeps the local-board default.
 
 #### `decisions.md`
 
@@ -457,19 +494,94 @@ useful context, rationale, rejected alternatives, or consequences.
 
 ### Contract
 
-Describe the current operational state of work, including enough accountability,
-execution, and scope information to coordinate agents.
+`.csdd/todo.md` is the project's task-coordination surface. It has exactly two
+valid shapes:
 
-`todo.md` is a live control surface, not a permanent project diary.
+| Shape | Discriminator | Role |
+| --- | --- | --- |
+| Local board (default) | Six canonical state H2 headings; no `Mode: external` | Live in-repo board for tasks, claims, scopes, blockers, and bounded completion history |
+| External-tracker stub | `Mode: external` plus required stub fields | In-repo pointer and next-action policy; backlog and issue state live in the external tracker |
+
+`todo.md` is a live control surface, not a permanent project diary. The local
+board describes current operational work with enough accountability, execution,
+and scope information to coordinate agents. The external stub does not host that
+board; see [External-tracker stub](#external-tracker-stub).
+
+Shape selection is exclusive. Mixing shapes is malformed. Omitting the file is
+partial, not external mode.
+
+### External-tracker stub
+
+This subsection is the **canonical** external-mode contract. Protocol and
+read-only workflow text MUST link here rather than redefine field rules.
+
+Use the external stub only when the project explicitly opts out of the local
+board because an external tracker (GitHub Issues/PRs, Linear, or equivalent) is
+the backlog source of truth. Default projects keep the local board.
+
+Required shape (illustrative; wording of prose around the fields may vary):
+
+```markdown
+# TODO
+
+Mode: external
+Tracker: https://github.com/example/project/issues
+Next: open Issues labeled `ready` (or: current Linear cycle / linked PR checklist)
+```
+
+Field rules:
+
+1. `Mode: external` MUST appear as a top-level field under `# TODO` (not inside
+   a fenced code block). Any other `Mode:` value is invalid for this shape.
+2. `Tracker:` MUST be a non-empty pointer to the external system of record
+   (full URL preferred; a durable project/path identifier is acceptable when a
+   URL is unavailable).
+3. `Next:` MUST state a durable next-action policy agents can follow (for
+   example a label, milestone, project view, or Linear cycle rule). It MUST NOT
+   be an inventoried mirror of the full backlog.
+4. The six canonical state H2 headings (`In Progress`, `Ready to Land`,
+   `Blocked`, `Pending`, `Deferred`, `Recently Completed`) MUST NOT appear as a
+   live board. Their presence together with `Mode: external` is a **mixed
+   shape** and is malformed.
+5. Do not invent CSDD task IDs, `Owner` / `Agent` / `Scope` claims, Retention,
+   or Recently Completed history in the stub.
+6. Absence of `.csdd/todo.md` MUST NOT be treated as this shape.
+
+Ordered next-action sources in external mode:
+
+1. the stub's `Tracker:` and `Next:` fields;
+2. the external tracker according to that policy;
+3. an explicit user task designation for the current turn;
+4. `.csdd/handoff.md` only for boundary + concrete resumption risk — never as a
+   substitute backlog.
+
+Honest capability loss: external mode does **not** provide in-repo
+`Owner` / `Agent` / `Scope` claims, six-state placement, or task-wise TODO
+text reconciliation. Overlap and landing coordination rely on the tracker, PR
+or branch ownership, and handoffs. Multi-agent shared-file work that needs
+those claims SHOULD keep the local board.
+
+`specs.md` and `decisions.md` are unchanged. `handoff.md` remains valid for
+boundary risk and SHOULD link external issue or PR identifiers when those are
+the work identity. Automatic two-way sync between the tracker and CSDD is out
+of scope.
 
 ### Read policy
 
-Agents MUST NOT knowingly ignore active scope overlap. Read relevant active work
-before editing when a task is non-trivial, continues existing work, or may
-overlap. A trivial or isolated task MAY avoid reading `todo.md` when overlap is
-not plausible.
+**Local board:** Agents MUST NOT knowingly ignore active scope overlap. Read
+relevant active work before editing when a task is non-trivial, continues
+existing work, or may overlap. A trivial or isolated task MAY avoid reading
+`todo.md` when overlap is not plausible.
+
+**External stub:** Read the stub before non-trivial work. Follow `Next:` /
+`Tracker:` (and the user message) for task selection. Do not invent a local
+board. When overlap is plausible, inspect the tracker or ask the user; treat
+missing in-repo claims as a known limit, not as proof that scopes are free.
 
 ### Minimum task structure
+
+These rules apply to the **local board**. They do not apply to a valid
+external stub.
 
 CSDD tasks MUST use plain, human-readable Markdown. Each task requires:
 
@@ -630,8 +742,9 @@ coordination surfaces](#shared-coordination-surfaces).
 
 ### Canonical structure and presentation
 
-Every `todo.md` MUST contain these six H2 headings, including when empty, in
-this exact order:
+Every **local-board** `todo.md` MUST contain these six H2 headings, including
+when empty, in this exact order. External stubs MUST NOT use this board; see
+[External-tracker stub](#external-tracker-stub).
 
 ```markdown
 ## In Progress
@@ -842,6 +955,9 @@ a mechanical destination for retention overflow.
 
 ### Contains
 
+For the **local board** (external stub contents are only the fields in
+[External-tracker stub](#external-tracker-stub)):
+
 - all six canonical state H2 headings, including when empty;
 - pending, in-progress, ready-to-land, blocked, and deferred work when used;
 - ownership, execution, and active scope when coordination requires them;
@@ -868,7 +984,12 @@ a mechanical destination for retention overflow.
 
 ### Update triggers
 
-Update `todo.md` when:
+These triggers apply to the **local board**. For an external stub, update
+`todo.md` only when `Mode:`, `Tracker:`, or `Next:` must change; do not mirror
+tracker backlog churn into the stub. See
+[External-tracker stub](#external-tracker-stub).
+
+Update a local-board `todo.md` when:
 
 - work is claimed or released;
 - scope, `Owner`, `Agent`, state, dependency, or blocker changes;
@@ -1202,10 +1323,16 @@ handoff-specific timestamp.
 
 ### Relationship to `todo.md`
 
-`todo.md` remains canonical for task state, `Owner`, `Agent`, `Scope`,
-dependencies, blockers, overlap, sequencing, and collision prevention.
+**Local board:** `todo.md` remains canonical for task state, `Owner`, `Agent`,
+`Scope`, dependencies, blockers, overlap, sequencing, and collision prevention.
 `handoff.md` contains only additional non-obvious transient implementation or
 verification state that must cross a boundary safely.
+
+**External stub:** the stub is canonical only for mode, `Tracker:`, and
+`Next:`. Backlog and issue state live in the external tracker. `handoff.md`
+still holds boundary + resumption-risk state and SHOULD reference external
+issue or PR identifiers rather than inventing a shadow board. See
+[External-tracker stub](#external-tracker-stub).
 
 These responsibilities MUST remain distinct. `handoff.md` MUST NOT become a
 duplicate task tracker or the primary collision-prevention mechanism.
@@ -1213,13 +1340,19 @@ duplicate task tracker or the primary collision-prevention mechanism.
 Operational rule:
 
 ```text
-coordination without boundary + risk -> todo.md
-coordination with boundary + risk    -> todo.md and, when needed, handoff.md
+local board:
+  coordination without boundary + risk -> todo.md
+  coordination with boundary + risk    -> todo.md and, when needed, handoff.md
+
+external stub:
+  coordination without boundary + risk -> tracker (per stub Next:/Tracker:)
+  coordination with boundary + risk    -> tracker and, when needed, handoff.md
 ```
 
 When both refer to the same task, the handoff SHOULD link or refer to the
-canonical task entry rather than duplicate ownership fields. If they disagree,
-reconcile the task state before continuing.
+canonical task entry (local board) or external identifier (external mode)
+rather than duplicate ownership fields. If they disagree, reconcile before
+continuing.
 
 Outcome-specific representation follows the table in [Boundary-driven
 handoffs](protocol.md#boundary-driven-handoffs).
