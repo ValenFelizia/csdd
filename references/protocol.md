@@ -85,7 +85,9 @@ should load it. It does not make any document mandatory reading.
 
 Current, operational, and frequently changing:
 
-- `.csdd/todo.md`;
+- `.csdd/todo.md` (local board, or the external stub's mode and next-action
+  pointer — see
+  [External-tracker stub](document-contracts.md#external-tracker-stub));
 - `.csdd/handoff.md`.
 
 Hot context is the first candidate for project or collaborative work, but a
@@ -135,11 +137,18 @@ CSDD separates the four documents by responsibility:
 | --- | --- | --- |
 | `.csdd/specs.md` | L1 | Durable requirements, constraints, invariants, and contracts |
 | `.csdd/decisions.md` | L1 | Consequential choices, rationale, consequences, and supersession |
-| `.csdd/todo.md` | L2 | Current work, accountability, executor, scope, dependencies, and blockers |
+| `.csdd/todo.md` | L2 | Local board: current work, accountability, executor, scope, dependencies, and blockers. External stub: in-repo pointer (`Mode: external`, `Tracker:`, `Next:`) when an external tracker owns the backlog |
 | `.csdd/handoff.md` | L2 | Minimum replaceable transfer state at a boundary with concrete resumption risk |
 
-`todo.md` and `handoff.md` MUST preserve distinct responsibilities. `todo.md` is
-the primary coordination surface for active work and overlap detection.
+`todo.md` and `handoff.md` MUST preserve distinct responsibilities. In the
+default **local-board** shape, `todo.md` is the primary coordination surface for
+active work and overlap detection. In the opt-in **external-tracker stub**
+shape, `todo.md` records only mode and next-action policy; backlog and issue
+state live in the external tracker, and in-repo `Owner` / `Agent` / `Scope`
+claims are not available. The stub field contract is canonical in
+[External-tracker stub](document-contracts.md#external-tracker-stub). Omitting
+the `todo.md` file is never external mode.
+
 `handoff.md` holds only additional non-obvious transient state needed to cross a
 boundary safely; it is not the primary collision-prevention mechanism, a
 parallel task tracker, or chronological history. See [Boundary-driven
@@ -302,15 +311,21 @@ specifications and decisions.
 
 ### Claim/Plan
 
-For concurrent or continuity-sensitive work, identify the task, human `Owner`,
-executing `Agent`, intended scope, dependencies, and likely overlap before
-editing when those fields are relevant. For repository-modifying work, resolve
-`Target` and apply the `Base` rules in [Git-aware task
+For concurrent or continuity-sensitive work on a **local board**, identify the
+task, human `Owner`, executing `Agent`, intended scope, dependencies, and likely
+overlap before editing when those fields are relevant. For repository-modifying
+work, resolve `Target` and apply the `Base` rules in [Git-aware task
 lifecycle](#git-aware-task-lifecycle). Run the refresh checkpoint before writing
 when that section requires it.
 
 A task claim coordinates scope and continuity. It does not grant automatic
 permission to commit, push, or merge.
+
+Under an **external-tracker stub**, do not mint local-board claims. Follow the
+stub's `Tracker:` / `Next:` policy (and any explicit user designation). Treat
+missing in-repo claim and scope fields as an honest capability loss; rely on
+tracker assignees, PR or branch ownership, and handoffs. See
+[External-tracker stub](document-contracts.md#external-tracker-stub).
 
 ### Execute
 
@@ -384,7 +399,11 @@ reality before relying on them. The executor whose work resolves or transforms
 the risk removes or replaces the entry; cleanup ownership does not permanently
 remain with the author. Age alone never proves staleness.
 
-Outcome-specific behavior:
+Outcome-specific behavior (local board; under an external stub, the tracker and
+PR or branch state supply the primary representation, and handoff still applies
+only for boundary + concrete resumption risk — see
+[External-tracker stub](document-contracts.md#external-tracker-stub) and the
+[handoff relationship](document-contracts.md#relationship-to-todomd)):
 
 | Situation | Primary representation | Handoff behavior |
 | --- | --- | --- |
@@ -398,8 +417,13 @@ Outcome-specific behavior:
 Operational rule:
 
 ```text
-coordination without boundary + risk -> todo.md
-coordination with boundary + risk    -> todo.md and, when needed, handoff.md
+local board:
+  coordination without boundary + risk -> todo.md
+  coordination with boundary + risk    -> todo.md and, when needed, handoff.md
+
+external stub:
+  coordination without boundary + risk -> tracker (per stub Next:/Tracker:)
+  coordination with boundary + risk    -> tracker and, when needed, handoff.md
 ```
 
 Document-local creation, content, organization, consumption, and cleanup rules
@@ -597,8 +621,12 @@ when its rationale is durable and likely to prevent repeated debate.
 
 ### TODO structure and retention
 
-Every `todo.md` MUST contain these six H2 headings, including when empty, in
-this exact order:
+These heading and retention rules apply to the **local-board** shape. An
+external-tracker stub MUST NOT use this board; its fields are defined only in
+[External-tracker stub](document-contracts.md#external-tracker-stub).
+
+Every local-board `todo.md` MUST contain these six H2 headings, including when
+empty, in this exact order:
 
 1. `## In Progress`
 2. `## Ready to Land`
@@ -609,9 +637,9 @@ this exact order:
 
 H2 headings under `# TODO` are reserved for canonical task state. Projects and
 agents MUST NOT omit, rename, reorder, alias, or add state H2 headings. Every
-task present in `todo.md` MUST appear under exactly one canonical state H2.
-Active and lateral states use unchecked task items; Recently Completed uses
-checked task items.
+task present in a local-board `todo.md` MUST appear under exactly one canonical
+state H2. Active and lateral states use unchecked task items; Recently Completed
+uses checked task items.
 
 State is always the primary grouping dimension. The default presentation is
 flat. A task MAY use an optional `Workstream:` field when thematic context
@@ -1059,24 +1087,32 @@ machine schema, or harness-specific metadata.
 
 ### C1 - Read active ownership before writing when overlap is plausible
 
-Before non-trivial work, inspect relevant active entries in `.csdd/todo.md` when
-the target scope could overlap. A trivial, clearly unrelated edit does not
-require a coordination scan. Compare both path scope and affected contracts;
-semantically overlapping contracts may conflict even when file globs differ.
-When another worktree or branch may hold relevant claims or overlapping dirty
-state, extend the scan per [Branch and worktree baseline
+Before non-trivial work on a **local board**, inspect relevant active entries in
+`.csdd/todo.md` when the target scope could overlap. A trivial, clearly
+unrelated edit does not require a coordination scan. Compare both path scope and
+affected contracts; semantically overlapping contracts may conflict even when
+file globs differ. When another worktree or branch may hold relevant claims or
+overlapping dirty state, extend the scan per [Branch and worktree baseline
 reconciliation](#branch-and-worktree-baseline-reconciliation).
+
+Under an **external-tracker stub**, read the stub, then inspect the tracker (or
+ask the user) when overlap is plausible. Absence of in-repo claims is not proof
+that scopes are free. See
+[External-tracker stub](document-contracts.md#external-tracker-stub).
 
 ### C2 - Claim explicit scope when collaborative work requires ownership
 
-A task SHOULD be claimed before editing when it is non-trivial and explicit
-scope would reduce collision or continuity risk. Do not claim trivial isolated
-work when coordination overhead would exceed that risk.
+On a **local board**, a task SHOULD be claimed before editing when it is
+non-trivial and explicit scope would reduce collision or continuity risk. Do not
+claim trivial isolated work when coordination overhead would exceed that risk.
 
 A claim SHOULD name concrete files, directories, modules, contracts, or another
 boundary that lets an agent judge overlap. Scope is usually more useful for
 collision detection than agent identity. Prefer `src/auth/**` and
 `tests/auth/**` over a vague label such as `backend`.
+
+External mode does not provide CSDD claim or scope fields. Prefer keeping the
+local board when multi-agent shared-file coordination needs those claims.
 
 ### C3 - Single writer per overlapping scope by default
 

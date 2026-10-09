@@ -75,15 +75,20 @@ After the root is usable, classify with the same first-match precedence as
 | --- | --- | --- |
 | 1 | Ambiguous or conflicting | Report `root.ambiguous` or `root.unusable`. Do not continue into document scoring. |
 | 2 | Absent | `.csdd/` does not exist. This is a classification, not a structural defect. |
-| 3 | Current | All four primary documents exist and the minimum current structure is recognizable: `todo.md` has the six canonical state H2 headings, each exactly once, in canonical order, with no forbidden state H2. Individual field defects do not demote this class. |
+| 3 | Current | All four primary documents exist and `todo.md` matches exactly one valid current shape: **local board** (six canonical state H2 headings, each exactly once, in canonical order, with no forbidden state H2, and without `Mode: external`) or **external stub** (recognizable per [External-tracker stub](document-contracts.md#external-tracker-stub)). Individual field defects do not demote this class. |
 | 4 | Recognizable older | Not current, and a positive older-contract signal is present as defined below. |
 | 5 | Partial or malformed | `.csdd/` exists but the state is neither current nor recognizable older. Missing primary documents are partial. Present documents that still fail recognition are malformed. |
+
+Missing `.csdd/todo.md` is **partial** (`docs.missing`), never external mode. A
+mixed shape (`Mode: external` together with canonical state H2 headings, or
+`Mode: external` without required stub fields) is **malformed**.
 
 Recognizable older v0.1 requires all of the following:
 
 - the root is unambiguous and `.csdd/` is a directory;
 - the state is not current;
 - `specs.md`, `todo.md`, `decisions.md`, and `handoff.md` exist as files;
+- `todo.md` is not a recognizable external stub;
 - `todo.md` contains none of the six canonical state H2 headings;
 - at least one positive older signal is present: an `Icebox` H2, task-like
   content under a non-canonical H2, or an explicit v0.1 identification in one
@@ -91,9 +96,9 @@ Recognizable older v0.1 requires all of the following:
 
 A mix of canonical headings and older signals is malformed, not older. In that
 case emit the structural findings, including `todo.h2.forbidden` when `Icebox`
-or `Archived` is present. If the four files exist, the heading contract fails,
-and no older signal meets the rule above, the class is malformed. If
-recognition is still uncertain, emit `state.uncertain` (warning) and do not
+or `Archived` is present. If the four files exist, neither current shape
+recognizes, and no older signal meets the rule above, the class is malformed.
+If recognition is still uncertain, emit `state.uncertain` (warning) and do not
 choose current or older.
 
 Doctor never writes, including when the class is Absent. Pointing at
@@ -119,8 +124,23 @@ evidence for any finding. Do not emit `claim.reconcile` or
 
 ### Structural rules reused from repository validation
 
-Where a check concerns TODO headings, forbidden state names, or `Retention`,
-apply the same rules as `validate_todo_template` in
+First determine the `todo.md` shape from
+[External-tracker stub](document-contracts.md#external-tracker-stub) and the
+local-board heading contract.
+
+**External stub:** when `Mode: external` is present, validate stub fields only:
+
+- `Tracker:` and `Next:` are present and non-empty;
+- the six canonical state H2 headings are absent (mixed shape → malformed;
+  emit `todo.mode.mixed`);
+- do not demand `Retention` or local-board task-field checks.
+
+Stub field defects use `todo.external.tracker-missing`,
+`todo.external.next-missing`, and `todo.external.invalid` as listed under
+[Finding identifiers](#finding-identifiers).
+
+**Local board:** when `Mode: external` is absent, apply the same rules as
+`validate_todo_template` in
 [`scripts/validate_repository.py`](../scripts/validate_repository.py), against
 the project's `.csdd/todo.md` rather than `assets/templates/todo.md`:
 
@@ -139,9 +159,10 @@ come from the [`todo.md` contract](document-contracts.md#todomd) and the
 [`handoff.md` contract](document-contracts.md#handoffmd). Do not invent a
 second heading taxonomy.
 
-Missing `Retention` on an otherwise current document is `todo.retention.missing`
-with severity warning. The operational fallback remains five until a human or
-explicit project policy sets `N`. Doctor does not insert the line.
+Missing `Retention` on an otherwise current **local-board** document is
+`todo.retention.missing` with severity warning. The operational fallback remains
+five until a human or explicit project policy sets `N`. Doctor does not insert
+the line. Retention findings do not apply to a valid external stub.
 
 Do not run `scripts/validate_repository.py` against a target project. That
 script validates the CSDD skill package, not an adopted repository.
@@ -179,32 +200,43 @@ and why.
 **Structure**
 
 - Four primary documents present as files. Each missing file is `docs.missing`.
-  A primary path that exists and is not a file is `docs.not-file`.
-- TODO headings, forbidden names, order, duplicates, and retention, using the
-  shared structural rules. Identifiers: `todo.h2.missing`,
+  A primary path that exists and is not a file is `docs.not-file`. Missing
+  `todo.md` is partial, not external mode.
+- Determine the `todo.md` shape. Mixed local-board headings with
+  `Mode: external` is `todo.mode.mixed`.
+- **External stub:** validate `Mode: external`, `Tracker:`, and `Next:` per
+  [External-tracker stub](document-contracts.md#external-tracker-stub).
+  Identifiers: `todo.external.tracker-missing`, `todo.external.next-missing`,
+  `todo.external.invalid`. Skip local-board heading, retention, and task-field
+  checks.
+- **Local board:** TODO headings, forbidden names, order, duplicates, and
+  retention, using the shared structural rules. Identifiers: `todo.h2.missing`,
   `todo.h2.duplicate`, `todo.h2.order`, `todo.h2.extra`, `todo.h2.forbidden`,
   `todo.retention.missing`, `todo.retention.duplicate`,
   `todo.retention.placement`, `todo.retention.value`.
 - More checked Recently Completed entries than `N` (or than the fallback five
   when the declaration is absent) is `todo.retention.overflow`, severity
-  warning. Reporting it does not authorize compaction.
+  warning. Reporting it does not authorize compaction. Local board only.
 - Active and lateral tasks use unchecked items. Recently Completed uses checked
-  items. A mismatch is `todo.task.checkbox`.
+  items. A mismatch is `todo.task.checkbox`. Local board only.
 - A task that cannot be placed under exactly one canonical state H2 is
-  `todo.task.unplaced`.
+  `todo.task.unplaced`. Local board only.
 - Deferred entries require `Reason:` and an observable `Resume when:`, have no
   `Agent`, and omit active scope or use `Scope: released`. A violation is
   `todo.deferred.invalid`. Vague resume conditions such as "later" are invalid.
+  Local board only.
 - Ready to Land entries include `Landing:` and do not include `Landed:`.
   Violations are `todo.ready.landing-missing` and `todo.ready.landed-present`.
+  Local board only.
 - Pending entries do not carry an active `Agent` or active write scope.
-  A violation is `todo.pending.claim`.
+  A violation is `todo.pending.claim`. Local board only.
 - Recently Completed entries do not retain a concrete active scope. A violation
-  is `todo.completed.active-scope`.
+  is `todo.completed.active-scope`. Local board only.
 
 **Task identity**
 
-Apply [Local task identity](document-contracts.md#local-task-identity). Doctor
+Apply only to a **local board**. Skip under a valid external stub. Apply
+[Local task identity](document-contracts.md#local-task-identity). Doctor
 reports identity defects; it does not allocate, rename, or repair IDs.
 
 - Legacy `T-NNN` IDs remain valid and MUST NOT emit `todo.task.id-invalid`.
@@ -278,12 +310,16 @@ may not be omitted.
 | `state.uncertain` | warning | Classification cannot choose current or older from the evidence. |
 | `docs.missing` | error | A primary document file is absent. |
 | `docs.not-file` | error | A primary path exists and is not a file. |
-| `todo.h2.missing` | error | A required canonical state H2 is missing. |
-| `todo.h2.duplicate` | error | A canonical state H2 appears more than once. |
-| `todo.h2.order` | error | Canonical state H2 headings are out of order. |
-| `todo.h2.extra` | error | An extra non-canonical state H2 is present. |
+| `todo.mode.mixed` | error | `Mode: external` appears together with canonical state H2 headings (or other local-board board structure). |
+| `todo.external.tracker-missing` | error | External stub lacks a non-empty `Tracker:` field. |
+| `todo.external.next-missing` | error | External stub lacks a non-empty `Next:` field. |
+| `todo.external.invalid` | error | `Mode: external` is declared but the stub shape is otherwise invalid (unknown `Mode` value, unreadable stub, or equivalent). |
+| `todo.h2.missing` | error | A required canonical state H2 is missing (local board). |
+| `todo.h2.duplicate` | error | A canonical state H2 appears more than once (local board). |
+| `todo.h2.order` | error | Canonical state H2 headings are out of order (local board). |
+| `todo.h2.extra` | error | An extra non-canonical state H2 is present (local board). |
 | `todo.h2.forbidden` | error | A forbidden state H2 such as `Icebox` or `Archived` is present. |
-| `todo.retention.missing` | warning | `Retention` is absent on an otherwise current document. |
+| `todo.retention.missing` | warning | `Retention` is absent on an otherwise current local-board document. |
 | `todo.retention.duplicate` | error | More than one `Retention` declaration is present. |
 | `todo.retention.placement` | error | `Retention` is outside `## Recently Completed`. |
 | `todo.retention.value` | error | `Retention` is not a positive decimal integer `N >= 1`. |
@@ -367,17 +403,20 @@ Follow shared inspection through classification.
 | Classification | Status behavior |
 | --- | --- |
 | Absent | Report that `.csdd/` is absent. Do not print task counts of zero. `/csdd init` remains a separate request. |
-| Current, and every task sits under exactly one canonical state H2 | Derive the snapshot below. |
-| Current, but one or more tasks cannot be placed | Do not invent counts. Recommend `/csdd doctor`. |
+| Current (**local board**), and every task sits under exactly one canonical state H2 | Derive the local-board snapshot below. |
+| Current (**external stub**) | Derive the external snapshot below. Do **not** invent six-state counts, retention `used/N`, or active-claim lines from a board that does not exist. |
+| Current local board, but one or more tasks cannot be placed | Do not invent counts. Recommend `/csdd doctor`. |
 | Partial, malformed, recognizable older, ambiguous, or uncertain | Do not invent counts. State the limitation and recommend `/csdd doctor`. |
 
-Field defects that still leave every task placed, such as a Deferred entry
-missing `Reason:`, do not block counts. Say that structural diagnosis belongs
-to doctor, and do not copy doctor's finding list into the snapshot.
+Field defects that still leave every local-board task placed, such as a Deferred
+entry missing `Reason:`, do not block counts. Say that structural diagnosis
+belongs to doctor, and do not copy doctor's finding list into the snapshot.
 
 ### Brief output
 
-Default output is brief. The wording may vary. Include:
+Default output is brief. The wording may vary.
+
+**Local board** — include:
 
 - root, classification, and detected version or `unknown`;
 - the source paths used, at least `.csdd/todo.md` and `.csdd/handoff.md` when
@@ -400,14 +439,32 @@ Default output is brief. The wording may vary. Include:
   fetched;
 - the sentence `Nothing was modified.`
 
+**External stub** — include:
+
+- root, classification (`current`), detected version or `unknown`, and
+  `mode: external`;
+- sources, at least `.csdd/todo.md` and `.csdd/handoff.md` when they were read;
+- the stub `Tracker:` and `Next:` values (or a one-line paraphrase that still
+  names both fields);
+- the number of current handoff entries and the task, workstream, or external
+  identifiers they name, without handoff bodies;
+- an explicit statement that six-state counts and in-repo claim lines are not
+  applicable in external mode;
+- Git or worktree limitations when observed;
+- the sentence `Nothing was modified.`
+
+Do not fabricate In Progress / Ready to Land / Blocked / Pending / Deferred /
+Recently Completed counts or retention `used/N` for an external stub.
+
 Counts come from the current worktree baseline only. Do not add counts from
 another branch or worktree into the same totals. If another local worktree or
 branch is visible and its CSDD state differs, report that divergence in one
 line and leave the totals on this baseline.
 
-An illustrative shape, not a schema. Mandatory elements such as retention
-`used/N`, the no-proof-on-uninspected sentence, and `Nothing was modified.`
-MUST appear even when wording varies:
+An illustrative **local-board** shape, not a schema. Mandatory local-board
+elements such as retention `used/N`, the no-proof-on-uninspected sentence, and
+`Nothing was modified.` MUST appear even when wording varies. External-stub
+output follows the external brief rules above instead of this example.
 
 ```text
 CSDD v0.2
