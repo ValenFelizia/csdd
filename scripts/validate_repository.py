@@ -34,6 +34,10 @@ PRIMARY_TEMPLATES = (
     "handoff.md",
 )
 
+EXTERNAL_TODO_TEMPLATE = "todo.external.md"
+
+ALLOWED_TEMPLATES = frozenset(PRIMARY_TEMPLATES) | {EXTERNAL_TODO_TEMPLATE}
+
 CANONICAL_TODO_H2 = (
     "In Progress",
     "Ready to Land",
@@ -48,6 +52,9 @@ FORBIDDEN_TODO_H2 = ("Icebox", "Archived")
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 H2_RE = re.compile(r"^##[ \t]+(.+?)\s*$")
 RETENTION_RE = re.compile(r"^Retention:\s*(.*?)\s*$")
+MODE_RE = re.compile(r"^Mode:\s*(.*?)\s*$")
+TRACKER_RE = re.compile(r"^Tracker:\s*(.*?)\s*$")
+NEXT_FIELD_RE = re.compile(r"^Next:\s*(.*?)\s*$")
 INLINE_LINK_RE = re.compile(
     r"(?<!!)\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)"
 )
@@ -352,18 +359,28 @@ def validate_primary_templates(root: Path) -> list[Diagnostic]:
 
     present = sorted(p.name for p in templates_dir.iterdir() if p.is_file())
     markdown = [name for name in present if name.endswith(".md")]
-    expected = set(PRIMARY_TEMPLATES)
+    expected = set(ALLOWED_TEMPLATES)
     observed = set(markdown)
 
     missing = sorted(expected - observed)
     extra = sorted(observed - expected)
 
     for name in missing:
+        rule = (
+            "templates.external.missing"
+            if name == EXTERNAL_TODO_TEMPLATE
+            else "templates.primary.missing"
+        )
+        expected_msg = (
+            f"external todo template {name} exists"
+            if name == EXTERNAL_TODO_TEMPLATE
+            else f"primary template {name} exists"
+        )
         diagnostics.append(
             Diagnostic(
                 f"{label}/{name}",
-                "templates.primary.missing",
-                f"primary template {name} exists",
+                rule,
+                expected_msg,
                 "file missing",
             )
         )
@@ -373,9 +390,9 @@ def validate_primary_templates(root: Path) -> list[Diagnostic]:
             Diagnostic(
                 f"{label}/{name}",
                 "templates.primary.extra",
-                "only specs.md, todo.md, decisions.md, and handoff.md "
-                "are primary templates",
-                f"unexpected primary template {name}",
+                "only specs.md, todo.md, todo.external.md, decisions.md, "
+                "and handoff.md are allowed templates",
+                f"unexpected template {name}",
             )
         )
 
@@ -401,6 +418,17 @@ def collect_h2_headings(text: str) -> list[tuple[int, str]]:
     return headings
 
 
+def field_hits(
+    cleaned: str, pattern: re.Pattern[str]
+) -> list[tuple[int, str]]:
+    hits: list[tuple[int, str]] = []
+    for lineno, line in enumerate(cleaned.splitlines(), start=1):
+        match = pattern.match(line)
+        if match:
+            hits.append((lineno, match.group(1)))
+    return hits
+
+
 def validate_todo_template(root: Path) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     path = root / "assets" / "templates" / "todo.md"
@@ -420,6 +448,21 @@ def validate_todo_template(root: Path) -> list[Diagnostic]:
     text = path.read_text(encoding="utf-8")
     headings = collect_h2_headings(text)
     names = [name for _, name in headings]
+    cleaned = strip_fenced_code_blocks(text)
+    mode_hits = field_hits(cleaned, MODE_RE)
+
+    # Local package template must remain the board shape, not Mode: external.
+    for lineno, value in mode_hits:
+        if value.strip().lower() == "external":
+            diagnostics.append(
+                Diagnostic(
+                    label,
+                    "todo_template.mode.mixed",
+                    "assets/templates/todo.md is the local-board template "
+                    "and must not declare Mode: external",
+                    f"line {lineno}: Mode: {value}",
+                )
+            )
 
     allowed = set(CANONICAL_TODO_H2)
     forbidden = set(FORBIDDEN_TODO_H2)
@@ -486,7 +529,6 @@ def validate_todo_template(root: Path) -> list[Diagnostic]:
         )
 
     # Retention: scan outside fences.
-    cleaned = strip_fenced_code_blocks(text)
     lines = cleaned.splitlines()
     retention_hits: list[tuple[int, str]] = []
     for lineno, line in enumerate(lines, start=1):
@@ -549,6 +591,144 @@ def validate_todo_template(root: Path) -> list[Diagnostic]:
                     detail,
                 )
             )
+
+    return diagnostics
+
+
+def validate_todo_external_template(root: Path) -> list[Diagnostic]:
+    """Validate the shipped external-tracker stub package template."""
+    diagnostics: list[Diagnostic] = []
+    path = root / "assets" / "templates" / EXTERNAL_TODO_TEMPLATE
+    label = f"assets/templates/{EXTERNAL_TODO_TEMPLATE}"
+
+    if not path.is_file():
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.exists",
+                f"assets/templates/{EXTERNAL_TODO_TEMPLATE} exists",
+                "file missing",
+            )
+        )
+        return diagnostics
+
+    text = path.read_text(encoding="utf-8")
+    cleaned = strip_fenced_code_blocks(text)
+    headings = collect_h2_headings(text)
+    names = [name for _, name in headings]
+    mode_hits = field_hits(cleaned, MODE_RE)
+    tracker_hits = field_hits(cleaned, TRACKER_RE)
+    next_hits = field_hits(cleaned, NEXT_FIELD_RE)
+
+    canonical_present = [name for name in names if name in CANONICAL_TODO_H2]
+    if canonical_present:
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.mode.mixed",
+                "external stub template must not include canonical state H2 "
+                "headings",
+                "found: " + ", ".join(canonical_present),
+            )
+        )
+
+    for name in names:
+        if name in FORBIDDEN_TODO_H2:
+            diagnostics.append(
+                Diagnostic(
+                    label,
+                    "todo_external_template.forbidden_state",
+                    f"H2 '{name}' must not appear in the external stub "
+                    "template",
+                    f"found ## {name}",
+                )
+            )
+
+    if len(mode_hits) == 0:
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.mode.missing",
+                "exactly one Mode: external declaration exists",
+                "none found",
+            )
+        )
+    elif len(mode_hits) > 1:
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.mode.duplicate",
+                "exactly one Mode: external declaration exists",
+                f"found {len(mode_hits)} Mode declarations",
+            )
+        )
+    else:
+        _, value = mode_hits[0]
+        if value.strip().lower() != "external":
+            diagnostics.append(
+                Diagnostic(
+                    label,
+                    "todo_external_template.mode.value",
+                    "Mode value is external",
+                    f"observed {value!r}",
+                )
+            )
+
+    if len(tracker_hits) == 0:
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.tracker.missing",
+                "exactly one non-empty Tracker: field exists",
+                "none found",
+            )
+        )
+    elif len(tracker_hits) > 1:
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.tracker.duplicate",
+                "exactly one non-empty Tracker: field exists",
+                f"found {len(tracker_hits)} Tracker declarations",
+            )
+        )
+    elif not tracker_hits[0][1].strip():
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.tracker.empty",
+                "Tracker: value is non-empty",
+                "empty Tracker value",
+            )
+        )
+
+    if len(next_hits) == 0:
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.next.missing",
+                "exactly one non-empty Next: field exists",
+                "none found",
+            )
+        )
+    elif len(next_hits) > 1:
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.next.duplicate",
+                "exactly one non-empty Next: field exists",
+                f"found {len(next_hits)} Next declarations",
+            )
+        )
+    elif not next_hits[0][1].strip():
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "todo_external_template.next.empty",
+                "Next: value is non-empty",
+                "empty Next value",
+            )
+        )
 
     return diagnostics
 
@@ -730,6 +910,7 @@ def validate_repository(root: Path) -> list[Diagnostic]:
     diagnostics.extend(validate_runtime_boundary(root))
     diagnostics.extend(validate_primary_templates(root))
     diagnostics.extend(validate_todo_template(root))
+    diagnostics.extend(validate_todo_external_template(root))
     diagnostics.extend(validate_relative_markdown_links(root))
     return sort_diagnostics(diagnostics)
 
