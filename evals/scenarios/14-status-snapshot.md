@@ -8,6 +8,12 @@ Evaluate `/csdd status` on valid empty and valid active CSDD states. Counts and
 claims must come from the canonical documents. The default report must stay
 brief and must not write a status file.
 
+## Applicability
+
+**Local-board only.** Six-state counts, retention `used/N`, and active-claim
+lines require the local board. External-stub status (no fake counts) is
+scenario 17.
+
 ## Behaviors under test
 
 - Explicit harness-agnostic invocation

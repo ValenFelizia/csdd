@@ -11,6 +11,13 @@ already make continuation obvious.
 Validates surfaces introduced or strengthened by T-018 through T-020. Does not
 repeat the broad v0.1 campaign.
 
+## Applicability
+
+**Local-board only.** Landing, Recently Completed retention, and six-heading
+structure apply to the local board. External stubs have no board transitions or
+Retention window (see
+[External-tracker stub](../../references/document-contracts.md#external-tracker-stub)).
+
 ## Behaviors under test
 
 - Distinguishing committed-but-unlanded work from work reachable from Target

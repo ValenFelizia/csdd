@@ -7,6 +7,14 @@ Pre-run evaluation contract. Not a run report.
 Evaluate `/csdd status` when the snapshot would be dishonest: absent state,
 malformed state, inaccessible Git, and visible divergence.
 
+## Applicability
+
+**Both modes for shared limits; fixtures are local-board shaped.** Absent,
+malformed-without-counts, Git-unavailable, and visible-divergence behaviors
+apply conceptually to any current shape. Variant fixtures here use local-board
+or absent state. External-stub snapshot rules and mixed-shape refusal are
+scenario 17.
+
 ## Behaviors under test
 
 - Absent state is not reported as an empty initialized TODO

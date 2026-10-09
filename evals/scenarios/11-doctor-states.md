@@ -8,6 +8,13 @@ Evaluate the read-only `/csdd doctor` workflow from
 [read-only-workflows.md](../../references/read-only-workflows.md) on valid,
 partial, malformed, recognizable older, and ambiguous CSDD states.
 
+## Applicability
+
+**Local-board focused (variants A–E).** Current/valid, partial, malformed board,
+older, and ambiguous-root cases use local-board or non-stub fixtures.
+External-stub current classification, stub field findings, and mixed-shape
+malformed cases are scenario 17.
+
 ## Behaviors under test
 
 - Explicit, harness-agnostic invocation
