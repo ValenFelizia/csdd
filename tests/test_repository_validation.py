@@ -55,11 +55,23 @@ VALID_TODO = """\
 Retention: 5
 """
 
+VALID_TODO_EXTERNAL = """\
+# TODO
+
+Mode: external
+Tracker: https://github.com/example/project/issues
+Next: open Issues labeled `ready`
+"""
+
 VALID_SPECS = "# Specifications\n\nSummary.\n"
 VALID_DECISIONS = "# Decisions\n\nNone yet.\n"
 VALID_HANDOFF = "# Handoff\n\nNone.\n"
 VALID_PROTOCOL = "# Protocol\n\n## Adaptive context hydration\n\nDetails.\n"
-VALID_CONTRACTS = "# Document contracts\n\n## Initialization\n\nDetails.\n"
+VALID_CONTRACTS = (
+    "# Document contracts\n\n"
+    "## Initialization\n\nDetails.\n\n"
+    "## External-tracker stub\n\nDetails.\n"
+)
 VALID_MIGRATION = "# Migration\n\nDetails.\n"
 
 
@@ -75,6 +87,7 @@ def build_valid_repo(root: Path) -> None:
     write(root / "references" / "migration-v0.1-to-v0.2.md", VALID_MIGRATION)
     write(root / "assets" / "templates" / "specs.md", VALID_SPECS)
     write(root / "assets" / "templates" / "todo.md", VALID_TODO)
+    write(root / "assets" / "templates" / "todo.external.md", VALID_TODO_EXTERNAL)
     write(root / "assets" / "templates" / "decisions.md", VALID_DECISIONS)
     write(root / "assets" / "templates" / "handoff.md", VALID_HANDOFF)
     write(
@@ -321,6 +334,115 @@ class RepositoryValidationTests(unittest.TestCase):
             diagnostics = VALIDATOR.validate_repository(root)
             self.assert_has_rule(
                 diagnostics, "templates.primary.extra", "backlog.md"
+            )
+
+    def test_external_stub_template_required_and_valid(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assertEqual(diagnostics, [])
+
+            (root / "assets" / "templates" / "todo.external.md").unlink()
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assert_has_rule(
+                diagnostics,
+                "templates.external.missing",
+                "todo.external.md",
+            )
+            self.assert_has_rule(
+                diagnostics,
+                "todo_external_template.exists",
+                "todo.external.md",
+            )
+
+    def test_external_stub_missing_tracker_or_next(self):
+        cases = [
+            (
+                "# TODO\n\nMode: external\nNext: open Issues labeled ready\n",
+                "todo_external_template.tracker.missing",
+            ),
+            (
+                "# TODO\n\nMode: external\n"
+                "Tracker: https://github.com/example/project/issues\n",
+                "todo_external_template.next.missing",
+            ),
+            (
+                "# TODO\n\nMode: external\nTracker: \nNext: open Issues\n",
+                "todo_external_template.tracker.empty",
+            ),
+            (
+                "# TODO\n\nMode: external\n"
+                "Tracker: https://github.com/example/project/issues\n"
+                "Next: \n",
+                "todo_external_template.next.empty",
+            ),
+            (
+                "# TODO\n\nMode: local\n"
+                "Tracker: https://github.com/example/project/issues\n"
+                "Next: open Issues\n",
+                "todo_external_template.mode.value",
+            ),
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            for content, rule in cases:
+                with self.subTest(rule=rule):
+                    write(
+                        root / "assets" / "templates" / "todo.external.md",
+                        content,
+                    )
+                    diagnostics = VALIDATOR.validate_repository(root)
+                    self.assert_has_rule(
+                        diagnostics, rule, "todo.external.md"
+                    )
+
+    def test_mixed_shape_rejected_on_local_and_external_templates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+
+            write(
+                root / "assets" / "templates" / "todo.md",
+                "# TODO\n\n"
+                "Mode: external\n"
+                "Tracker: https://github.com/example/project/issues\n"
+                "Next: open Issues labeled ready\n\n"
+                "## In Progress\n\n"
+                "## Ready to Land\n\n"
+                "## Blocked\n\n"
+                "## Pending\n\n"
+                "## Deferred\n\n"
+                "## Recently Completed\n\n"
+                "Retention: 5\n",
+            )
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assert_has_rule(
+                diagnostics,
+                "todo_template.mode.mixed",
+                "assets/templates/todo.md",
+            )
+
+            write(root / "assets" / "templates" / "todo.md", VALID_TODO)
+            write(
+                root / "assets" / "templates" / "todo.external.md",
+                "# TODO\n\n"
+                "Mode: external\n"
+                "Tracker: https://github.com/example/project/issues\n"
+                "Next: open Issues labeled ready\n\n"
+                "## In Progress\n\n"
+                "## Ready to Land\n\n"
+                "## Blocked\n\n"
+                "## Pending\n\n"
+                "## Deferred\n\n"
+                "## Recently Completed\n",
+            )
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assert_has_rule(
+                diagnostics,
+                "todo_external_template.mode.mixed",
+                "todo.external.md",
             )
 
     def test_links_inside_fenced_code_are_ignored(self):
