@@ -10,6 +10,12 @@ templates in a realistic existing repository.
 Validates surfaces introduced or strengthened by T-021 and T-022. Does not
 repeat the broad v0.1 campaign.
 
+## Applicability
+
+**Local-board default init.** This contract covers Absent-only initialization
+that creates the six-heading local `todo.md` with `Retention: 5`. External-stub
+init (explicit opt-in) is scenario 16.
+
 ## Behaviors under test
 
 - Absent-only initialization after confirming no `.csdd` path exists

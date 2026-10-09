@@ -6,6 +6,13 @@ All notable changes to CSDD will be documented in this file.
 
 ### Added
 
+- Optional external-tracker shape for `.csdd/todo.md` (`Mode: external` with
+  `Tracker:` and `Next:`), so repos that already track work in GitHub Issues/PRs
+  or Linear can opt out of the local board. Default init and local six-heading
+  boards are unchanged; missing `todo.md` remains partial; mixed shapes are
+  malformed. Package template: `assets/templates/todo.external.md`. Evaluation
+  contracts: scenarios 16–17 (unexecuted); scenarios 06–08/10/11/14/15 declare
+  local-board vs both applicability.
 - Compatible local task-ID convention with explicitly coordinated bounded
   namespaces, optional external issue relationships, and duplicate repair.
 - Offline identity fixtures and a qualitative evaluation scenario.
@@ -26,8 +33,10 @@ All notable changes to CSDD will be documented in this file.
 
 - Candidate for a compatible minor release; no release is published here.
 - Existing IDs remain valid. No renumbering, automatic migration, fifth primary
-  document, tracker, or runtime service is required. Parallel-integration guidance
-  preserves the same layout and lifecycle; savings remain workload-dependent.
+  document, tracker sync service, or runtime service is required. External
+  `todo.md` mode is opt-in only; existing local boards need no migration.
+  Parallel-integration guidance preserves the same layout and lifecycle;
+  savings remain workload-dependent.
 
 ## [0.2.1] — 2026-09-27
 

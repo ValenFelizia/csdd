@@ -2,6 +2,12 @@
 
 Pre-run contract for #42. No executions, results, or model-performance claims.
 
+## Applicability
+
+**Local-board only.** Write economy and task-wise reconciliation assume a shared
+six-heading `todo.md` board. External-stub mode is N/A (no board text to
+reconcile).
+
 ## Scope and isolation
 
 Evaluate fewer operational writes and manual three-way reconciliation by stable

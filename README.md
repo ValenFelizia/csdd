@@ -82,10 +82,17 @@ does not already contain `.csdd/`. A successful run creates exactly:
 your-project/
 └── .csdd/
     ├── specs.md
-    ├── todo.md
+    ├── todo.md      # local board by default; external stub only on explicit request
     ├── decisions.md
     └── handoff.md
 ```
+
+By default `todo.md` is the six-heading local board. When the human explicitly
+requests external task tracking (GitHub Issues/PRs, Linear, and so on), init
+may create the
+[external-tracker stub](references/document-contracts.md#external-tracker-stub)
+instead (`Mode: external` with `Tracker:` and `Next:`). Omitting `todo.md` is
+not a mode switch.
 
 ### 3. Start using durable project state
 
@@ -102,9 +109,11 @@ active work should be recorded, without inventing missing information.
 The initialized documents may stay sparse. Structural success does not require
 the agent to guess requirements, decisions, tasks, or handoff state.
 
-As a manual fallback, copy the four files from
+As a manual fallback, copy the templates from
 [`assets/templates`](assets/templates) into a repository-level `.csdd/`
-directory. Prefer `/csdd init` when an agent can run the adoption workflow.
+directory (`todo.md` for the local board, or `todo.external.md` renamed to
+`todo.md` for the stub). Prefer `/csdd init` when an agent can run the adoption
+workflow.
 
 ### 4. Inspect existing state
 
@@ -127,7 +136,7 @@ contracts are in [read-only-workflows.md](references/read-only-workflows.md).
 | Document | Canonical responsibility |
 | --- | --- |
 | [`specs.md`](assets/templates/specs.md) | Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
-| [`todo.md`](assets/templates/todo.md) | Current operational coordination: tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history |
+| [`todo.md`](assets/templates/todo.md) | Local board (default): current operational coordination — tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history. Optional external stub ([`todo.external.md`](assets/templates/todo.external.md)): in-repo `Mode: external` / `Tracker:` / `Next:` pointer when an external tracker owns the backlog |
 | [`decisions.md`](assets/templates/decisions.md) | Accepted directions whose rationale, alternatives, or consequences should survive the session |
 | [`handoff.md`](assets/templates/handoff.md) | Only current resumable state that another agent could otherwise misunderstand, repeat, or lose |
 
@@ -381,11 +390,11 @@ python scripts/validate_repository.py
 ```
 
 Structural validation verifies machine-checkable repository contracts such as
-`SKILL.md` frontmatter, the T-025 runtime file boundary, the four primary
-templates, canonical `todo.md` template headings and Retention, and relative
-Markdown links. It is deterministic and does not use the network or model
-output. Passing these checks does not replace the qualitative evaluations in
-[`evals/`](evals).
+`SKILL.md` frontmatter, the T-025 runtime file boundary, the primary templates
+plus `todo.external.md`, local-board `todo.md` headings and Retention, external
+stub fields and mixed-shape rejection, and relative Markdown links. It is
+deterministic and does not use the network or model output. Passing these
+checks does not replace the qualitative evaluations in [`evals/`](evals).
 
 ## Versioning
 
