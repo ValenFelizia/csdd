@@ -6,6 +6,10 @@ All notable changes to CSDD will be documented in this file.
 
 ### Added
 
+- Claude Code distribution docs: personal `~/.claude/skills/csdd/` and project
+  `.claude/skills/csdd/` install via Agent Skills CLI (`--agent claude-code`)
+  and manual copy/clone/symlink; README Supported agents section; T-033
+  distribution evidence. Discovery and behavior remain not tested.
 - Optional external-tracker shape for `.csdd/todo.md` (`Mode: external` with
   `Tracker:` and `Next:`), so repos that already track work in GitHub Issues/PRs
   or Linear can opt out of the local board. Default init and local six-heading
