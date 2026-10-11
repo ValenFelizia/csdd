@@ -1,6 +1,7 @@
 ---
 name: csdd
 description: Apply Collaborative Spec-Driven Development as a lightweight coordination and durable project-state protocol. Use when a repository contains canonical `.csdd/` project-state documents, making it CSDD-aware, when the user or project instructions explicitly require CSDD, or when the user explicitly requests `/csdd doctor` or `/csdd status`.
+license: MIT
 ---
 
 # Collaborative Spec-Driven Development

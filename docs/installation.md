@@ -1,7 +1,8 @@
 # Installing the CSDD skill
 
 This guide covers installation of the **CSDD Agent Skill** for Codex, Cursor,
-and Google Antigravity. It does **not** create project `.csdd/` state.
+Claude Code, and Google Antigravity. It does **not** create project `.csdd/`
+state.
 
 Installing the skill and adopting CSDD in a repository are separate steps:
 
@@ -14,15 +15,19 @@ delete or modify any project's `.csdd/` directory.
 
 ## Prerequisites
 
-- Node.js with `npx` available (evidence recorded with Node `v24.15.0` and
-  npm/`npx` `11.13.0`).
+- Node.js with `npx` available (T-025 evidence used Node `v24.15.0` and
+  npm/`npx` `11.13.0`; T-033 Claude Code evidence used Node `v22.14.0` and
+  Agent Skills CLI `1.5.18`).
 - Network access so `npx` can fetch the `skills` CLI and clone
   `ValenFelizia/csdd` from GitHub.
-- Codex, Cursor, and/or Antigravity as the agent targets you intend to use.
+- Codex, Cursor, Claude Code, and/or Antigravity as the agent targets you
+  intend to use.
 
-Codex and Cursor global claims are backed by T-025. Antigravity claims are
-limited to the project-local distribution evidence recorded in T-032; actual
-Antigravity discovery and behavior remain not tested.
+Codex and Cursor global claims are backed by T-025. Claude Code claims are
+limited to the distribution evidence in T-033 (CLI and manual layout); Claude
+Code discovery and behavior remain not tested. Antigravity claims are limited
+to the project-local distribution evidence in T-032; actual Antigravity
+discovery and behavior remain not tested.
 
 ## Codex and Cursor: global install
 
@@ -44,6 +49,104 @@ On Windows, `~` is the current user profile (for example
 Codex and Cursor both use `~/.agents/skills` as a universal skills location.
 The CLI places one shared copy there; you do not need a separate clone for each
 agent.
+
+## Claude Code: personal or project install
+
+Claude Code loads custom skills from filesystem paths documented in the
+[Claude Code skills guide](https://code.claude.com/docs/en/skills):
+
+| Scope | Path |
+| --- | --- |
+| Personal (all your local projects) | `~/.claude/skills/csdd/` |
+| Project (shared with the repository) | `.claude/skills/csdd/` |
+
+The directory name must be `csdd` so it matches the skill frontmatter
+`name: csdd` (Agent Skills / Claude Code convention).
+
+### Agent Skills CLI (verified)
+
+Personal / global:
+
+```bash
+npx skills add ValenFelizia/csdd --skill csdd --agent claude-code -g -y
+```
+
+Observed result with Agent Skills CLI `1.5.18`: skill copy at
+`~/.claude/skills/csdd` (CLI summary: `copy → Claude Code`).
+
+Project-local (run from the target repository root):
+
+```bash
+npx skills add ValenFelizia/csdd --skill csdd --agent claude-code -y
+```
+
+Observed result: skill copy at `./.claude/skills/csdd`.
+
+Transcript and layout checks:
+[`evidence/t-033-claude-code.md`](../evidence/t-033-claude-code.md).
+
+### Manual copy, clone, or symlink
+
+Claude Code also accepts a normal directory or symlink at those paths:
+
+```bash
+# Personal — clone
+git clone https://github.com/ValenFelizia/csdd.git ~/.claude/skills/csdd
+
+# Personal — copy
+cp -a /path/to/csdd ~/.claude/skills/csdd
+
+# Personal — symlink (useful for a development checkout)
+ln -s /path/to/csdd ~/.claude/skills/csdd
+
+# Project — clone into the repo (then commit if the team should share it)
+mkdir -p .claude/skills
+git clone https://github.com/ValenFelizia/csdd.git .claude/skills/csdd
+```
+
+Required runtime files after any install method:
+
+```text
+…/csdd/SKILL.md
+…/csdd/references/
+…/csdd/assets/templates/
+```
+
+### Verify Claude Code installation
+
+```bash
+npx skills list -g --agent claude-code
+```
+
+Confirm `csdd` is listed at `~/.claude/skills/csdd` for a global install, or
+inspect the project path for a project install. Confirm frontmatter parses
+(`name: csdd`, non-empty `description`, optional `license: MIT`).
+
+Start a **new** Claude Code session and confirm `/csdd` appears or is
+invocable. Session discovery and behavioral fidelity are **not tested** in
+T-033; the checks above prove distribution layout only.
+
+A project `CLAUDE.md` is **not** required for Claude Code to discover the
+skill. Do not paste the full CSDD protocol into `CLAUDE.md`; install the skill
+instead.
+
+### Uninstall Claude Code skill
+
+CLI-managed personal install:
+
+```bash
+npx skills remove csdd --agent claude-code -g -y
+```
+
+CLI-managed project install (from the repository root):
+
+```bash
+npx skills remove csdd --agent claude-code -y
+```
+
+Manual installs: delete or unlink the exact skill directory
+(`~/.claude/skills/csdd` or `.claude/skills/csdd`). Never delete a project's
+`.csdd/` state when removing the skill.
 
 ## Antigravity: workspace install
 
@@ -146,11 +249,22 @@ Then start a new Antigravity session for the workspace and confirm that `csdd`
 is discoverable. The file and CLI checks verify installation only; session
 discovery remains a separate smoke test.
 
+## Generic `npx skills add ValenFelizia/csdd`
+
+The bare command (no `--agent`) was executed successfully with CLI `1.5.18`
+and installed a project copy under `./.agents/skills/csdd`, with the installer
+reporting copies toward multiple detected agents. Prefer the explicit
+`--agent` commands in this guide so the destination harness is intentional.
+See [`evidence/t-033-claude-code.md`](../evidence/t-033-claude-code.md) for the
+captured transcript.
+
 ## Install the skill vs `/csdd init`
 
 | Step | What it does | Where |
 | --- | --- | --- |
 | `npx skills add ... --agent codex cursor -g` | Makes CSDD globally available to Codex and Cursor | `~/.agents/skills/csdd` |
+| `npx skills add ... --agent claude-code -g` | Makes CSDD available to Claude Code personally | `~/.claude/skills/csdd` |
+| `npx skills add ... --agent claude-code` | Makes CSDD available to Claude Code in one repository | `<workspace>/.claude/skills/csdd` |
 | `npx skills add ... --agent antigravity` | Makes CSDD available to Antigravity in one workspace | `<workspace>/.agents/skills/csdd` |
 | `/csdd init` | Creates four primary documents for one repository | `<project>/.csdd/` |
 
@@ -217,8 +331,8 @@ delete that exact directory manually. Never delete the separate project
 
 After install:
 
-1. Start a **new** session in each installed target (Codex, Cursor, or
-   Antigravity) so it reloads skills.
+1. Start a **new** session in each installed target (Codex, Cursor, Claude
+   Code, or Antigravity) so it reloads skills.
 2. Confirm the skill is offered or attachable as `csdd`.
 3. Optionally invoke CSDD on a repository that already has `.csdd/`, or run
    `/csdd init` on a repository that does not.
@@ -264,8 +378,10 @@ user projects.
 ## Evidence and limitations
 
 Reproducible CLI evidence for T-025 lives in
-[`evidence/t-025-installation.md`](../evidence/t-025-installation.md). Claims
-for Antigravity live in
+[`evidence/t-025-installation.md`](../evidence/t-025-installation.md). Claude
+Code distribution evidence lives in
+[`evidence/t-033-claude-code.md`](../evidence/t-033-claude-code.md). Antigravity
+claims live in
 [`evidence/t-032-antigravity.md`](../evidence/t-032-antigravity.md). Claims in
 this guide should not exceed those records and the official documentation they
 cite.
