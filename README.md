@@ -191,6 +191,7 @@ evidence-backed.
 - [Architecture and product boundaries](docs/architecture.md)
 - [Installation and lifecycle](docs/installation.md)
 - [Agent compatibility matrix](docs/compatibility.md)
+- [Example: session resume and adaptive hydration](docs/examples/session-resume.md)
 - [Full protocol](references/protocol.md)
 - [Document contracts](references/document-contracts.md)
 - [Evaluation results](evals/results.md)
@@ -224,6 +225,27 @@ The agent should classify the task before hydrating context.
 A trivial label change should not require reading project history. A stale
 claim, architectural migration, or phase closure should not proceed without
 relevant project state.
+
+### Before / after: session resume
+
+Same task: a fresh agent must finish partially completed password-reset work
+with no prior conversation.
+
+| | Without durable state (problem CSDD targets) | With CSDD ([run 02](evals/runs/02-session-resume.md), PASS) |
+| --- | --- | --- |
+| Continuity | Generation-done / consumption-left lives only in a dead chat — easy to redo or miss | Handoff + TODO record the boundary; subject preserved generation work |
+| Context loaded | Broad rediscovery, or loading “everything” hoping something sticks | Level 2 — Operational: read `todo.md`, `handoff.md`, `specs.md`, `decisions.md` only |
+| Decisions | Accepted storage choice can be reinvented | Reused the accepted SHA-256 hashed-storage decision |
+| Outcome | Repeat or contradict prior work | Consumption + rejection cases implemented; **five tests passed**; scope released; obsolete handoff removed |
+
+Trivial work stays cheap: a button-label change stayed Level 0 and **did not
+read any `.csdd/` document contents**
+([run 01](evals/runs/01-trivial-edit.md)).
+
+Sources: [`evals/runs/02-session-resume.md`](evals/runs/02-session-resume.md),
+[`evals/runs/01-trivial-edit.md`](evals/runs/01-trivial-edit.md),
+[`evals/results.md`](evals/results.md). Longer walkthrough:
+[`docs/examples/session-resume.md`](docs/examples/session-resume.md).
 
 ## Task and claim semantics
 
@@ -338,7 +360,9 @@ When completed:
 ├── SKILL.md
 ├── docs/
 │   ├── installation.md
-│   └── compatibility.md
+│   ├── compatibility.md
+│   └── examples/
+│       └── session-resume.md
 ├── assets/
 │   └── templates/
 ├── references/
@@ -354,6 +378,7 @@ When completed:
 - [`SKILL.md`](SKILL.md) is the operational router.
 - [`docs/installation.md`](docs/installation.md) is the global skill installation guide.
 - [`docs/compatibility.md`](docs/compatibility.md) is the canonical dimensional compatibility matrix.
+- [`docs/examples/session-resume.md`](docs/examples/session-resume.md) walks through adaptive hydration on a recorded resume eval.
 - [`references/protocol.md`](references/protocol.md) defines the full protocol.
 - [`references/document-contracts.md`](references/document-contracts.md) defines document semantics.
 - [`assets/templates`](assets/templates) contains initialization templates.
