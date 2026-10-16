@@ -2,15 +2,19 @@
 
 ## In Progress
 
+## Ready to Land
+
 - [ ] T-subagent-001 — Match subagent model and effort to the subtask
   - Owner: valen
   - Agent: cursor/subagent-effort
   - Scope: `SKILL.md` delegation section, `references/protocol.md` ownership paragraph, `references/poteto-composition.md` model pointer, `changelog.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `b58f8eb`
   - Updated: 2026-10-16
   - Issue: https://github.com/ValenFelizia/csdd/issues/56
+  - Landing: https://github.com/ValenFelizia/csdd/pull/58 from `csdd/subagent-effort` to `main`. Human review pending.
+  - Verification: 22 unit tests passed. `scripts/validate_repository.py` passed. `git diff --check` passed. No harness session, so the compatibility matrix is unchanged.
   - Note: subagent namespace agreed for this line; allocator cursor/subagent-effort. No prior T-subagent id in inspected history. Adds the fallback beside coordination. Does not rewrite the doctor, status, landing, or Poteto-gate text. T-036, T-037, and T-todo-integration-001 still list SKILL.md. T-poteto-001 reached main in #57.
-
-## Ready to Land
 
 - [ ] T-poteto-001 — Compose CSDD with Poteto mode only when that session is running it
   - Owner: valen
