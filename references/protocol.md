@@ -917,6 +917,14 @@ reconciliation](#branch-and-worktree-baseline-reconciliation). Use the
 ownership follows C6 and the document contract's stale-claim procedure; the
 operational contract does not define a second reclamation rule.
 
+When the harness can delegate, follow
+[Delegate with a fitting model](../SKILL.md#delegate-with-a-fitting-model).
+Match the child model and effort to the subtask. Do not inherit the parent
+unless a harness, orchestrator, or project rule explicitly says so. An
+orchestrator per-role choice, including an explicit inherit-parent line,
+wins. Do not record a catalog of model slugs. Sessions that never load the
+skill are outside this rule.
+
 ### Execution, persistence, and reconciliation
 
 The skill fast path should require the agent to:

@@ -6,6 +6,10 @@ All notable changes to CSDD will be documented in this file.
 
 ### Added
 
+- Subagent model and effort fallback in `SKILL.md`. When CSDD is loaded and
+  the harness can delegate, the child model matches the subtask. The parent
+  is not inherited unless a harness, orchestrator, or project rule says so.
+  No model catalog. Sessions that never load the skill are unchanged.
 - Adaptive Poteto-mode composition. The skill loads
   `references/poteto-composition.md` only when the current session is running
   Poteto mode. Other sessions do not load it and do not change claims,

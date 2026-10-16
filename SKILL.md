@@ -213,6 +213,31 @@ next counter solely from the current TODO; insufficient history needs a fresh
 coordinated namespace. Optional `Issue:` URLs do not replace or rename local IDs.
 These rules add no tracking requirement to the trivial fast path.
 
+## Delegate with a fitting model
+
+This section applies only in a session that has loaded CSDD, and only when
+the harness can delegate. A session that never loads this skill does not get
+this rule. Do not copy it into `AGENTS.md` or `CLAUDE.md`.
+
+Choose the child model and effort for the subtask. Do not inherit the parent
+unless the harness, an orchestrator role line, or a project rule explicitly
+says to. An explicit inherit-parent choice stays valid. If an orchestrator
+already selected a per-role model, that choice wins. This section is the
+fallback when nothing else selected a model.
+
+The same pattern holds on Cursor, Codex, and Claude. Use a cheaper or
+lower-effort model for reading, searching, mechanical edits, and narrowed
+implementation, when that model can still do the job. Keep the parent model
+for contested judgment, cross-cutting design, and work whose mistakes are
+expensive. Do not record a catalog of model slugs.
+
+Name the choice in the brief, with any CSDD constraint the child must follow.
+The child may not load this skill. On current Cursor, Codex, and Claude
+tooling, an omitted model argument inherits the parent.
+
+Do not delegate only to satisfy this section. Work the parent can finish
+directly stays with the parent.
+
 Avoid TODO/handoff writes for reads or unchanged verification; preserve necessary
 claims and waiting states. Batch compatible known changes within one operation,
 without delaying updates across a coordination boundary. For parallel landing,
