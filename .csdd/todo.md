@@ -2,6 +2,14 @@
 
 ## In Progress
 
+- [ ] T-poteto-001 — Compose CSDD with Poteto mode only when that session is running it
+  - Owner: valen
+  - Agent: cursor/poteto-composition
+  - Scope: `SKILL.md` Poteto gate, `references/poteto-composition.md`, `references/protocol.md` progressive-reference sentence, `changelog.md`, `.csdd/todo.md`
+  - Updated: 2026-10-16
+  - Issue: https://github.com/ValenFelizia/csdd/issues/55
+  - Note: poteto namespace agreed for this line; allocator cursor/poteto-composition. No prior T-poteto id in inspected history. Does not rewrite the doctor, status, or landing guidance claimed by T-036, T-037, and T-todo-integration-001.
+
 ## Ready to Land
 
 - [ ] T-036 — Add a read-only `/csdd doctor` workflow

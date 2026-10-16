@@ -386,6 +386,24 @@ external issue or PR identifiers. See
 Keep implemented work awaiting required human review active with a concise
 review note when completion has not yet been earned.
 
+## When Poteto mode is active
+
+Apply this section only when the current session is running Poteto mode.
+Either signal is enough:
+
+- The user invoked poteto, poteto-mode, or pstack mode.
+- The poteto-mode skill is loaded for this session.
+
+A copy of that skill on disk that this session did not load is not a signal.
+Do not search the filesystem to decide.
+
+If neither signal is present, stop. Do not load
+[Poteto composition](references/poteto-composition.md). Do not change claims,
+handoffs, hydration, initialization, or any other CSDD behavior because that
+file exists.
+
+If a signal is present, load that file and follow it for this session only.
+
 ## Load detailed references progressively
 
 Load only the section relevant to the current question:
@@ -408,6 +426,8 @@ Load only the section relevant to the current question:
 - Use [the v0.1 → v0.2 migration guide](references/migration-v0.1-to-v0.2.md)
   only when recognizable older v0.1 state is present and migration intent is
   explicit.
+- Use [Poteto composition](references/poteto-composition.md) only when
+  [this session is running Poteto mode](#when-poteto-mode-is-active).
 
 Do not load both references in full by default and do not reproduce their
 detailed procedures in working notes.
