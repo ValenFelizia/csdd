@@ -7,8 +7,8 @@ the current session. If it does not match, stop. Do not apply the steps below.
 Poteto mode owns orchestration, playbook selection, and per-role model choice.
 CSDD owns durable project state. Do not add a scheduler or a required subagent
 type. Do not override a Poteto role line, and do not record model slugs here.
-A cheaper model, when no orchestrator policy selected one, is
-[issue 56](https://github.com/ValenFelizia/csdd/issues/56), not this file.
+When no orchestrator policy selected a model, follow
+[Delegate with a fitting model](../SKILL.md#delegate-with-a-fitting-model).
 
 ## Keep playbook steps out of `todo.md`
 
