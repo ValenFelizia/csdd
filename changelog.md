@@ -6,6 +6,10 @@ All notable changes to CSDD will be documented in this file.
 
 ### Added
 
+- Adaptive Poteto-mode composition. The skill loads
+  `references/poteto-composition.md` only when the current session is running
+  Poteto mode. Other sessions do not load it and do not change claims,
+  handoffs, hydration, or initialization.
 - Claude Code distribution docs: personal `~/.claude/skills/csdd/` and project
   `.claude/skills/csdd/` install via Agent Skills CLI (`--agent claude-code`)
   and manual copy/clone/symlink; README Supported agents section; T-033

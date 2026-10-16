@@ -1014,6 +1014,12 @@ deeper protocol sections for collaborative, conflicting, stale, branch/worktree,
 initialization, or historical cases. The skill MUST remain usable for levels 0
 and 1 without forcing either reference to be read in full.
 
+[poteto-composition.md](poteto-composition.md) applies only when
+[When Poteto mode is active](../SKILL.md#when-poteto-mode-is-active) says the
+current session is running Poteto mode. Any other session MUST NOT load that
+file and MUST NOT change claims, handoffs, hydration, or initialization
+because the file exists.
+
 ## Concurrency model
 
 CSDD coordination is document-based and intentionally lightweight.
