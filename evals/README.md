@@ -128,6 +128,16 @@ Scenarios 16–17 are pre-run contracts for optional external-tracker `todo.md`
 missing-todo shapes. They are not run reports. Do not add them to
 `evals/results.md` before execution.
 
+### Poteto gate and delegation model (scenarios 18–19)
+
+[Scenario 18](scenarios/18-poteto-inactive.md) checks that a session which is
+not running Poteto mode does not open the composition reference.
+[Scenario 19](scenarios/19-delegate-model.md) checks an instructed delegation.
+The child model must not inherit the parent, and the child prompt must name
+the chosen model. Run A for each is recorded. One subject per scenario. The
+compatibility matrix is unchanged. A session that is running Poteto mode is
+not part of this campaign.
+
 ## Reporting
 
 ### Task identity campaign (scenario 09)
@@ -154,6 +164,13 @@ and measured savings separately. One subject per case supports bounded findings,
 not universal conflict or overhead guarantees. Keep the four-document storage
 and historical compatibility matrix unchanged.
 See [Run A](runs/10-todo-integration-a.md) for observed metrics and limitations.
+
+### Recorded Poteto and delegation runs (scenarios 18–19)
+
+[Run A for scenario 18](runs/18-poteto-inactive-a.md) and
+[Run A for scenario 19](runs/19-delegate-model-a.md) are the executed reports
+for the contracts above. They grade tool logs and fixture diffs. They do not
+update the compatibility matrix.
 
 Store structured reports under `evals/runs/`.
 

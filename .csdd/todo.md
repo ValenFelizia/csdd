@@ -4,6 +4,17 @@
 
 ## Ready to Land
 
+- [ ] T-behavior-001 — Record the Poteto-inactive and delegated-model runs
+  - Owner: valen
+  - Agent: cursor/behavior-eval
+  - Scope: `evals/scenarios/18-poteto-inactive.md`, `evals/scenarios/19-delegate-model.md`, `evals/runs/18-poteto-inactive-a.md`, `evals/runs/19-delegate-model-a.md`, `evals/README.md`, `evals/results.md`, `changelog.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `a6ac88f`
+  - Updated: 2026-10-16
+  - Landing: https://github.com/ValenFelizia/csdd/pull/59 from `csdd/behavior-eval` to `main`. Human review pending.
+  - Verification: 22 unit tests passed. `scripts/validate_repository.py` passed. `git diff --check` passed. Run A for scenarios 18 and 19 is the evidence. No second subject was run for this pull request.
+  - Note: behavior namespace agreed for this line; allocator cursor/behavior-eval. No prior T-behavior id in inspected history. Records the two runs already executed. Does not add a Poteto-active scenario and does not change the compatibility matrix.
+
 - [ ] T-subagent-001 — Match subagent model and effort to the subtask
   - Owner: valen
   - Agent: cursor/subagent-effort
