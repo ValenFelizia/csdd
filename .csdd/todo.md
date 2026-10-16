@@ -2,6 +2,13 @@
 
 ## In Progress
 
+- [ ] T-behavior-001 — Record the Poteto-inactive and delegated-model runs
+  - Owner: valen
+  - Agent: cursor/behavior-eval
+  - Scope: `evals/scenarios/18-poteto-inactive.md`, `evals/scenarios/19-delegate-model.md`, `evals/runs/18-poteto-inactive-a.md`, `evals/runs/19-delegate-model-a.md`, `evals/README.md`, `evals/results.md`, `changelog.md`, `.csdd/todo.md`
+  - Updated: 2026-10-16
+  - Note: behavior namespace agreed for this line; allocator cursor/behavior-eval. No prior T-behavior id in inspected history. Records the two runs already executed. Does not add a Poteto-active scenario and does not change the compatibility matrix.
+
 ## Ready to Land
 
 - [ ] T-subagent-001 — Match subagent model and effort to the subtask

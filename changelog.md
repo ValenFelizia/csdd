@@ -6,6 +6,10 @@ All notable changes to CSDD will be documented in this file.
 
 ### Added
 
+- Scenarios 18 and 19, with Run A for each. A session that is not running
+  Poteto mode did not open the composition reference. An instructed delegation
+  named `composer-2.5-fast` instead of the parent model. One Cursor subject
+  each, at skill commit `a6ac88f`. The compatibility matrix is unchanged.
 - Subagent model and effort fallback in `SKILL.md`. When CSDD is loaded and
   the harness can delegate, the child model matches the subtask. The parent
   is not inherited unless a harness, orchestrator, or project rule says so.
