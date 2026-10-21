@@ -8,6 +8,12 @@ Evaluate whether `/csdd doctor` avoids false stale-claim and stale-handoff
 findings, while still reporting contract violations and corroborated
 reconciliation risks.
 
+## Applicability
+
+**Opted-in local board.** Each fixture already contains a six-heading
+`todo.md`. That file is not the init default (scenario 08). Expectations
+below stay.
+
 ## Behaviors under test
 
 - Age alone does not produce `claim.reconcile` or `handoff.maybe-consumed`

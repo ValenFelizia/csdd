@@ -4,6 +4,27 @@ All notable changes to CSDD will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0]
+
+Prepared notes since v0.2.1. This version is not tagged in the commit that
+adds these notes.
+
+### Breaking
+
+- Fresh `/csdd init` writes `specs.md`, `decisions.md`, and `handoff.md` only.
+  `.csdd/todo.md` is opt-in through a whole-line phrase fence. A valid trio
+  with that path absent is Current board-off. Doctor does not emit
+  `docs.missing` for it and does not treat it as external mode. An empty
+  local board still reports six counts of zero.
+- `/csdd todo enable` is the only post-init writer, and only from Current
+  board-off. The same shape is unchanged and is not recopied. A different
+  shape, a stub field mismatch, or an invalid existing path is a refusal.
+  Nothing deletes the file. Enable writes a blank template and does not
+  resurrect task text. Restore a deleted board from Git instead of enabling
+  over the restored file.
+- Existing valid local boards and valid stubs stay valid. Do not delete them
+  to match the new init default.
+
 ### Added
 
 - Scenarios 18 and 19, with Run A for each. A session that is not running
@@ -17,42 +38,47 @@ All notable changes to CSDD will be documented in this file.
 - Adaptive Poteto-mode composition. The skill loads
   `references/poteto-composition.md` only when the current session is running
   Poteto mode. Other sessions do not load it and do not change claims,
-  handoffs, hydration, or initialization.
+  handoffs, hydration, or initialization. On board-off or a stub, that
+  session does not create `.csdd/todo.md` to hold `Agent`.
 - Claude Code distribution docs: personal `~/.claude/skills/csdd/` and project
   `.claude/skills/csdd/` install via Agent Skills CLI (`--agent claude-code`)
   and manual copy/clone/symlink; README Supported agents section; T-033
   distribution evidence. Discovery and behavior remain not tested.
-- Optional external-tracker shape for `.csdd/todo.md` (`Mode: external` with
-  `Tracker:` and `Next:`), so repos that already track work in GitHub Issues/PRs
-  or Linear can opt out of the local board. Default init and local six-heading
-  boards are unchanged; missing `todo.md` remains partial; mixed shapes are
-  malformed. Package template: `assets/templates/todo.external.md`. Evaluation
-  contracts: scenarios 16–17 (unexecuted); scenarios 06–08/10/11/14/15 declare
-  local-board vs both applicability.
+- Opt-in task surfaces at `.csdd/todo.md`: a six-heading local board and an
+  external stub (`Mode: external`, `Tracker:`, `Next:`). Package templates
+  stay `assets/templates/todo.md` and `assets/templates/todo.external.md`.
+  Mixed shapes stay malformed. Scenarios 16–17, 20, and 21 are the new
+  contracts. Scenarios 16–17 and 20–21 are unexecuted.
 - Compatible local task-ID convention with explicitly coordinated bounded
   namespaces, optional external issue relationships, and duplicate repair.
 - Offline identity fixtures and a qualitative evaluation scenario.
 - Shared-state write economy and task-wise landing reconciliation, with
-  visible claims/waiting states and combined retention after verified landing.
+  visible claims and waiting states and combined retention after verified
+  landing.
 - Reproducible offline integration fixtures comparing the baseline, each
   change separately, and their combination, with separate safety cases.
 - Read-only `/csdd doctor` workflow for diagnosing CSDD state without writing,
   repairing, or migrating. Structural TODO checks reuse the repository
-  validator's heading and retention rules. Evaluation contracts are scenarios
-  11–13 and have not been executed.
+  validator's heading and retention rules on a local board. Evaluation
+  contracts are scenarios 11–13 and have not been executed.
 - Read-only `/csdd status` workflow that derives a brief operational snapshot
   from canonical documents and observable Git state. It does not persist a
-  status file. Evaluation contracts are scenarios 14–15 and have not been
-  executed.
+  status file. Current briefs include `task surface:`. Evaluation contracts
+  are scenarios 14–15 and have not been executed.
+
+### Migration
+
+- To opt in, put a fence line in the init utterance, or run
+  `/csdd todo enable` later on Current board-off. A recognizable v0.1
+  `todo.md` is still transformed in place. It is not deleted.
 
 ### Adoption
 
-- Candidate for a compatible minor release; no release is published here.
-- Existing IDs remain valid. No renumbering, automatic migration, fifth primary
-  document, tracker sync service, or runtime service is required. External
-  `todo.md` mode is opt-in only; existing local boards need no migration.
-  Parallel-integration guidance preserves the same layout and lifecycle;
-  savings remain workload-dependent.
+- No release is published with these notes.
+- Existing IDs remain valid. No renumbering, fifth primary document, tracker
+  sync service, or runtime service is required. Valid local boards and valid
+  stubs need no migration. Parallel-integration guidance does not create
+  `todo.md`. Savings remain workload-dependent.
 
 ## [0.2.1] — 2026-09-27
 

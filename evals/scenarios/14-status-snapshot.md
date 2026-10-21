@@ -10,9 +10,10 @@ brief and must not write a status file.
 
 ## Applicability
 
-**Local-board only.** Six-state counts, retention `used/N`, and active-claim
-lines require the local board. External-stub status (no fake counts) is
-scenario 17.
+**Opted-in local board.** The fixture already has the six headings. It is not
+the init default (scenario 08). Variant A still reports six counts of zero.
+That zero snapshot is the empty board, not board-off (scenario 21).
+External-stub status is scenario 17. Expectations below stay.
 
 ## Behaviors under test
 

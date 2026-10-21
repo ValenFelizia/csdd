@@ -14,8 +14,11 @@ Doctor/status rules:
 
 ## Applicability
 
-**External stub and mixed-shape malformed.** Local-board doctor/status fixtures
-remain scenarios 11 and 14–15.
+**External stub, mixed-shape malformed, and one board-off negative.** Variant
+D is Current board-off and must not be graded as external. The dedicated
+board-off doctor, status, and post-init enable contract is scenario 21.
+Local-board doctor/status fixtures remain scenarios 11 and 14–15. They assume
+an opted-in board, not the init default.
 
 ## Behaviors under test
 
@@ -23,7 +26,8 @@ remain scenarios 11 and 14–15.
 - Doctor stub-field findings and `todo.mode.mixed` on mixed shape
 - Status external snapshot: `mode: external`, Tracker, Next, handoffs; **no**
   invented six-state counts or retention `used/N`
-- Missing `todo.md` remains partial (`docs.missing`), not external mode
+- Variant D is Current board-off: no `docs.missing` for `todo.md`, no
+  `mode: external`, no six-state counts, and no retention `used/N`
 - No writes, repair, migration, staging, commit, or fetch
 
 ## Fixture contract
@@ -68,11 +72,13 @@ Next: open Issues labeled `ready`
 - No canonical state H2 headings
 - Clean worktree
 
-### Variant D — missing todo.md (doctor + status)
+### Variant D — board-off (doctor + status)
 
-- `.csdd/` exists with `specs.md`, `decisions.md`, and `handoff.md`
+- `.csdd/` exists with `specs.md`, `decisions.md`, and `handoff.md` as files
 - `todo.md` is absent
-- Expect **partial** and `docs.missing` for `todo.md` — not external mode
+- Expect **Current** and `task surface: board-off`
+- Do not emit `docs.missing` for `todo.md`
+- Do not report `mode: external`, six-state counts, or retention `used/N`
 - Clean worktree
 
 ## Exact subject prompts
@@ -103,12 +109,12 @@ Give the current CSDD snapshot. Read only. Do not modify files or Git state.
 | Variant | Workflow | Required observations |
 | --- | --- | --- |
 | A | doctor | Classification `current`. No demand for six state H2s or Retention. No `todo.h2.missing`. Ends with `Nothing was modified.` |
-| A | status | Reports `mode: external` (or equivalent), names Tracker and Next, sources include `.csdd/todo.md`, handoff count 0. Does **not** print six-state counts or retention `used/N` as if a board existed. Ends with `Nothing was modified.` |
+| A | status | Reports `task surface: external` and `mode: external` (or equivalent), names Tracker and Next, sources include `.csdd/todo.md`, handoff count 0. Does **not** print six-state counts or retention `used/N` as if a board existed. Ends with `Nothing was modified.` |
 | B | doctor | Classification `malformed`. Emits `todo.mode.mixed`. Does not rewrite the file. Ends with `Nothing was modified.` |
 | B | status | Does not invent six-state counts. States a limitation and recommends `/csdd doctor`. Ends with `Nothing was modified.` |
 | C | doctor | Emits `todo.external.tracker-missing` and/or `todo.external.invalid`. Does not treat the file as a valid local board. Ends with `Nothing was modified.` |
-| D | doctor | Classification `partial`. `docs.missing` for `todo.md`. Does not classify as external mode. Ends with `Nothing was modified.` |
-| D | status | Does not invent counts or claim external mode. Recommends `/csdd doctor`. Ends with `Nothing was modified.` |
+| D | doctor | Classification `current`. `task surface: board-off`. No `docs.missing` for `todo.md`. Skip reason records that the task surface is board-off. Does not classify as external mode. Ends with `Nothing was modified.` |
+| D | status | `task surface: board-off`. Does not invent six-state counts, retention `used/N`, or `mode: external`. Does not recommend doctor for the missing file. Ends with `Nothing was modified.` |
 
 Every doctor finding includes its stable identifier and an evidence path. Final
 Git status matches each fixture baseline.
@@ -120,7 +126,9 @@ FAIL if the subject:
 - creates, edits, deletes, stages, commits, fetches, or pushes;
 - classifies Variant A as malformed solely for lacking six H2s;
 - classifies Variant B as current external;
-- treats Variant D (missing `todo.md`) as external mode;
+- treats Variant D (absent `todo.md`) as external mode;
+- emits `docs.missing` for Variant D's absent `todo.md`;
+- prints six-state counts or retention `used/N` for Variant D;
 - invents six-state counts or retention `used/N` for Variant A status;
 - omits `Nothing was modified.` on a workflow that requires it;
 - emits a finding with no evidence path.

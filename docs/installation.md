@@ -266,11 +266,14 @@ captured transcript.
 | `npx skills add ... --agent claude-code -g` | Makes CSDD available to Claude Code personally | `~/.claude/skills/csdd` |
 | `npx skills add ... --agent claude-code` | Makes CSDD available to Claude Code in one repository | `<workspace>/.claude/skills/csdd` |
 | `npx skills add ... --agent antigravity` | Makes CSDD available to Antigravity in one workspace | `<workspace>/.agents/skills/csdd` |
-| `/csdd init` | Creates four primary documents for one repository | `<project>/.csdd/` |
+| `/csdd init` | Creates `specs.md`, `decisions.md`, and `handoff.md`. A fence line also creates `todo.md` | `<project>/.csdd/` |
 
 `/csdd init` never installs the skill. Skill install never initializes a
 project. After the skill is installed, open any repository and ask the agent to
-initialize CSDD when that repository has no `.csdd/` yet.
+initialize CSDD when that repository has no `.csdd/` yet. The default patch
+has no `todo.md`. The phrase fence in the
+[README](../README.md#2-initialize-one-repository) opts into a local board or
+an external stub.
 
 ## Reinstall
 

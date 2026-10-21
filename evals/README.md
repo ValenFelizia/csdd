@@ -5,7 +5,7 @@ behavior across fresh coding-agent sessions.
 
 ## Scenario contracts vs run reports
 
-- **Pre-run scenario contracts** (for example scenarios 06–17) define fixture
+- **Pre-run scenario contracts** (for example scenarios 06–21) define fixture
   shape, the exact subject prompt, expected observable behavior, critical
   failures, and grading notes. They are not evaluation reports and must not
   contain Observed Behavior, PASS/PARTIAL/FAIL results, or invented run
@@ -16,10 +16,11 @@ behavior across fresh coding-agent sessions.
 - Evaluations 01–05 predate the contract/report split. Their combined historical
   reports now live under `evals/runs/`. No separate frozen pre-run contracts
   exist for those historical evaluations.
-- Scenarios 06–17 are the reusable pre-run contracts under `evals/scenarios/`.
-  Contracts that assume a local `todo.md` board declare **Applicability:
-  local-board only** (or equivalent). External-stub init and doctor/status are
-  scenarios 16–17.
+- Scenarios 06–21 are the reusable pre-run contracts under `evals/scenarios/`.
+  Scenario 08 is the board-off init default. Scenario 20 is local opt-in at
+  init. Scenarios 16–17 are the external stub. Scenario 21 is board-off
+  doctor, status, and post-init enable. Contracts that assume a local
+  `todo.md` board say they assume an opted-in board, not the init default.
 
 ## Evaluation Roles
 
@@ -121,12 +122,14 @@ reports. Do not add them to `evals/results.md` before execution.
 Scenarios 14–15 are pre-run contracts for `/csdd status`. They are not run
 reports. Do not add them to `evals/results.md` before execution.
 
-### External todo stub scenarios (16–17)
+### Task surface scenarios (08, 16–17, 20–21)
 
-Scenarios 16–17 are pre-run contracts for optional external-tracker `todo.md`
-(#48): explicit external init, and doctor/status on stub / mixed / incomplete /
-missing-todo shapes. They are not run reports. Do not add them to
-`evals/results.md` before execution.
+Scenario 08 is board-off init. Scenario 20 is the local fence at init.
+Scenarios 16–17 cover the external stub, including variant D as Current
+board-off. Scenario 21 covers board-off doctor and status, then
+`/csdd todo enable`. They are not run reports. Do not add them to
+`evals/results.md` before execution. Run A of scenario 08 recorded the older
+four-file init and is historical.
 
 ### Poteto gate and delegation model (scenarios 18–19)
 

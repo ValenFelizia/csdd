@@ -13,9 +13,9 @@ repeat the broad v0.1 campaign.
 
 ## Applicability
 
-**Local-board only.** Landing, Recently Completed retention, and six-heading
-structure apply to the local board. External stubs have no board transitions or
-Retention window (see
+**Opted-in local board.** This fixture already contains a six-heading
+`todo.md`. It is not the init default (scenario 08). Expectations below stay.
+External stubs have no board transitions or Retention window (see
 [External-tracker stub](../../references/document-contracts.md#external-tracker-stub)).
 
 ## Behaviors under test

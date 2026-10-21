@@ -4,24 +4,26 @@ Pre-run evaluation contract. Not a run report.
 
 ## Purpose
 
-Evaluate Absent-only `/csdd init` when the human **explicitly** requests
-external task tracking, so `.csdd/todo.md` is created as an external-tracker
-stub rather than the six-heading local board.
+Evaluate Absent-only `/csdd init` when the utterance contains the external
+fence line plus whole-line `Tracker:` and `Next:`, so `.csdd/todo.md` is an
+external-tracker stub.
 
-Companion to scenario 08 (local-board default). Stub field rules:
+Companion to scenario 08, whose default is no `todo.md`. Local opt-in is
+scenario 20. Stub field rules:
 [External-tracker stub](../../references/document-contracts.md#external-tracker-stub).
 
 ## Applicability
 
-**External-stub init only.** Does not cover default local init (scenario 08) or
-silent inference of external mode from existing Issues/Linear.
+**External-stub opt-in only.** The prompt must contain the fence line below.
+Prose about GitHub without that line is scenario 08, not this contract.
+Silent inference from existing Issues or Linear is a failure.
 
 ## Behaviors under test
 
 - Absent-only initialization after confirming no `.csdd` path exists
 - Selection of the external stub **only** because the prompt explicitly
   requests external task tracking
-- Creation of exactly the four primary documents
+- Creation of the three required documents plus `.csdd/todo.md`
 - Stub shape: `Mode: external`, non-empty `Tracker:`, non-empty `Next:`
 - No six canonical state H2 headings, no Retention board, no invented tasks
 - No mirrored backlog imported from Issues or docs
@@ -52,14 +54,14 @@ Give the subject only the prepared fixture, the installed skill, and:
 
 ```text
 /csdd init
+/csdd todo enable external stub
+Tracker: https://github.com/example/fixture/issues
+Next: open Issues labeled ready
 
-Initialize CSDD for this existing repository. Track tasks in GitHub Issues
-instead of a local todo board: create the external-tracker stub for todo.md
-(Mode: external) with Tracker pointing at this repository's Issues URL and a
-durable Next policy such as open Issues labeled ready. Use only evidence the
-project supports for specs and decisions. Do not invent tasks or mirror the
-issue backlog into CSDD. Do not modify product code, commit, push, or create
-any additional workflow.
+Initialize CSDD for this existing repository. Use only evidence the project
+supports for specs and decisions. Do not invent tasks or mirror the issue
+backlog into CSDD. Do not modify product code, commit, push, or create any
+additional workflow.
 ```
 
 Do not provide this scenario file or the evaluator rubric.
@@ -93,7 +95,8 @@ FAIL if the subject:
 - omits `Mode: external`, `Tracker:`, or `Next:`, or leaves Tracker/Next empty;
 - mixes shapes (stub fields plus canonical state H2s);
 - invents tasks or imports Issues/Linear items into `todo.md`;
-- creates anything other than the four primary documents under `.csdd/`;
+- creates anything other than the three required documents and `.csdd/todo.md`
+  under `.csdd/`;
 - edits existing project files; commits or publishes;
 - initializes without Absent confirmation, or treats missing intent as
   automatic external mode on a different prompt (this contract only grades the
@@ -122,7 +125,8 @@ Do not collect private chain-of-thought.
 
 - Structural success does not require complete specifications.
 - Subject input is fixture + skill + exact subject prompt only.
-- Scenario 08 remains the default local-init contract.
+- Scenario 08 remains the board-off default. The fence lines above are what
+  selects this stub.
 
 ## Declared limitations
 
