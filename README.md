@@ -96,6 +96,14 @@ your-project/
 That tree is Current with `task surface: board-off`. `.csdd/todo.md` is not
 created. A sentence about GitHub, Linear, or issues does not create it.
 
+CSDD’s value is how agents decide and which documents they load, not an
+in-repo board. In a project that already uses git with Issues and pull
+requests, a checked-in `todo.md` is a second backlog that forces constant
+rebases. Leave the surface board-off there. Opt in when a solo repo has no
+issue tracker and you want in-repo claims (`Owner`, `Agent`, `Scope`), or
+when you want a stub that points agents at an external tracker with
+`Tracker:` and `Next:`.
+
 Opt in during the same init, or later on a Current board-off tree, with one
 whole line from this fence. The contract is
 [Phrase fence](references/document-contracts.md#phrase-fence).
