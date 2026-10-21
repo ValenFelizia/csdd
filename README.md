@@ -82,23 +82,38 @@ Installation and initialization are separate operations:
 | `/csdd init` | Creates CSDD state in the current repository |
 
 Initialization is Absent-only: it creates state only when the target repository
-does not already contain `.csdd/`. A successful run creates exactly:
+does not already contain `.csdd/`. A successful run with no fence line creates
+exactly:
 
 ```text
 your-project/
 └── .csdd/
     ├── specs.md
-    ├── todo.md      # local board by default; external stub only on explicit request
     ├── decisions.md
     └── handoff.md
 ```
 
-By default `todo.md` is the six-heading local board. When the human explicitly
-requests external task tracking (GitHub Issues/PRs, Linear, and so on), init
-may create the
-[external-tracker stub](references/document-contracts.md#external-tracker-stub)
-instead (`Mode: external` with `Tracker:` and `Next:`). Omitting `todo.md` is
-not a mode switch.
+That tree is Current with `task surface: board-off`. `.csdd/todo.md` is not
+created. A sentence about GitHub, Linear, or issues does not create it.
+
+Opt in during the same init, or later on a Current board-off tree, with one
+whole line from this fence. The contract is
+[Phrase fence](references/document-contracts.md#phrase-fence).
+
+```text
+/csdd todo enable local board
+csdd todo enable local board
+/csdd todo enable external stub
+csdd todo enable external stub
+```
+
+The local phrase also writes `.csdd/todo.md` from
+[`assets/templates/todo.md`](assets/templates/todo.md): six headings and
+`Retention: 5`, no tasks. The external phrase also needs one whole-line
+`Tracker:` and one whole-line `Next:`, and writes the
+[external-tracker stub](references/document-contracts.md#external-tracker-stub).
+A second init does not add the file. `/csdd todo enable` is the later writer,
+and only while the surface is still board-off.
 
 ### 3. Start using durable project state
 
@@ -115,11 +130,11 @@ active work should be recorded, without inventing missing information.
 The initialized documents may stay sparse. Structural success does not require
 the agent to guess requirements, decisions, tasks, or handoff state.
 
-As a manual fallback, copy the templates from
+As a manual fallback, copy `specs.md`, `decisions.md`, and `handoff.md` from
 [`assets/templates`](assets/templates) into a repository-level `.csdd/`
-directory (`todo.md` for the local board, or `todo.external.md` renamed to
-`todo.md` for the stub). Prefer `/csdd init` when an agent can run the adoption
-workflow.
+directory. Copy `todo.md`, or copy `todo.external.md` and rename it to
+`todo.md` after replacing `Tracker:` and `Next:`, only when opting in.
+Prefer `/csdd init` when an agent can run the adoption workflow.
 
 ### 4. Inspect existing state
 
@@ -137,14 +152,14 @@ files. Neither initializes, repairs, migrates, or edits files. If status
 cannot count the state reliably, it says so and recommends doctor. The
 contracts are in [read-only-workflows.md](references/read-only-workflows.md).
 
-## The four documents
+## The documents
 
 | Document | Canonical responsibility |
 | --- | --- |
-| [`specs.md`](assets/templates/specs.md) | Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
-| [`todo.md`](assets/templates/todo.md) | Local board (default): current operational coordination — tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history. Optional external stub ([`todo.external.md`](assets/templates/todo.external.md)): in-repo `Mode: external` / `Tracker:` / `Next:` pointer when an external tracker owns the backlog |
-| [`decisions.md`](assets/templates/decisions.md) | Accepted directions whose rationale, alternatives, or consequences should survive the session |
-| [`handoff.md`](assets/templates/handoff.md) | Only current resumable state that another agent could otherwise misunderstand, repeat, or lose |
+| [`specs.md`](assets/templates/specs.md) | Required. Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
+| [`decisions.md`](assets/templates/decisions.md) | Required. Accepted directions whose rationale, alternatives, or consequences should survive the session |
+| [`handoff.md`](assets/templates/handoff.md) | Required. Only current resumable state that another agent could otherwise misunderstand, repeat, or lose. Not a backlog when `todo.md` is absent |
+| [`todo.md`](assets/templates/todo.md) | Optional. Absent by default (board-off). Opt-in local board: tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history. Opt-in external stub ([`todo.external.md`](assets/templates/todo.external.md)): in-repo `Mode: external`, `Tracker:`, and `Next:` when an external tracker owns the backlog |
 
 Projects may add an optional `.csdd/archive/` for cold semantic summaries of
 completed phases or superseded context. It is not part of initialization or
@@ -235,9 +250,10 @@ CSDD is experimental public-beta software. The latest published version is
 shown by the release badge above; release history is recorded in
 [`changelog.md`](changelog.md).
 
-The v0.2 protocol includes a Git-aware task lifecycle, six canonical TODO
-states with bounded retention, boundary-driven replaceable handoffs, an
-Absent-only initialization workflow, and primary templates.
+The protocol includes a Git-aware task lifecycle, six TODO states on an
+opted-in local board, boundary-driven replaceable handoffs, Absent-only
+initialization, and templates for the required documents plus the opt-in
+task surface. Fresh init leaves the task surface board-off.
 
 Before `1.0`, document contracts and workflows may still evolve through
 versioned releases. Current compatibility claims are intentionally narrow and
@@ -292,7 +308,7 @@ with no prior conversation.
 | | Without durable state (problem CSDD targets) | With CSDD ([run 02](evals/runs/02-session-resume.md), PASS) |
 | --- | --- | --- |
 | Continuity | Generation-done / consumption-left lives only in a dead chat — easy to redo or miss | Handoff + TODO record the boundary; subject preserved generation work |
-| Context loaded | Broad rediscovery, or loading “everything” hoping something sticks | Level 2 — Operational: read `todo.md`, `handoff.md`, `specs.md`, `decisions.md` only |
+| Context loaded | Broad rediscovery, or loading “everything” hoping something sticks | Level 2 on that opted-in board: read `todo.md`, `handoff.md`, `specs.md`, and `decisions.md` only |
 | Decisions | Accepted storage choice can be reinvented | Reused the accepted SHA-256 hashed-storage decision |
 | Outcome | Repeat or contradict prior work | Consumption + rejection cases implemented; **five tests passed**; scope released; obsolete handoff removed |
 
@@ -481,11 +497,18 @@ checks does not replace the qualitative evaluations in [`evals/`](evals).
 
 ## Versioning
 
-CSDD follows semantic versioning.
+CSDD follows semantic versioning. Before 1.0, a minor version may change
+required init behavior.
 
 - patch releases clarify wording or fix non-breaking protocol defects;
 - minor releases add compatible rules, document fields, or workflows;
 - major releases may change canonical document contracts or required behavior.
+
+v0.3.0 changes the init patch and the Current class. Fresh init does not
+write `.csdd/todo.md`. A valid trio with that path absent is Current
+board-off. Existing valid local boards and valid stubs stay valid. Re-enable
+with a fence line. Enable writes a blank template and does not restore deleted
+task text. Restore that file from Git instead.
 
 ## License
 
