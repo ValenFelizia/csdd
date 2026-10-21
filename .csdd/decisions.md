@@ -4,6 +4,7 @@
 
 - Status: accepted
 - Date: 2026-07-10
+- Superseded in part by DEC-009: `.csdd/` stays the location. `todo.md` is no longer a required file.
 
 ### Context
 
@@ -256,3 +257,25 @@ follows from adopting the direction. No merge or release is authorized here.
 
 The tested workload and execution limitations are recorded in the
 [scenario 10 run report](../evals/runs/10-todo-integration-a.md).
+
+## DEC-009 — Default the task surface to board-off
+
+- Status: accepted
+- Date: 2026-10-21
+- Supersedes: the DEC-001 implication that `.csdd/todo.md` is required. DEC-001's location text stays.
+
+### Context
+
+Plan 048 kept a file at `.csdd/todo.md` and treated a missing file as partial, so absence would not be confused with an external tracker. That compatibility promise made the local board the init default. v0.3.0 reverses the default and keeps the two file shapes as opt-in.
+
+### Decision
+
+Fresh `/csdd init` writes `specs.md`, `decisions.md`, and `handoff.md` only. A valid trio with no `.csdd/todo.md` is Current board-off. A local board or an external stub is created only by the phrase fence in [document-contracts.md](../references/document-contracts.md#phrase-fence). This repository stays on an opted-in local board. Do not delete `.csdd/todo.md` to resemble a fresh init.
+
+### Rationale
+
+Absence is a smaller switch than a `Mode: off` file or a fifth document. The deletion hazard is accepted: removing the board classifies as board-off, and doctor does not restore it. Git restore is the undo. Enable writes a blank template and does not resurrect task text.
+
+### Consequences
+
+v0.3.0 is a breaking contract change and is not a tag by itself. Existing valid boards and valid stubs stay valid. `/csdd todo enable` is the only post-init creator, and only from Current board-off. It does not convert shapes and does not delete.

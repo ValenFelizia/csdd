@@ -37,9 +37,9 @@ The authoritative conceptual protocol is defined in:
 
 - Agents are ephemeral; project state is durable.
 - Persist consequential knowledge, not activity.
-- The four primary documents remain plain Markdown.
-- `todo.md` remains the primary coordination surface.
-- `handoff.md` transfers resumable state and does not duplicate task tracking.
+- `specs.md`, `decisions.md`, `handoff.md`, and an opted-in `todo.md` remain plain Markdown.
+- A fresh init leaves the task surface board-off. This repository keeps an opted-in local board at `.csdd/todo.md`.
+- `handoff.md` transfers resumable state and does not duplicate task tracking, including when `todo.md` is absent.
 - Archive content, when present, is cold context and is never loaded by default.
 - Active scope overlap is never knowingly ignored.
 - Durable decisions are never silently reversed.
@@ -58,8 +58,8 @@ The authoritative conceptual protocol is defined in:
 
 ## Distribution (non-normative for protocol semantics)
 
-These distribution facts do not change the v0.2 protocol rules in
-`references/`. They describe how the skill itself is obtained.
+These distribution facts do not change the protocol rules in `references/`.
+They describe how the skill itself is obtained.
 
 - Agent Skills (`npx skills`) is the standard distribution mechanism for the
   CSDD skill.
@@ -74,7 +74,7 @@ These distribution facts do not change the v0.2 protocol rules in
 
 ## Structural validation (non-normative for protocol semantics)
 
-These facts describe repository tooling. They do not change the v0.2 protocol
+These facts describe repository tooling. They do not change the protocol
 rules in `references/`.
 
 - The repository provides reproducible structural validation for the skill
@@ -89,7 +89,7 @@ rules in `references/`.
 ## Compatibility claims (non-normative for protocol semantics)
 
 These facts govern how public harness compatibility is stated. They do not
-change the v0.2 protocol rules in `references/`.
+change the protocol rules in `references/`.
 
 - Compatibility claims MUST be dimensional (install, discovery, invocation,
   init, workflow, Git visibility, and similar), never a single harness-wide
