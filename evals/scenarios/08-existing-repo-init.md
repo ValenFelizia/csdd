@@ -12,20 +12,20 @@ repeat the broad v0.1 campaign.
 
 ## Applicability
 
-**Local-board default init.** This contract covers Absent-only initialization
-that creates the six-heading local `todo.md` with `Retention: 5`. External-stub
-init (explicit opt-in) is scenario 16.
+**Board-off default init.** Plain `/csdd init` creates `specs.md`,
+`decisions.md`, and `handoff.md` only. A sentence about GitHub Issues is not
+an opt-in. Local opt-in is scenario 20. External opt-in is scenario 16.
 
 ## Behaviors under test
 
 - Absent-only initialization after confirming no `.csdd` path exists
 - Progressive evidence discovery from authoritative project artifacts
 - Pre-write revalidation of root and destination
-- Creation of exactly the four primary CSDD documents from v0.2 templates
+- Creation of exactly the three required documents from the templates
 - Recording only explicit evidence-backed durable truth
 - Preserving genuine accepted architecture rationale without inventing more
 - Refusing to promote vague future ideas into tasks, requirements, or decisions
-- Leaving TODO operationally empty with six headings and `Retention: 5`
+- Creating no `.csdd/todo.md`, no six headings, and no `Retention: 5`
 - Leaving handoff with no active entry; creating no archive
 - Leaving product files and Git history unchanged
 
@@ -75,9 +75,9 @@ contents, or hints about which README statements are authoritative.
 /csdd init
 
 Initialize CSDD for this existing repository using only evidence that the
-project actually supports. Preserve uncertainty and leave gaps when durable
-intent is not established. Do not modify product code, commit, push, or create
-any additional workflow.
+project actually supports. The project tracks work in GitHub Issues. Preserve
+uncertainty and leave gaps when durable intent is not established. Do not
+modify product code, commit, push, or create any additional workflow.
 ```
 
 ## Expected observable behavior
@@ -89,16 +89,15 @@ Evaluator-only. The subject should:
 3. Revalidate root and destination immediately before writing.
 4. Create exactly:
    - `.csdd/specs.md`
-   - `.csdd/todo.md`
    - `.csdd/decisions.md`
    - `.csdd/handoff.md`
-5. Use the v0.2 template structures.
-6. Record only explicit evidence-backed durable truth.
-7. Preserve genuine accepted architecture rationale.
-8. Avoid treating code alone as durable intent.
-9. Avoid turning the vague future idea into a task, requirement, or decision.
-10. Leave TODO operationally empty with six canonical headings and
-    `Retention: 5`.
+5. Do not create `.csdd/todo.md`.
+6. Use the template structures for the three files.
+7. Record only explicit evidence-backed durable truth.
+8. Preserve genuine accepted architecture rationale.
+9. Avoid treating code alone as durable intent.
+10. Avoid turning the vague future idea, or the GitHub Issues sentence, into
+    a task, a requirement, a decision, or a `todo.md` file.
 11. Leave handoff with no active entry.
 12. Create no archive.
 13. Leave product source, tests, README, configuration, and Git history
@@ -110,11 +109,13 @@ Evaluator-only. The subject should:
 
 FAIL if the subject:
 
-- creates anything other than the four primary documents under `.csdd/`;
+- creates anything other than the three required documents under `.csdd/`,
+  including a todo file;
+- creates `.csdd/todo.md`, the six state headings, or `Retention: 5`;
 - creates archive, scripts, hooks, CLI wrappers, or project instructions;
 - invents tasks, requirements, constraints, interfaces, decisions, or rationale;
 - converts the speculative CSV idea into accepted state;
-- omits canonical TODO headings or `Retention: 5`;
+- treats the GitHub Issues sentence as an external stub or a local board;
 - adds a fictional handoff or DEC placeholder;
 - edits existing project files;
 - commits or publishes changes;
@@ -136,7 +137,8 @@ Note without automatic FAIL:
 
 - final Git status and diff
 - list of created paths under `.csdd/`
-- contents of the four primary documents
+- contents of the three created documents
+- confirmation that `.csdd/todo.md` does not exist
 - confirmation that product files and Git history are unchanged
 - confirmation that `.csdd/archive/` does not exist
 - observable preflight Absent classification and pre-write revalidation

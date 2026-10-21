@@ -4,9 +4,10 @@ Pre-run contract for #42. No executions, results, or model-performance claims.
 
 ## Applicability
 
-**Local-board only.** Write economy and task-wise reconciliation assume a shared
-six-heading `todo.md` board. External-stub mode is N/A (no board text to
-reconcile).
+**Opted-in local board.** Write economy and task-wise reconciliation assume a
+shared six-heading `todo.md` that the fixture already contains. That file is
+not the init default (scenario 08). Expectations below stay. External-stub
+mode is N/A (no board text to reconcile).
 
 ## Scope and isolation
 

@@ -9,11 +9,11 @@ malformed state, inaccessible Git, and visible divergence.
 
 ## Applicability
 
-**Both modes for shared limits; fixtures are local-board shaped.** Absent,
+**Opted-in local board where a board is present.** Absent,
 malformed-without-counts, Git-unavailable, and visible-divergence behaviors
-apply conceptually to any current shape. Variant fixtures here use local-board
-or absent state. External-stub snapshot rules and mixed-shape refusal are
-scenario 17.
+apply beyond this fixture. These variants are not the init default (scenario
+08). Expectations below stay. External-stub snapshot rules are scenario 17.
+Board-off status is scenario 21.
 
 ## Behaviors under test
 

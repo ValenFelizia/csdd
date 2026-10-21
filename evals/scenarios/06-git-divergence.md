@@ -12,9 +12,9 @@ repeat the broad v0.1 campaign.
 
 ## Applicability
 
-**Local-board only.** Fixtures and expectations require in-repo task claims,
-scopes, and blocked state on the six-heading `todo.md`. External-stub mode is
-out of scope (see scenario 17 for doctor/status external behavior).
+**Opted-in local board.** This fixture already contains a six-heading
+`todo.md`. It is not the init default (scenario 08). Expectations below stay.
+External-stub mode is out of scope (see scenario 17).
 
 ## Behaviors under test
 

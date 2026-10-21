@@ -10,10 +10,11 @@ partial, malformed, recognizable older, and ambiguous CSDD states.
 
 ## Applicability
 
-**Local-board focused (variants A–E).** Current/valid, partial, malformed board,
-older, and ambiguous-root cases use local-board or non-stub fixtures.
-External-stub current classification, stub field findings, and mixed-shape
-malformed cases are scenario 17.
+**Opted-in local board (variants A–E).** These fixtures are not the init
+default (scenario 08). Expectations below stay. Variant B stays partial
+because `decisions.md` and `handoff.md` are the missing files. External-stub
+current classification, stub field findings, and mixed-shape malformed cases
+are scenario 17. Board-off doctor and status are scenario 21.
 
 ## Behaviors under test
 

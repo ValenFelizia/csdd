@@ -10,6 +10,11 @@ history-aware allocation, and explicit duplicate repair. The identity convention
 does not resolve #42 textual contention in shared Markdown, source overlap, or
 durable-truth conflicts.
 
+## Applicability
+
+**Opted-in local board.** The materializer writes a six-heading `todo.md`.
+That file is not the init default (scenario 08). Expectations below stay.
+
 ## Roles and subject isolation
 
 The fixture author materializes baselines only. Separate fresh subjects execute
