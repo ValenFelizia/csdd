@@ -245,7 +245,7 @@ skill over pasting CSDD into `CLAUDE.md`.
 
 The short command and the per-agent commands are in
 [Quick start](#1-install-the-skill). Use
-[Advanced / per-agent install](#advanced--per-agent-install) when you want a
+[Advanced / per-agent install](#advanced-per-agent-install) when you want a
 specific harness. See the
 [installation guide](docs/installation.md) and the
 [Claude Code distribution evidence](evidence/t-033-claude-code.md).
