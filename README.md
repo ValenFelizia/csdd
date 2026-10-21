@@ -33,13 +33,12 @@ branches and worktrees. Trivial work keeps a trivial fast path.
 npx skills add valenfelizia/csdd
 ```
 
-Installs skill `csdd` into the current project at `./.agents/skills/csdd` and
-prompts you to pick agents. It does not create project `.csdd/` state. Package
-page: [skills.sh/valenfelizia/csdd](https://www.skills.sh/valenfelizia/csdd).
+The default install puts skill `csdd` into the current project at
+`./.agents/skills/csdd`. The Agent Skills CLI prompts you to pick agents. The
+prompt is `Which agents do you want to install to?`. The install does not create
+project `.csdd/` state.
 
-Full commands, manual copy/clone/symlink options, verification, and uninstall
-steps are in the [installation guide](docs/installation.md). See
-[Supported agents](#supported-agents) for the evidence-backed summary.
+See the [CSDD package on skills.sh](https://www.skills.sh/valenfelizia/csdd).
 
 ### Advanced / per-agent install
 
@@ -65,7 +64,10 @@ npx skills add ValenFelizia/csdd --skill csdd --agent antigravity -y
 
 Skill install does **not** create or modify `.csdd/` in any project. Do not
 add `-g` to the Antigravity command until the Agent Skills CLI global target
-agrees with Antigravity's current documented global path.
+agrees with Antigravity's current documented global path. Full commands, manual
+copy, clone, or symlink options, verification, and uninstall steps are in the
+[installation guide](docs/installation.md). See
+[Supported agents](#supported-agents) for the evidence-backed summary.
 
 ### 2. Initialize one repository
 
@@ -241,11 +243,11 @@ skill over pasting CSDD into `CLAUDE.md`.
 
 ### Agent Skills CLI
 
-The short install and the per-agent flags live in
-[Quick start](#1-install-the-skill). Prefer
-[Advanced / per-agent install](#advanced-per-agent-install) when you need a
-specific harness. Details and older transcripts:
-[installation guide](docs/installation.md),
+The short command and the per-agent commands are in
+[Quick start](#1-install-the-skill). Use
+[Advanced / per-agent install](#advanced--per-agent-install) when you want a
+specific harness. See the
+[installation guide](docs/installation.md) and the
 [Claude Code distribution evidence](evidence/t-033-claude-code.md).
 
 Full dimensional matrix, provenance, and limitations:
