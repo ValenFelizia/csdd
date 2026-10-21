@@ -29,10 +29,20 @@ branches and worktrees. Trivial work keeps a trivial fast path.
 
 ### 1. Install the skill
 
-Pick the install path for your agent. Full commands, manual
-copy/clone/symlink options, verification, and uninstall steps are in the
-[installation guide](docs/installation.md). See
-[Supported agents](#supported-agents) for the evidence-backed summary.
+```bash
+npx skills add valenfelizia/csdd
+```
+
+The default install puts skill `csdd` into the current project at
+`./.agents/skills/csdd`. The Agent Skills CLI prompts you to pick agents. The
+prompt is `Which agents do you want to install to?`. The install does not create
+project `.csdd/` state.
+
+See the [CSDD package on skills.sh](https://www.skills.sh/valenfelizia/csdd).
+
+### Advanced / per-agent install
+
+Use these when you want a specific harness and scope without the agent picker.
 
 **Codex and Cursor** (global):
 
@@ -54,7 +64,10 @@ npx skills add ValenFelizia/csdd --skill csdd --agent antigravity -y
 
 Skill install does **not** create or modify `.csdd/` in any project. Do not
 add `-g` to the Antigravity command until the Agent Skills CLI global target
-agrees with Antigravity's current documented global path.
+agrees with Antigravity's current documented global path. Full commands, manual
+copy, clone, or symlink options, verification, and uninstall steps are in the
+[installation guide](docs/installation.md). See
+[Supported agents](#supported-agents) for the evidence-backed summary.
 
 ### 2. Initialize one repository
 
@@ -76,6 +89,7 @@ Installation and initialization are separate operations:
 
 | Operation | Result |
 | --- | --- |
+| `npx skills add valenfelizia/csdd` | Installs skill `csdd` into the current project (`./.agents/skills/csdd`) and prompts for agents |
 | `npx skills add ... --agent codex cursor -g` | Makes CSDD globally available to Codex and Cursor |
 | `npx skills add ... --agent claude-code -g` | Makes CSDD available to Claude Code under `~/.claude/skills/csdd` |
 | `npx skills add ... --agent antigravity` | Makes CSDD available to Antigravity in the current workspace |
@@ -227,17 +241,13 @@ git clone https://github.com/ValenFelizia/csdd.git .claude/skills/csdd
 A project `CLAUDE.md` is not required for skill discovery. Prefer installing the
 skill over pasting CSDD into `CLAUDE.md`.
 
-### Agent Skills CLI (verified in this repo’s install evidence)
+### Agent Skills CLI
 
-```bash
-npx skills add ValenFelizia/csdd
-```
-
-With Agent Skills CLI `1.5.18`, this command succeeds and installs a project
-copy (observed destination `./.agents/skills/csdd`, with copies linked toward
-detected agents). Prefer the explicit `--agent ...` commands above so you
-control which harnesses receive the skill. Details and transcripts:
-[installation guide](docs/installation.md),
+The short command and the per-agent commands are in
+[Quick start](#1-install-the-skill). Use
+[Advanced / per-agent install](#advanced-per-agent-install) when you want a
+specific harness. See the
+[installation guide](docs/installation.md) and the
 [Claude Code distribution evidence](evidence/t-033-claude-code.md).
 
 Full dimensional matrix, provenance, and limitations:
