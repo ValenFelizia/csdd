@@ -13,16 +13,20 @@ When no orchestrator policy selected a model, follow
 ## Keep playbook steps out of `todo.md`
 
 Leave Poteto playbook steps in the session todolist. Do not copy them into
-`.csdd/todo.md`. Task shape and retention stay in
+`.csdd/todo.md` when that file exists. Do not create the file to store them.
+Task shape and retention stay in
 [TODO structure and retention](protocol.md#todo-structure-and-retention).
 
 ## Hold one claim
 
-The coordinating session holds one claim for the human-visible task. Set
-`Agent` to that session.
+On an opted-in local board, the coordinating session holds one claim for the
+human-visible task. Set `Agent` to that session.
+
+On board-off or an external stub, do not create `.csdd/todo.md` to hold that
+claim. Do not mint `Owner`, `Agent`, or `Scope` there.
 
 Give a delegate its own claim only when the delegate takes a distinct write
-scope that can collide with other work.
+scope that can collide with other work, and only on a local board.
 
 Do not change `Agent` when a delegate returns. Closure still must not rewrite
 historical `Agent` metadata. See

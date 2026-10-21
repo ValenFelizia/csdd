@@ -4,33 +4,46 @@ Status: Phase 0 conceptual draft
 
 ## Purpose
 
-The four CSDD documents separate project state by purpose and lifetime. Their
-contracts define what belongs in each document, when an agent should read or
-update it, and how its contents age.
+CSDD documents separate project state by purpose and lifetime. `specs.md`,
+`decisions.md`, and `handoff.md` are required. `.csdd/todo.md` is an optional
+task surface. These contracts define what belongs in each document, when an
+agent should read or update it, and how its contents age.
 
 These contracts prevent CSDD from becoming a single large context dump.
 Normative terms have the meanings defined in [protocol.md](protocol.md).
 
 ## Canonical layout
 
-The four primary documents MUST be human-readable Markdown files at these exact
-v0 paths:
+Required documents and the optional task surface are human-readable Markdown
+at these exact v0 paths:
 
 ```text
 .csdd/
-|-- specs.md
-|-- todo.md
-|-- decisions.md
-|-- handoff.md
-`-- archive/        # optional
+|-- specs.md        # required
+|-- decisions.md    # required
+|-- handoff.md      # required
+|-- todo.md         # optional; absence is Current board-off
+`-- archive/        # optional; init does not create it
 ```
 
-`.csdd/todo.md` remains a required primary path. It has two mutually exclusive
-valid shapes: the default **local board** (six canonical state H2 headings) and
-an opt-in **external-tracker stub** (`Mode: external` with `Tracker:` and
-`Next:`). The stub contract is defined in
-[External-tracker stub](#external-tracker-stub). Omitting the `todo.md` file is
-never a mode declaration; missing primary files are partial or malformed.
+`.csdd/todo.md` is not required. The task surface is `board-off`, `local`, or
+`external`. See [Task surface](#task-surface).
+
+- **board-off.** The path does not exist. `specs.md`, `decisions.md`, and
+  `handoff.md` are regular files. The class is Current.
+- **local.** Opt-in six-heading board at that path.
+- **external.** Opt-in stub at that path (`Mode: external`, `Tracker:`, and
+  `Next:`). Field rules are in
+  [External-tracker stub](#external-tracker-stub).
+
+There is no fifth primary document and no `Mode: off` body. Absence is never
+external mode. An empty file, a non-file, a mixed shape, and a stub missing
+`Tracker:` or `Next:` are not board-off. An empty local board is Current
+local, not board-off.
+
+A missing `specs.md`, `decisions.md`, or `handoff.md` is partial. A present
+`todo.md` that matches neither opt-in shape, and is not recognizable older,
+is malformed.
 
 Project-root alternatives and configurable locations are outside v0. In the
 rest of this document, short names such as `todo.md` refer to these canonical
@@ -53,10 +66,11 @@ paths.
 
 ### Shared coordination surfaces
 
-`.csdd/todo.md` and `.csdd/handoff.md` are shared coordination surfaces, not a
-task's principal write `Scope` by default.
+`.csdd/todo.md` and `.csdd/handoff.md` are shared coordination surfaces when
+`todo.md` exists. They are not a task's principal write `Scope` by default.
+Board-off has no `todo.md` to edit. These rules do not create that file.
 
-When editing either document:
+When editing a coordination file that exists:
 
 1. re-read the current file before changing it;
 2. check for concurrent or intervening changes;
@@ -138,21 +152,134 @@ overlap even when the TODO merges cleanly.
 
 This is a portable manual/agent procedure, not a required parser, custom merge
 driver, task registry, lock, service, or guarantee of conflict-free Git merges.
-Keep the four-document layout. Reduced writes and task-wise reconciliation are
-complementary; claim improvement only for workloads with measured total savings.
+Do not add a fifth primary document, and do not create `todo.md` to hold a
+reconciliation. Reduced writes and task-wise reconciliation are complementary.
+Claim improvement only for workloads with measured total savings.
 
 ## Document map
 
 | Document | Primary question | Temperature | Expected lifetime |
 | --- | --- | --- | --- |
 | `.csdd/specs.md` | What must be true? | Warm | Durable, revised as project intent changes |
-| `.csdd/todo.md` | Local board: what work exists now, and who is accountable and executing? External stub: where is the tracker, and what is the next-action policy? | Hot | Current operational cycle (local board) or until the tracker/policy pointer changes (external stub) |
+| `.csdd/todo.md` | No task surface until opted in. Local board: what work exists now, and who is accountable? External stub: where is the tracker, and what is the next-action policy? | Hot when the file exists | None until a fence line creates it. Then the current operational cycle (local board) or until the pointer changes (external stub) |
 | `.csdd/decisions.md` | What consequential choice was made, and why? | Warm | Durable until superseded |
 | `.csdd/handoff.md` | What must a later agent or session know to cross this boundary safely? | Hot | Transient, replaced or removed when the handoff is consumed |
 
 Projects MAY omit `.csdd/archive/`. When present, it is standardized cold
 context, not a fifth primary document. Its read policy is defined in
 [Optional archive and cold history](protocol.md#optional-archive-and-cold-history).
+
+## Task surface
+
+The task surface is `board-off`, `local`, or `external`. Classification,
+init, enable, doctor, and status share this section. There is no runtime
+classifier in this repository. The skill is the procedure.
+
+| Surface | `.csdd/todo.md` | Class, when the other three files are regular files |
+| --- | --- | --- |
+| board-off | does not exist | Current |
+| local | six-heading board, no `Mode: external` | Current |
+| external | one `Mode: external`, one non-empty `Tracker:`, one non-empty `Next:`, no six state H2 headings | Current |
+
+`board-off` is produced only when the path does not exist. A regular file,
+an empty file, a directory, or a symlink at that path is not board-off.
+`Current` with surface `board-off` requires `specs.md`, `decisions.md`, and
+`handoff.md` to exist as regular files. If any of those three is missing or
+not a file, the class is partial or malformed even when `todo.md` is also
+absent.
+
+A recognized local board stays Current when `Retention:` is missing. A stub
+that fails its field rules is malformed, not Current. Partial and malformed
+stay distinct classes. `docs.missing` names only `specs.md`, `decisions.md`,
+or `handoff.md`.
+
+`assets/templates/todo.md` and `assets/templates/todo.external.md` are blanks
+a writer copies. They are not evidence that an adopted repository has a
+board. `scripts/validate_repository.py` grades those shipped blanks. It does
+not classify an adopted `.csdd/`.
+
+### Phrase fence
+
+This subsection owns the fence. [`SKILL.md`](../SKILL.md) inlines the same
+four lines. [protocol.md](protocol.md) links here and does not restate them.
+
+Trim each line. Match the whole line only. A leading slash and the same
+words without the slash are one phrase. The same words inside a sentence, a
+trailing period, or extra words do not match. Mentioning GitHub, Linear,
+issues, or pull requests is not a phrase.
+
+```text
+/csdd todo enable local board
+csdd todo enable local board
+/csdd todo enable external stub
+csdd todo enable external stub
+```
+
+The two local lines are one phrase. The two external lines are one phrase.
+
+An external phrase is complete only when the same utterance also has exactly
+one whole-line `Tracker:` with a non-empty remainder and exactly one
+whole-line `Next:` with a non-empty remainder. Do not read those fields from
+the repository, and do not scrape them out of a paragraph.
+
+Write nothing when any of these is true:
+
+- both the local phrase and the external phrase appear;
+- the external phrase lacks `Tracker:`, lacks `Next:`, or repeats either field;
+- the local phrase appears together with a `Tracker:` line or a `Next:` line.
+
+An utterance with no fence line selects board-off. That selection does not
+delete a file.
+
+### Who may create `.csdd/todo.md`
+
+Two gates may create the file. They use the transition table below. Claim,
+close, persist, hydration, doctor, status, repair, migration, a second
+`/csdd init`, and the local-board heading rules do not create the path.
+Poteto composition does not create the path to store `Agent`.
+
+| Gate | Runs only when | What it may write |
+| --- | --- | --- |
+| `/csdd init` | reclassification is still Absent | `specs.md`, `decisions.md`, and `handoff.md`, plus `.csdd/todo.md` when the fence selects local or a complete external stub |
+| `/csdd todo enable` | reclassification is Current board-off, and the utterance is not also init | only `.csdd/todo.md` |
+
+Inside an init utterance the fence line is a selection, not a second
+workflow. `/csdd todo enable` runs only when the utterance is not also an
+init request. Enable on an Absent tree writes nothing. Initialize first.
+A later `/csdd init`, including one that also contains a fence line, writes
+nothing on a tree that is already Current. Repeat the enable phrase on its
+own.
+
+Re-read `.csdd/todo.md` immediately before a write. If the path is present
+and the table row is not `Unchanged` for the requested shape, stop. Do not
+overwrite the other writer's bytes. This is not a lock file.
+
+### Transition table
+
+Rows are the path just observed. Columns are the fence selection.
+`Unchanged` does not recopy the template and does not wipe tasks. No row
+deletes the file. No row converts a board into a stub or a stub into a
+board. A path that exists and is not a valid surface is not repaired.
+
+| Observed | No fence line | Local phrase | Complete external phrase |
+| --- | --- | --- | --- |
+| path absent | do not create `todo.md` | write [`assets/templates/todo.md`](../assets/templates/todo.md) | write [`assets/templates/todo.external.md`](../assets/templates/todo.external.md) with the utterance `Tracker:` and `Next:` |
+| valid local board | refuse. Do not delete | Unchanged | refuse. Different shape |
+| valid stub, same `Tracker:` and `Next:` | refuse. Do not delete | refuse. Different shape | Unchanged |
+| valid stub, different fields | refuse. Do not delete | refuse. Different shape | refuse. Field mismatch |
+| path exists and is not a valid surface | refuse. Do not repair | refuse. Do not repair | refuse. Do not repair |
+
+Enable writes a blank template. It does not resurrect task text. If a deleted
+board still matters, restore `.csdd/todo.md` from Git. Do not run enable over
+that restored file. The same shape is Unchanged. A different shape is a
+refusal.
+
+The local write is the template bytes: six state H2 headings in order,
+`Retention: 5`, no tasks, and no `Mode: external`. The external write
+replaces `Tracker:` and `Next:` from the utterance. The template's example
+URL must not survive. If this attempt created the path and the new bytes are
+not a valid surface, delete only that new path. The result is still a
+refusal.
 
 ## Initialization
 
@@ -175,11 +302,16 @@ root ambiguity and destination conflicts have been ruled out:
 | --- | --- | --- |
 | 1 | Ambiguous or conflicting — competing or unresolved roots, `.csdd` is not a usable directory, or another destination conflict prevents safe classification | Stop and request clarification; never overwrite conflicting content |
 | 2 | Absent — the canonical `.csdd/` path does not exist | Proceed with initialization |
-| 3 | Already initialized — all four primary documents exist and the minimum current canonical structure validates for either the local-board or external-stub `todo.md` shape | Do not overwrite; report that CSDD is already initialized and surface any validation concerns |
-| 4 | Recognizable older state — existing CSDD state can be identified as following an older contract | Do not migrate; direct the user to the migration workflow |
-| 5 | Partial or malformed — `.csdd/` exists but the state is neither valid current state nor recognizable older state | Do not modify; report incomplete or malformed CSDD state and offer a separate repair path |
+| 3 | Already initialized / Current — `specs.md`, `decisions.md`, and `handoff.md` exist as regular files, and `.csdd/todo.md` is absent (**board-off**) or matches exactly one valid shape below | Do not overwrite; report that CSDD is already initialized, including `task surface:`. Surface any validation concerns |
+| 4 | Recognizable older state — not Current, and a present `todo.md` follows an older contract | Do not migrate; direct the user to the migration workflow |
+| 5 | Partial or malformed — `.csdd/` exists but the state is neither Current nor recognizable older | Do not modify; report partial or malformed CSDD state and offer a separate repair path |
 
-For `todo.md`, minimum current structure means exactly one valid shape:
+Order 3 is the only Current match. It runs before older and before partial.
+A valid trio whose `todo.md` does not exist is Current board-off, including
+when the other files mention v0.1. That tree does not reach the migration
+guide until the file is restored.
+
+For a present `todo.md`, minimum current structure means exactly one shape:
 
 - **Local board:** the six canonical state H2 headings, each exactly once, in
   canonical order, with no forbidden state H2, and without `Mode: external`.
@@ -188,19 +320,27 @@ For `todo.md`, minimum current structure means exactly one valid shape:
   required `Tracker:` and `Next:`), without the six canonical state H2 headings
   used as a live board.
 
-Absence of `.csdd/todo.md` when other primaries exist is **partial**, never
-external mode. A mixed shape (`Mode: external` together with canonical state
-H2 headings, or `Mode: external` without required stub fields) is
-**malformed**. Do not infer external mode from GitHub Issues, Linear, or other
-tracker usage alone.
+Recognizable older still requires a present `todo.md` that is not a stub, has
+none of the six state H2 headings, and carries a positive older signal.
+Absence of the file is not older.
+
+Partial and malformed stay distinct. A missing `specs.md`, `decisions.md`, or
+`handoff.md` is **partial** (`docs.missing`), whether or not `todo.md` exists.
+A present `todo.md` that is neither valid shape nor recognizable older is
+**malformed**. A path that exists and is not a regular file is malformed
+(`docs.not-file`), including `.csdd/todo.md`. An empty file is malformed. A
+mixed shape (`Mode: external` together with canonical state H2 headings, or
+`Mode: external` without required stub fields) is malformed. Do not infer
+external mode, or a local board, from GitHub Issues, Linear, or other tracker
+usage alone.
 
 Only Absent may proceed through `init`. An ambiguous or unusable destination
 MUST block before absence is evaluated. An unusable `.csdd` path (for example
-a regular file) MUST NOT classify as Absent. The presence of all four primary
-filenames alone MUST NOT classify malformed current state as already
-initialized. Every other class remains non-destructive and routes to
-already-initialized reporting, migration, repair, or clarification as
-applicable.
+a regular file) MUST NOT classify as Absent. Filenames alone MUST NOT classify
+a malformed `todo.md` as already initialized. Every other class remains
+non-destructive and routes to already-initialized reporting, migration,
+repair, or clarification as applicable. A second init never creates
+`todo.md`.
 
 `init` initializes previously absent CSDD state only. It MUST NOT repair,
 normalize, upgrade, migrate, or complete existing CSDD state. Successful
@@ -248,22 +388,35 @@ without a concrete question are outside default discovery.
 
 ### Generated structure
 
-A successful new initialization creates one coherent patch containing only
-these four primary documents directly under the canonical root:
+A successful new initialization creates one coherent patch. The phrase fence
+in [Task surface](#task-surface) chooses the patch. Do not write the trio and
+then enable in a second step.
+
+Default, no fence line. Report `task surface: board-off`.
 
 ```text
 .csdd/
 |-- specs.md
-|-- todo.md
 |-- decisions.md
 `-- handoff.md
 ```
+
+Local fence line. Also write `.csdd/todo.md` from
+[`assets/templates/todo.md`](../assets/templates/todo.md). Report
+`task surface: local`.
+
+Complete external fence. Also write `.csdd/todo.md` from
+[`assets/templates/todo.external.md`](../assets/templates/todo.external.md)
+with the utterance fields. Report `task surface: external`.
+
+An incomplete or conflicting selection writes nothing. The tree stays Absent.
 
 Do not create `.csdd/archive/` by default. Do not create version files,
 databases, extra canonical documents, or harness-specific metadata. Do not
 modify `AGENTS.md`, `CLAUDE.md`, README files, source code, configuration, or
 unrelated project files as part of initialization. Do not stage, commit, push,
-or open a pull request without separate authority.
+or open a pull request without separate authority. Do not ask whether the
+surface should be local, external, or board-off.
 
 ### Document-specific initialization behavior
 
@@ -279,28 +432,33 @@ or open a pull request without separate authority.
 
 #### `todo.md`
 
-Default (**local board**), when the human or project does not explicitly request
-external task tracking:
+Follow [Who may create `.csdd/todo.md`](#who-may-create-csddtodomd) and the
+[transition table](#transition-table). Init does not create this file unless
+the same utterance contains a complete fence selection.
 
-- Create the six canonical H2 state headings in order: In Progress, Ready to
-  Land, Blocked, Pending, Deferred, Recently Completed.
-- Declare `Retention: 5`.
+**Board-off** (no fence line):
+
+- Do not create `.csdd/todo.md`.
+- Do not import issues, roadmaps, source-code TODO comments, or documentation
+  wish lists.
+- Existing issues are not a request for either opt-in shape.
+
+**Local** (local fence line):
+
+- Copy [`assets/templates/todo.md`](../assets/templates/todo.md).
+- That copy has the six canonical H2 state headings in order and
+  `Retention: 5`.
 - Start without invented tasks, ownership, executors, scopes, priorities,
   dependencies, completed work, or an initialization self-task.
-- Do not import issues, roadmaps, source-code TODO comments, or documentation
-  wish lists automatically.
 
-**External-tracker stub** only when the human or project explicitly requests
-external task tracking (GitHub Issues/PRs, Linear, or equivalent) for this
-repository:
+**External stub** (complete external fence):
 
-- Create `.csdd/todo.md` as an
-  [external-tracker stub](#external-tracker-stub) with `Mode: external`,
-  `Tracker:`, and `Next:`.
+- Start from
+  [`assets/templates/todo.external.md`](../assets/templates/todo.external.md).
+- Write `Mode: external` and the utterance's `Tracker:` and `Next:`.
 - Do not create the six canonical state H2 headings.
 - Do not invent tasks, owners, agents, scopes, or a mirrored backlog.
-- Do not select this shape because issues or a tracker already exist; absence of
-  explicit intent keeps the local-board default.
+- Do not keep the template's example URL.
 
 #### `decisions.md`
 
@@ -323,7 +481,9 @@ Initialization MUST behave as one logical adoption transaction:
    destination usability against the recorded preflight state, then reclassify
    from the beginning—stop without writing unless the destination is still
    unambiguously Absent;
-4. create the four primary documents as one coherent patch;
+4. create the fence selection as one coherent patch: the three required
+   documents, plus `.csdd/todo.md` only when that selection is local or a
+   complete external stub;
 5. validate the resulting structure and content;
 6. report completion only when the structural postconditions hold.
 
@@ -377,7 +537,9 @@ Hard structural completion conditions are:
 
 - one unambiguous canonical root;
 - previously Absent CSDD state through the pre-write revalidation;
-- all four primary documents created coherently;
+- the selected patch created coherently;
+- when the selection is board-off, `.csdd/todo.md` does not exist;
+- when the selection is local or external, `.csdd/todo.md` matches that shape;
 - canonical document structure validates;
 - generated content respects evidence and non-invention rules;
 - no pre-existing or unrelated content was modified.
@@ -393,6 +555,8 @@ The final response SHOULD state:
 
 - the initialized project root;
 - files created;
+- `task surface: board-off`, `task surface: local`, or
+  `task surface: external`;
 - principal evidence sources inspected;
 - project truth persisted;
 - sections deliberately left empty and why;
@@ -494,30 +658,32 @@ useful context, rationale, rejected alternatives, or consequences.
 
 ### Contract
 
-`.csdd/todo.md` is the project's task-coordination surface. It has exactly two
-valid shapes:
+`.csdd/todo.md` is the project's optional task-coordination surface. The
+default is absence ([board-off](#task-surface)). The file, when present, has
+exactly one of two opt-in shapes:
 
 | Shape | Discriminator | Role |
 | --- | --- | --- |
-| Local board (default) | Six canonical state H2 headings; no `Mode: external` | Live in-repo board for tasks, claims, scopes, blockers, and bounded completion history |
-| External-tracker stub | `Mode: external` plus required stub fields | In-repo pointer and next-action policy; backlog and issue state live in the external tracker |
+| Local board (opt-in) | Six canonical state H2 headings; no `Mode: external` | Live in-repo board for tasks, claims, scopes, blockers, and bounded completion history |
+| External-tracker stub (opt-in) | `Mode: external` plus required stub fields | In-repo pointer and next-action policy; backlog and issue state live in the external tracker |
 
 `todo.md` is a live control surface, not a permanent project diary. The local
 board describes current operational work with enough accountability, execution,
 and scope information to coordinate agents. The external stub does not host that
 board; see [External-tracker stub](#external-tracker-stub).
 
-Shape selection is exclusive. Mixing shapes is malformed. Omitting the file is
-partial, not external mode.
+Shape selection is exclusive. Mixing shapes is malformed. Absence of the file
+among a valid trio is Current board-off, not external mode.
 
 ### External-tracker stub
 
 This subsection is the **canonical** external-mode contract. Protocol and
 read-only workflow text MUST link here rather than redefine field rules.
 
-Use the external stub only when the project explicitly opts out of the local
-board because an external tracker (GitHub Issues/PRs, Linear, or equivalent) is
-the backlog source of truth. Default projects keep the local board.
+Use the external stub only when the [phrase fence](#phrase-fence) selects it
+because an external tracker (GitHub Issues/PRs, Linear, or equivalent) is the
+backlog source of truth. Both file shapes are opt-in. The default surface is
+board-off. A missing file is not this stub.
 
 Required shape (illustrative; wording of prose around the fields may vary):
 
@@ -545,7 +711,8 @@ Field rules:
    shape** and is malformed.
 5. Do not invent CSDD task IDs, `Owner` / `Agent` / `Scope` claims, Retention,
    or Recently Completed history in the stub.
-6. Absence of `.csdd/todo.md` MUST NOT be treated as this shape.
+6. Absence of `.csdd/todo.md` is Current board-off. It MUST NOT be treated as
+   this shape, and it is not partial.
 
 Ordered next-action sources in external mode:
 
@@ -557,9 +724,11 @@ Ordered next-action sources in external mode:
 
 Honest capability loss: external mode does **not** provide in-repo
 `Owner` / `Agent` / `Scope` claims, six-state placement, or task-wise TODO
-text reconciliation. Overlap and landing coordination rely on the tracker, PR
-or branch ownership, and handoffs. Multi-agent shared-file work that needs
-those claims SHOULD keep the local board.
+text reconciliation. Board-off drops `Tracker:` and `Next:` as well. The
+remaining next action is the user message, then `handoff.md` for boundary
+risk only. Overlap and landing coordination on a stub rely on the tracker,
+PR or branch ownership, and handoffs. Multi-agent shared-file work that needs
+in-repo claims SHOULD opt into the local board with the local fence phrase.
 
 `specs.md` and `decisions.md` are unchanged. `handoff.md` remains valid for
 boundary risk and SHOULD link external issue or PR identifiers when those are
@@ -567,6 +736,10 @@ the work identity. Automatic two-way sync between the tracker and CSDD is out
 of scope.
 
 ### Read policy
+
+**Board-off:** Do not open or create `todo.md`. With no boundary risk, the
+next action is the user message. With boundary risk, read `handoff.md` for
+that risk only. Do not mint `T-` ids, `Owner`, `Agent`, or `Scope`.
 
 **Local board:** Agents MUST NOT knowingly ignore active scope overlap. Read
 relevant active work before editing when a task is non-trivial, continues
@@ -1323,6 +1496,10 @@ handoff-specific timestamp.
 
 ### Relationship to `todo.md`
 
+**Board-off:** there is no in-repo task file. Ordinary coordination is the
+user message. `handoff.md` holds boundary plus resumption risk only. It is
+not the backlog.
+
 **Local board:** `todo.md` remains canonical for task state, `Owner`, `Agent`,
 `Scope`, dependencies, blockers, overlap, sequencing, and collision prevention.
 `handoff.md` contains only additional non-obvious transient implementation or
@@ -1330,16 +1507,21 @@ verification state that must cross a boundary safely.
 
 **External stub:** the stub is canonical only for mode, `Tracker:`, and
 `Next:`. Backlog and issue state live in the external tracker. `handoff.md`
-still holds boundary + resumption-risk state and SHOULD reference external
+still holds boundary plus resumption-risk state and SHOULD reference external
 issue or PR identifiers rather than inventing a shadow board. See
 [External-tracker stub](#external-tracker-stub).
 
 These responsibilities MUST remain distinct. `handoff.md` MUST NOT become a
-duplicate task tracker or the primary collision-prevention mechanism.
+duplicate task tracker or the primary collision-prevention mechanism, including
+when `todo.md` is absent.
 
 Operational rule:
 
 ```text
+board-off:
+  coordination without boundary + risk -> the user message
+  coordination with boundary + risk    -> handoff.md for that risk only
+
 local board:
   coordination without boundary + risk -> todo.md
   coordination with boundary + risk    -> todo.md and, when needed, handoff.md

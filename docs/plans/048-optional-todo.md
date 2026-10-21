@@ -1,5 +1,11 @@
 # Plan: Make `todo.md` optional (external task trackers)
 
+> Superseded for the absence rule. v0.3.0 classifies a missing `.csdd/todo.md`
+> beside regular `specs.md`, `decisions.md`, and `handoff.md` as Current
+> board-off. The stub remains a valid opt-in. Default init no longer writes a
+> local board. The verdict below that absence-as-mode is not worth doing is
+> withdrawn. The inventory is historical and was not rewritten.
+
 Status: proposed (docs-only; no behavior change)
 Issue: [#48](https://github.com/ValenFelizia/csdd/issues/48)
 Date: 2026-10-09

@@ -75,13 +75,15 @@ After the root is usable, classify with the same first-match precedence as
 | --- | --- | --- |
 | 1 | Ambiguous or conflicting | Report `root.ambiguous` or `root.unusable`. Do not continue into document scoring. |
 | 2 | Absent | `.csdd/` does not exist. This is a classification, not a structural defect. |
-| 3 | Current | All four primary documents exist and `todo.md` matches exactly one valid current shape: **local board** (six canonical state H2 headings, each exactly once, in canonical order, with no forbidden state H2, and without `Mode: external`) or **external stub** (recognizable per [External-tracker stub](document-contracts.md#external-tracker-stub)). Individual field defects do not demote this class. |
-| 4 | Recognizable older | Not current, and a positive older-contract signal is present as defined below. |
-| 5 | Partial or malformed | `.csdd/` exists but the state is neither current nor recognizable older. Missing primary documents are partial. Present documents that still fail recognition are malformed. |
+| 3 | Current | `specs.md`, `decisions.md`, and `handoff.md` exist as regular files, and `.csdd/todo.md` is absent (**board-off**) or matches exactly one valid shape: **local board** (six canonical state H2 headings, each exactly once, in canonical order, with no forbidden state H2, and without `Mode: external`) or **external stub** (recognizable per [External-tracker stub](document-contracts.md#external-tracker-stub)). Individual field defects do not demote this class. This row is the only Current match, including board-off. |
+| 4 | Recognizable older | Not Current, and a positive older-contract signal is present as defined below. Older recognition still requires a present `todo.md`. |
+| 5 | Partial or malformed | `.csdd/` exists but the state is neither Current nor recognizable older. A missing `specs.md`, `decisions.md`, or `handoff.md` is partial. A present document that still fails recognition is malformed. Partial and malformed stay distinct. |
 
-Missing `.csdd/todo.md` is **partial** (`docs.missing`), never external mode. A
-mixed shape (`Mode: external` together with canonical state H2 headings, or
-`Mode: external` without required stub fields) is **malformed**.
+A valid trio with no `.csdd/todo.md` is **Current board-off**. It is never
+external mode, never an empty local board, and not `docs.missing`. A mixed
+shape (`Mode: external` together with canonical state H2 headings, or
+`Mode: external` without required stub fields) is **malformed**. An empty
+file, a non-file, and an unrecognized present `todo.md` are not board-off.
 
 Recognizable older v0.1 requires all of the following:
 
@@ -124,11 +126,16 @@ evidence for any finding. Do not emit `claim.reconcile` or
 
 ### Structural rules reused from repository validation
 
-First determine the `todo.md` shape from
-[External-tracker stub](document-contracts.md#external-tracker-stub) and the
-local-board heading contract.
+Determine the task surface before heading checks. Absence is the first branch,
+and only when `specs.md`, `decisions.md`, and `handoff.md` are regular files.
 
-**External stub:** when `Mode: external` is present, validate stub fields only:
+**Board-off:** `.csdd/todo.md` does not exist. Skip heading, retention,
+task-field, task-identity, and stub checks. The skip reason is that the task
+surface is board-off by contract, not that a board passed. Do not emit
+`docs.missing` for that path.
+
+**External stub:** when the file exists and `Mode: external` is present,
+validate stub fields only:
 
 - `Tracker:` and `Next:` are present and non-empty;
 - the six canonical state H2 headings are absent (mixed shape → malformed;
@@ -139,7 +146,7 @@ Stub field defects use `todo.external.tracker-missing`,
 `todo.external.next-missing`, and `todo.external.invalid` as listed under
 [Finding identifiers](#finding-identifiers).
 
-**Local board:** when `Mode: external` is absent, apply the same rules as
+**Local board:** when the file exists and `Mode: external` is absent, apply the same rules as
 `validate_todo_template` in
 [`scripts/validate_repository.py`](../scripts/validate_repository.py), against
 the project's `.csdd/todo.md` rather than `assets/templates/todo.md`:
@@ -199,11 +206,16 @@ and why.
 
 **Structure**
 
-- Four primary documents present as files. Each missing file is `docs.missing`.
-  A primary path that exists and is not a file is `docs.not-file`. Missing
-  `todo.md` is partial, not external mode.
-- Determine the `todo.md` shape. Mixed local-board headings with
-  `Mode: external` is `todo.mode.mixed`.
+- `specs.md`, `decisions.md`, and `handoff.md` present as files. Each missing
+  one of those three is `docs.missing`. A path that exists and is not a file
+  is `docs.not-file`, including `.csdd/todo.md`. An absent `.csdd/todo.md`
+  beside those three files is Current board-off, not `docs.missing` and not
+  external mode.
+- Determine the task surface. Branch absence before `Mode: external` versus
+  local headings. Mixed local-board headings with `Mode: external` is
+  `todo.mode.mixed`.
+- **Board-off:** skip todo checks. Record the skip reason: task surface is
+  board-off. Do not repair and do not create the file.
 - **External stub:** validate `Mode: external`, `Tracker:`, and `Next:` per
   [External-tracker stub](document-contracts.md#external-tracker-stub).
   Identifiers: `todo.external.tracker-missing`, `todo.external.next-missing`,
@@ -235,7 +247,8 @@ and why.
 
 **Task identity**
 
-Apply only to a **local board**. Skip under a valid external stub. Apply
+Apply only to a **local board**. Skip on board-off and under a valid external
+stub. Apply
 [Local task identity](document-contracts.md#local-task-identity). Doctor
 reports identity defects; it does not allocate, rename, or repair IDs.
 
@@ -270,6 +283,9 @@ fixed labels such as `Risk:` or `Consumed:`.
   passed check, even when `Updated` or the surrounding commits are old.
 
 **Coordination**
+
+Apply scope and claim findings only on a local board. On board-off, do not
+invent overlap from the missing file.
 
 - Compare active scopes on In Progress, Ready to Land, and Blocked entries that
   still name a concrete scope. A path or glob intersection is `scope.overlap`.
@@ -308,7 +324,7 @@ may not be omitted.
 | `root.ambiguous` | error | More than one plausible canonical root remains. |
 | `root.unusable` | error | `.csdd` exists and is not a usable directory. |
 | `state.uncertain` | warning | Classification cannot choose current or older from the evidence. |
-| `docs.missing` | error | A primary document file is absent. |
+| `docs.missing` | error | `specs.md`, `decisions.md`, or `handoff.md` is absent. Do not use this identifier for an absent `.csdd/todo.md`. |
 | `docs.not-file` | error | A primary path exists and is not a file. |
 | `todo.mode.mixed` | error | `Mode: external` appears together with canonical state H2 headings (or other local-board board structure). |
 | `todo.external.tracker-missing` | error | External stub lacks a non-empty `Tracker:` field. |
@@ -354,6 +370,8 @@ harness. Include:
 - detected root;
 - classification: absent, current, recognizable older v0.1, partial,
   malformed, ambiguous, or uncertain;
+- when classification is current, `task surface: board-off`,
+  `task surface: local`, or `task surface: external`;
 - detected version or state when evidence supports it, otherwise `unknown`;
 - passed checks;
 - findings grouped by severity, each with identifier and evidence path;
@@ -364,6 +382,17 @@ harness. Include:
 Do not include a machine schema, a persisted report, or a full copy of the
 canonical documents.
 
+Current board-off includes the skip, and does not emit `docs.missing` for
+`.csdd/todo.md`:
+
+```text
+classification: current
+task surface: board-off
+checks skipped: todo headings, retention, task fields, task identity, stub fields
+skip reason: task surface is board-off
+Nothing was modified.
+```
+
 ### Recommended next action
 
 Recommend one next step that this workflow does not itself perform.
@@ -372,11 +401,14 @@ Recommend one next step that this workflow does not itself perform.
 - Recognizable older: the migration guide, only with explicit migration intent.
 - Partial or malformed: report the blocking defects. Repair stays a separate
   explicit request; doctor does not offer to perform it in the same turn.
+- Current board-off: no repair. The task surface is off by contract. Name
+  `/csdd todo enable` only if the user separately asks to opt in.
 - Current with risks: name the coordination item to reconcile before editing
   that scope.
 - Current with no findings: state that the inspected artifacts passed the
   checks that ran, and repeat any visibility limitations. Do not call the
-  repository safe beyond that evidence.
+  repository safe beyond that evidence. A board-off skip is not a passed
+  board.
 
 ## `/csdd status`
 
@@ -385,9 +417,11 @@ operational snapshot. It answers what is active now. Doctor answers whether
 the inspected state is valid and what is wrong. The workflows stay separable
 even though status reuses [Shared inspection](#shared-inspection).
 
-Status is a derived view. It MUST point back to `.csdd/todo.md`,
-`.csdd/handoff.md`, and observable Git state. It MUST NOT become a second TODO,
-a handoff surface, a cache, or a persisted status file.
+Status is a derived view. It MUST point back to the files it read and to
+observable Git state. Name `.csdd/todo.md` when that file was read. Board-off
+names `.csdd/handoff.md` and does not list `.csdd/todo.md`. Status MUST NOT
+become a second TODO, a handoff surface, a cache, or a persisted status file.
+Every Current brief carries `task surface:`.
 
 ### Invocation
 
@@ -403,10 +437,11 @@ Follow shared inspection through classification.
 | Classification | Status behavior |
 | --- | --- |
 | Absent | Report that `.csdd/` is absent. Do not print task counts of zero. `/csdd init` remains a separate request. |
-| Current (**local board**), and every task sits under exactly one canonical state H2 | Derive the local-board snapshot below. |
-| Current (**external stub**) | Derive the external snapshot below. Do **not** invent six-state counts, retention `used/N`, or active-claim lines from a board that does not exist. |
+| Current **board-off** | Print `task surface: board-off`. Name handoff ids. Do not print `mode: external`, six-state counts, or retention `used/N`. |
+| Current (**local board**), and every task sits under exactly one canonical state H2 | Derive the local-board snapshot below, including `task surface: local`. An empty board still prints six counts of zero. |
+| Current (**external stub**) | Derive the external snapshot below, including `task surface: external` and `mode: external`. Do **not** invent six-state counts, retention `used/N`, or active-claim lines from a board that does not exist. |
 | Current local board, but one or more tasks cannot be placed | Do not invent counts. Recommend `/csdd doctor`. |
-| Partial, malformed, recognizable older, ambiguous, or uncertain | Do not invent counts. State the limitation and recommend `/csdd doctor`. |
+| Partial, malformed, recognizable older, ambiguous, or uncertain | Do not invent counts. State the limitation and recommend `/csdd doctor`. Do not label these classes board-off. |
 
 Field defects that still leave every local-board task placed, such as a Deferred
 entry missing `Reason:`, do not block counts. Say that structural diagnosis
@@ -416,9 +451,26 @@ belongs to doctor, and do not copy doctor's finding list into the snapshot.
 
 Default output is brief. The wording may vary.
 
+**Board-off** — include:
+
+- root, classification `current`, and `task surface: board-off`;
+- sources: `.csdd/handoff.md` (do not list `.csdd/todo.md`);
+- the number of current handoff entries and the ids they name, without bodies;
+- no `mode:` line, no six-state counts, and no retention `used/N`;
+- the sentence `Nothing was modified.`
+
+```text
+classification: current
+task surface: board-off
+sources: .csdd/handoff.md
+handoffs: 0
+Nothing was modified.
+```
+
 **Local board** — include:
 
-- root, classification, and detected version or `unknown`;
+- root, classification, `task surface: local`, and detected version or
+  `unknown`;
 - the source paths used, at least `.csdd/todo.md` and `.csdd/handoff.md` when
   they were read;
 - counts for In Progress, Ready to Land, Blocked, Pending, Deferred, and
@@ -441,8 +493,8 @@ Default output is brief. The wording may vary.
 
 **External stub** — include:
 
-- root, classification (`current`), detected version or `unknown`, and
-  `mode: external`;
+- root, classification (`current`), `task surface: external`, detected version
+  or `unknown`, and `mode: external`;
 - sources, at least `.csdd/todo.md` and `.csdd/handoff.md` when they were read;
 - the stub `Tracker:` and `Next:` values (or a one-line paraphrase that still
   names both fields);
@@ -467,9 +519,10 @@ elements such as retention `used/N`, the no-proof-on-uninspected sentence, and
 output follows the external brief rules above instead of this example.
 
 ```text
-CSDD v0.2
+CSDD v0.3
 root: .
 classification: current
+task surface: local
 sources: .csdd/todo.md, .csdd/handoff.md
 2 in progress
 1 ready to land

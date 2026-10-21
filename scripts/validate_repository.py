@@ -27,6 +27,7 @@ REQUIRED_RUNTIME_PATHS = (
     "assets/templates",
 )
 
+# Shipped blanks. Init does not write every name in this tuple.
 PRIMARY_TEMPLATES = (
     "specs.md",
     "todo.md",

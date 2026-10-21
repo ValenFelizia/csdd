@@ -10,9 +10,10 @@ migration or renumber existing tasks, including when applying this v0.1 → v0.2
 guide. Preserve references and do not normalize existing tracker fields merely
 to adopt new IDs.
 
-Write economy and task-wise landing reconciliation likewise retain the four
-primary documents and existing task lifecycle. They need no automatic migration,
-new task store, parser, or history rewrite; preserve existing project state.
+Write economy and task-wise landing reconciliation likewise retain the
+existing documents and the task lifecycle. They do not delete `todo.md`.
+They need no automatic migration, new task store, parser, or history rewrite.
+Preserve existing project state.
 
 [`protocol.md`](protocol.md) and [`document-contracts.md`](document-contracts.md)
 remain authoritative. This guide is operational and non-normative.
@@ -22,6 +23,13 @@ remain authoritative. This guide is operational and non-normative.
 Do not replace an existing `.csdd/` with the v0.2 templates. Preserve valid
 project truth and coordination state while bringing the existing documents into
 conformance with v0.2.
+
+A recognizable v0.1 `todo.md` is transformed in place into a local board, or
+into an external stub only when the human uses the external phrase fence.
+Do not delete `todo.md` to match the v0.3 init default. If that file is
+already gone, the tree is Current board-off and this guide does not apply
+until the file is restored from Git. The phrase fence is in
+[document-contracts.md](document-contracts.md#phrase-fence).
 
 ## Suggested workflow
 
