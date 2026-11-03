@@ -12,7 +12,7 @@
   - Base: `d30eb30`
   - Updated: 2026-11-03
   - Depends on: T-034, T-035
-  - Landing: `feat/workspace-local-handoff` → `main`; PR pending
+  - Landing: `feat/workspace-local-handoff` → `main`; draft PR #62
   - Verification: 22 unit tests PASS; offline repository validator PASS; git check-ignore confirms .csdd/handoff.md is ignored; fixture covers three primary templates, gitignore template, and no committed handoff template.
   - Note: Implements DEC-007. Adds `.csdd/.gitignore`, deletes `assets/templates/handoff.md`, adds the v0.2 → v0.3 migration path, and untracks this repository's own handoff.
 
