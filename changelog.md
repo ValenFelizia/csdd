@@ -2,6 +2,67 @@
 
 All notable changes to CSDD will be documented in this file.
 
+## [0.3.0] — Unreleased
+
+### Added
+
+- Committed `.csdd/.gitignore` policy and matching `assets/templates/gitignore`
+  template, so every clone ignores the workspace-local handoff.
+- `references/migration-v0.2-to-v0.3.md` with detection, untracking,
+  verification, compatibility, and rollback.
+- Evaluation scenario 09 for the workspace-local handoff contract and the v0.2
+  migration path.
+
+### Changed
+
+- `.csdd/handoff.md` is now workspace-local and untracked. It holds one short,
+  replaceable snapshot of same-workspace resumption risk and defaults to absent.
+- `.csdd/specs.md`, `.csdd/todo.md`, and `.csdd/decisions.md` remain committed
+  and are the only cross-person, cross-machine, branch, and worktree transport.
+- `/csdd init` creates three committed documents plus `.csdd/.gitignore`. It no
+  longer creates `handoff.md`; the file appears lazily at a real boundary.
+- "Already initialized" now means the three committed documents plus a valid
+  `.csdd/.gitignore` and current structure. A missing handoff is valid state.
+- Handoff close behavior defaults to deletion. Keep a snapshot only when
+  committed state cannot recover a concrete resumption risk.
+- Branch and worktree reconciliation covers committed documents only. A local
+  handoff is never imported from another worktree.
+- Protocol gains P12: committed truth and local continuity have different
+  transport.
+- Structural validation now requires three primary templates and a `gitignore`
+  template with an uncommented `handoff.md` rule.
+
+### Removed
+
+- `assets/templates/handoff.md`. The contract owns the handoff shape; init does
+  not create the file.
+
+### Migration
+
+- Run the v0.2 → v0.3 migration when `git ls-files .csdd/handoff.md` prints a
+  path or the project lacks `.csdd/.gitignore`.
+- Untrack with `git rm --cached .csdd/handoff.md` and commit that deletion with
+  the ignore rule. Adding the ignore rule alone does not untrack the file.
+- A tracked handoff is legacy state. Agents surface it and require explicit
+  migration intent; they do not untrack, delete, or rewrite it silently.
+
+### Compatibility
+
+- v0.3 reads v0.2 state. A tracked handoff is recognized as legacy, not as a
+  stale local entry.
+- A v0.2 skill may treat a missing handoff as partial state and may create or
+  commit one. Upgrade the skill before relying on v0.3 behavior in a shared
+  repository.
+- Historical eval runs, field reports, and evidence remain frozen and unchanged.
+
+### Validation
+
+- Unit tests cover the three-template set, the `gitignore` template, and the
+  absence of a committed handoff template.
+- Offline structural validation passes on this checkout.
+- Behavioral scenario 09 is a pre-run contract; no run is recorded in this
+  release.
+
 ## [0.2.1] — 2026-09-27
 
 ### Added

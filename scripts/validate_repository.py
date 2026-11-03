@@ -24,6 +24,7 @@ REQUIRED_RUNTIME_PATHS = (
     "references/protocol.md",
     "references/document-contracts.md",
     "references/migration-v0.1-to-v0.2.md",
+    "references/migration-v0.2-to-v0.3.md",
     "assets/templates",
 )
 
@@ -31,8 +32,9 @@ PRIMARY_TEMPLATES = (
     "specs.md",
     "todo.md",
     "decisions.md",
-    "handoff.md",
 )
+
+GITIGNORE_TEMPLATE = "gitignore"
 
 CANONICAL_TODO_H2 = (
     "In Progress",
@@ -373,9 +375,56 @@ def validate_primary_templates(root: Path) -> list[Diagnostic]:
             Diagnostic(
                 f"{label}/{name}",
                 "templates.primary.extra",
-                "only specs.md, todo.md, decisions.md, and handoff.md "
-                "are primary templates",
+                "only specs.md, todo.md, and decisions.md "
+                "are committed primary templates",
                 f"unexpected primary template {name}",
+            )
+        )
+
+    return diagnostics
+
+
+def validate_gitignore_template(root: Path) -> list[Diagnostic]:
+    diagnostics: list[Diagnostic] = []
+    path = root / "assets" / "templates" / GITIGNORE_TEMPLATE
+    label = f"assets/templates/{GITIGNORE_TEMPLATE}"
+
+    if not path.is_file():
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "templates.gitignore.missing",
+                f"assets/templates/{GITIGNORE_TEMPLATE} exists",
+                "file missing",
+            )
+        )
+        return diagnostics
+
+    text = path.read_text(encoding="utf-8")
+    active: set[str] = set()
+    commented = False
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith("#"):
+            if "handoff.md" in line:
+                commented = True
+            continue
+        active.add(line.lstrip("/"))
+
+    if "handoff.md" not in active:
+        detail = (
+            "handoff.md only appears in a comment"
+            if commented
+            else "no handoff.md ignore rule found"
+        )
+        diagnostics.append(
+            Diagnostic(
+                label,
+                "templates.gitignore.handoff",
+                "gitignore contains an uncommented handoff.md rule",
+                detail,
             )
         )
 
@@ -729,6 +778,7 @@ def validate_repository(root: Path) -> list[Diagnostic]:
     diagnostics.extend(validate_skill_md(root))
     diagnostics.extend(validate_runtime_boundary(root))
     diagnostics.extend(validate_primary_templates(root))
+    diagnostics.extend(validate_gitignore_template(root))
     diagnostics.extend(validate_todo_template(root))
     diagnostics.extend(validate_relative_markdown_links(root))
     return sort_diagnostics(diagnostics)

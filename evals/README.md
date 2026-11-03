@@ -5,7 +5,7 @@ behavior across fresh coding-agent sessions.
 
 ## Scenario contracts vs run reports
 
-- **Pre-run scenario contracts** (for example scenarios 06–08) define fixture
+- **Pre-run scenario contracts** (for example scenarios 06–09) define fixture
   shape, the exact subject prompt, expected observable behavior, critical
   failures, and grading notes. They are not evaluation reports and must not
   contain Observed Behavior, PASS/PARTIAL/FAIL results, or invented run
@@ -16,7 +16,10 @@ behavior across fresh coding-agent sessions.
 - Evaluations 01–05 predate the contract/report split. Their combined historical
   reports now live under `evals/runs/`. No separate frozen pre-run contracts
   exist for those historical evaluations.
-- Scenarios 06–08 are the reusable pre-run contracts under `evals/scenarios/`.
+- Scenarios 06–09 are the reusable pre-run contracts under `evals/scenarios/`.
+- Scenario 08 records v0.2 initialization behavior, which created four primary
+  documents. It stays as written; scenario 09 owns v0.3 initialization and the
+  workspace-local handoff migration.
 
 ## Evaluation Roles
 
@@ -107,6 +110,12 @@ Default campaign settings:
 - run B only after a real defect or material ambiguity
 
 Do not add results to `evals/results.md` before execution.
+
+### T-036 v0.3 campaign (scenario 09)
+
+Scenario 09 uses the same defaults: one harness and one model, explicit
+invocation, one fresh subject per fixture, run A only by default. It has no
+recorded run yet. Do not add a row to `evals/results.md` until one exists.
 
 ## Reporting
 

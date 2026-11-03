@@ -4,6 +4,18 @@
 
 ## Ready to Land
 
+- [ ] T-036 — Make `.csdd/handoff.md` workspace-local and untracked for v0.3.0
+  - Owner: valen
+  - Agent: antigravity/gemini-3.8-flash-high
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/migration-v0.2-to-v0.3.md`, `assets/templates/`, `.csdd/.gitignore`, `.csdd/handoff.md`, `scripts/validate_repository.py`, `tests/test_repository_validation.py`, `README.md`, `changelog.md`, `CONTRIBUTING.md`, `docs/architecture.md`, `docs/installation.md`, `evals/scenarios/09-workspace-local-handoff.md`, `evals/README.md`, `.csdd/specs.md`, `.csdd/decisions.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `d30eb30`
+  - Updated: 2026-11-03
+  - Depends on: T-034, T-035
+  - Landing: `feat/workspace-local-handoff` → `main`; PR pending
+  - Verification: 22 unit tests PASS; offline repository validator PASS; git check-ignore confirms .csdd/handoff.md is ignored; fixture covers three primary templates, gitignore template, and no committed handoff template.
+  - Note: Implements DEC-007. Adds `.csdd/.gitignore`, deletes `assets/templates/handoff.md`, adds the v0.2 → v0.3 migration path, and untracks this repository's own handoff.
+
 - [ ] T-034 — Formalize lightweight architecture and product-scope guardrails
   - Owner: valen
   - Agent: codex

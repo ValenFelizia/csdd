@@ -152,7 +152,7 @@ discovery remains a separate smoke test.
 | --- | --- | --- |
 | `npx skills add ... --agent codex cursor -g` | Makes CSDD globally available to Codex and Cursor | `~/.agents/skills/csdd` |
 | `npx skills add ... --agent antigravity` | Makes CSDD available to Antigravity in one workspace | `<workspace>/.agents/skills/csdd` |
-| `/csdd init` | Creates four primary documents for one repository | `<project>/.csdd/` |
+| `/csdd init` | Creates three committed documents and the local handoff ignore policy for one repository | `<project>/.csdd/` |
 
 `/csdd init` never installs the skill. Skill install never initializes a
 project. After the skill is installed, open any repository and ask the agent to

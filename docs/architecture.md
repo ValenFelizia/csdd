@@ -7,7 +7,7 @@ proportional to the task.
 
 This is the canonical contributor design policy for reviewing product scope and
 optional integrations. It consolidates existing intent; it does not change the
-v0.2 runtime contract, add a project-state document, or require agents to load
+v0.3 runtime contract, add a project-state document, or require agents to load
 this file during ordinary work. Runtime behavior remains defined by the
 [protocol](../references/protocol.md) and
 [document contracts](../references/document-contracts.md).
@@ -18,11 +18,13 @@ this file during ordinary work. Runtime behavior remains defined by the
    inform proposals. Inferred memory alone cannot authorize requirements,
    decisions, task claims, or canonical writes. Investigate contradictions;
    neither code nor documentation automatically wins.
-2. **Repository-local truth.** Canonical state travels with the repository and
-   can be inspected through files, diffs, commits, branches, and worktrees.
-   Integrations must not silently move that authority into a service. The current
-   four documents retain their
+2. **Repository-local truth.** Committed canonical state travels with the
+   repository and can be inspected through files, diffs, commits, branches, and
+   worktrees. Integrations must not silently move that authority into a service.
+   The three committed documents retain their
    [distinct responsibilities](../references/protocol.md#core-project-state-documents).
+   The workspace-local handoff is continuity state, not canonical truth; it
+   never carries anything another person or machine must continue.
 3. **Usable without optional infrastructure.** The core needs no daemon,
    database, hosted backend, model proxy, continuous model calls, control panel,
    authenticated agent identity, or central coordination server. Optional tools
@@ -79,10 +81,12 @@ maintenance changes do not need a separate design document or full checklist.
 1. What concrete CSDD operational failure is observed, and what dogfooding,
    evaluation, or user evidence supports it? Separate observations from
    hypotheses and untested benefits.
-2. Why are the existing four documents and workflows insufficient? Compare the
-   smallest credible alternatives, including using an external specialized tool.
+2. Why are the existing three committed documents and workflows insufficient?
+   Compare the smallest credible alternatives, including using an external
+   specialized tool.
 3. Where does canonical truth live, and can ordinary repository files still
-   express it? Identify any changed document responsibilities or derived views.
+   express it? Identify any changed document responsibilities, derived views, or
+   state that must stay workspace-local.
 4. What required runtime, external service, model dependency, data export, or
    synchronization does the proposal introduce? State what happens without it.
 5. What context, coordination, and maintenance cost does it add to trivial,
