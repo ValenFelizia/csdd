@@ -1,6 +1,7 @@
 ---
 name: csdd
-description: Apply Collaborative Spec-Driven Development as a lightweight coordination and durable project-state protocol. Use when a repository contains canonical `.csdd/` project-state documents, making it CSDD-aware, or when the user or project instructions explicitly require CSDD.
+description: Apply Collaborative Spec-Driven Development as a lightweight coordination and durable project-state protocol. Use when a repository contains canonical `.csdd/` project-state documents, making it CSDD-aware, when the user or project instructions explicitly require CSDD, or when the user explicitly requests `/csdd doctor` or `/csdd status`.
+license: MIT
 ---
 
 # Collaborative Spec-Driven Development
@@ -35,12 +36,34 @@ memory, authenticated identity, reliable locking, or automatic synchronization.
 instructions, the canonical `.csdd/` shape, and the task's apparent target.
 Treat this as discovery, not permission to read every document.
 
+### Task surface phrase fence
+
+`.csdd/todo.md` is optional. The default surface is board-off. Opt in only
+with a whole line from this block. [`document-contracts.md`](references/document-contracts.md#phrase-fence)
+owns the matching rules and the transition table. Trim the line. Match the
+whole line only. A slash and the same words without a slash are one phrase.
+Words inside a sentence do not match. GitHub, Linear, issues, and pull
+requests are not a phrase.
+
+```text
+/csdd todo enable local board
+csdd todo enable local board
+/csdd todo enable external stub
+csdd todo enable external stub
+```
+
+An external phrase also needs exactly one whole-line non-empty `Tracker:` and
+exactly one whole-line non-empty `Next:` in the same utterance. A local phrase
+together with either field writes nothing. Both phrases in one utterance write
+nothing.
+
 ### `/csdd init` fast path
 
 `/csdd init` is the canonical user-facing workflow name, not a guaranteed native
 slash command. Equivalent explicit skill or natural-language requests to
 initialize CSDD are sufficient. No CLI, script, hook, plugin, MCP, or
-harness-specific adapter is required.
+harness-specific adapter is required. Inside an init utterance a fence line is
+a selection, not a second workflow.
 
 When the user explicitly requests initialization:
 
@@ -52,23 +75,38 @@ When the user explicitly requests initialization:
    unusable `.csdd` path (for example a regular file) are Ambiguous or
    conflicting—stop before evaluating Absent.
 3. Classify by first-match precedence after root and destination conflicts are
-   ruled out: Ambiguous or conflicting → stop; Absent (path does not exist) →
-   proceed; Already initialized (three committed docs plus valid
-   `.csdd/.gitignore` and current structure) → report; Recognizable older →
-   point to the matching migration guide (requires explicit relevant intent;
-   never silent); Partial or malformed → repair. Only Absent may write.
-   Filenames alone do not count as initialized. A missing `handoff.md` is
-   normal.
+   ruled out: Ambiguous or conflicting → stop; Absent (the `.csdd/` path does
+   not exist) → proceed; Already initialized (Current: `specs.md`,
+   `decisions.md`, and `.csdd/.gitignore` are regular files with valid
+   `.csdd/.gitignore` containing the `handoff.md` rule, and `todo.md` is absent
+   or exactly one valid shape) → report, including `task surface:`; Recognizable
+   older (a tracked `handoff.md`, missing `.csdd/.gitignore`, or a present
+   `todo.md` with an older signal) → point to the matching migration guide
+   (requires explicit relevant intent; never silent); Partial (a missing
+   required file among specs, decisions, or gitignore) or malformed (a present
+   `todo.md` that is neither valid shape) → repair. Only Absent may write.
+   A second init does not create `todo.md`. Filenames alone do not count as
+   initialized. A missing `handoff.md` is normal.
 4. Discover progressively from authoritative evidence; stop at the material
    criterion. Code and tests may evidence current behavior but do not invent
    durable requirements, decisions, tasks, or rationale.
 5. Immediately before writing, revalidate root and destination against the
    recorded preflight state; reclassify from the beginning and stop unless
    still unambiguously Absent.
-6. Create only `.csdd/specs.md`, `.csdd/todo.md`, `.csdd/decisions.md`, and
-   `.csdd/.gitignore` as one coherent patch. Do not create
-   `.csdd/handoff.md`; it is optional and local. Keep `todo.md` headings and
-   `Retention: 5`; invent no tasks, decisions, handoffs, or archive.
+6. Create one coherent patch. No fence line: write only `.csdd/specs.md`,
+   `.csdd/decisions.md`, and `.csdd/.gitignore`, and report
+   `task surface: board-off`. Do not create `.csdd/handoff.md`; it is optional,
+   workspace-local, and ignored. A local fence line also copies
+   [`assets/templates/todo.md`](assets/templates/todo.md) to `.csdd/todo.md`
+   (keep headings and `Retention: 5`) and reports `task surface: local`.
+   A complete external fence also writes `.csdd/todo.md` from
+   [`assets/templates/todo.external.md`](assets/templates/todo.external.md)
+   using the utterance `Tracker:` and `Next:`, and reports
+   `task surface: external`. An incomplete or conflicting selection writes
+   nothing and leaves the tree Absent. Never infer a surface from existing
+   issues or a tracker. Invent no tasks, decisions, handoffs, or archive.
+   Do not ask which surface to use. Stub field rules:
+   [External-tracker stub](references/document-contracts.md#external-tracker-stub).
 7. Structural success does not require complete specifications. Preserve
    unrelated dirty state; on failure clean up only artifacts from this attempt—
    cleanup restores pre-attempt state and does not make the attempt succeed.
@@ -78,6 +116,89 @@ For non-obvious initialization behavior, load [Initialization and
 adoption](references/protocol.md#initialization-and-adoption) and
 [Initialization](references/document-contracts.md#initialization).
 
+### `/csdd todo enable` fast path
+
+This is the only writer of `.csdd/todo.md` after init. It is not init, doctor,
+status, repair, migration, claim, or close. Run it only for an explicit enable
+request that is not also an init request. Use the
+[phrase fence](#task-surface-phrase-fence) above.
+
+1. Classify. Absent: write nothing and tell the user to init. Anything other
+   than Current board-off: write nothing. Do not convert, delete, or repair.
+2. A local phrase writes only `.csdd/todo.md` from
+   [`assets/templates/todo.md`](assets/templates/todo.md). A complete external
+   phrase writes only the stub from
+   [`assets/templates/todo.external.md`](assets/templates/todo.external.md)
+   with the utterance fields. Leave `specs.md`, `decisions.md`, and
+   `handoff.md` byte-identical. Do not run discovery.
+3. Re-read the path immediately before the write. Same shape and, for a stub,
+   the same `Tracker:` and `Next:`: Unchanged, do not recopy. Different shape,
+   different stub fields, or a path that is not a valid surface: refuse. Never
+   delete. Enable does not resurrect task text.
+4. Report the surface. Do not commit.
+
+The transition table is
+[Task surface](references/document-contracts.md#transition-table).
+
+### `/csdd doctor` fast path
+
+`/csdd doctor` is the canonical user-facing name for a read-only diagnosis. It
+is not a guaranteed native slash command and it does not require a CLI.
+Equivalent explicit requests to diagnose CSDD state are sufficient. Do not run
+doctor during unrelated work.
+
+1. Resolve one unambiguous canonical root. Competing roots or an unusable
+   `.csdd` path stop classification. Do not create a root.
+2. Classify the destination. Report absent, current, recognizable older,
+   partial, malformed, ambiguous, or uncertain. Do not initialize, repair, or
+   migrate from this workflow. Current is a valid trio whose `todo.md` is
+   absent (board-off), a local board, or a valid external stub. A missing
+   `specs.md`, `decisions.md`, or `handoff.md` is partial. Mixed shape is
+   malformed. Every Current report includes `task surface:`.
+3. Branch absence before stub versus local. Board-off: skip todo checks
+   because the task surface is off, and do not emit `docs.missing` for
+   `todo.md`. External stub: validate stub fields only; do not demand six
+   state H2s. Local board: structural TODO rules plus todo and handoff field
+   contracts. Cite evidence for every finding. Age alone is not evidence.
+   Unavailable Git or worktree tools are limitations, not passes.
+4. Return passed checks, findings, skipped checks, one next action that this
+   workflow does not perform, and the sentence `Nothing was modified.`
+
+Load [Read-only inspection](references/protocol.md#read-only-inspection) and
+[the doctor contract](references/read-only-workflows.md) before emitting
+finding identifiers. Stub fields:
+[External-tracker stub](references/document-contracts.md#external-tracker-stub).
+
+### `/csdd status` fast path
+
+`/csdd status` is the canonical name for a derived, read-only snapshot of what
+is active. It is not a native slash-command requirement, a CLI, or a fifth
+canonical document. Do not run it during unrelated work.
+
+1. Resolve one root and classify it with the same read-only inspection as
+   doctor. Do not write.
+2. If the state is absent, say so. Do not report an initialized empty project.
+3. If the class is partial, malformed, older, ambiguous, or uncertain, do not
+   invent counts. Recommend `/csdd doctor`.
+4. Current board-off: print `task surface: board-off` and handoff ids. Do not
+   print `mode: external`, six-state counts, or retention `used/N`. An empty
+   local board still prints six counts of zero. That snapshot is not board-off.
+5. External stub (current): print `task surface: external`, `mode: external`,
+   `Tracker:`, `Next:`, and handoff IDs. Do not invent six-state counts,
+   retention `used/N`, or active-claim lines. Local board (current): print
+   `task surface: local`. If tasks cannot be placed under the six states,
+   recommend `/csdd doctor`; otherwise report counts, active claims, landing
+   lines, handoff IDs, and retention usage.
+6. Point at `.csdd/todo.md` only when that file was read. Board-off points at
+   `.csdd/handoff.md`. Omit full task and handoff bodies unless the user asks
+   for detail, and even then do not paste them.
+7. On a local board, say whether inspected scopes overlap, and that this does
+   not prove other worktrees are idle. End with `Nothing was modified.`
+
+Load [the status contract](references/read-only-workflows.md#csdd-status)
+before adding fields the brief snapshot does not already require. Stub fields:
+[External-tracker stub](references/document-contracts.md#external-tracker-stub).
+
 ## Choose the minimum hydration level
 
 Classify by scope, risk, behavioral impact, ambiguity, dependencies, prior work,
@@ -86,8 +207,8 @@ and possible overlap. Increase the level when inspection reveals broader impact.
 | Level | Use when | Read |
 | --- | --- | --- |
 | 0 — Direct | Work is explicitly bounded, local, low-risk, reversible, non-architectural, not behaviorally or contractually significant, independent of prior work, and unlikely to overlap active scope. | No CSDD state by default. |
-| 1 — Local awareness | A localized change may plausibly overlap active work. | Only relevant active scope in `todo.md`. |
-| 2 — Operational | A non-trivial bug, feature, integration, multi-file change, or continuation task. | Relevant `todo.md`; this workspace's `handoff.md` when boundary transfer state with concrete resumption risk may exist; applicable specifications and decisions. |
+| 1 — Local awareness | A localized change may plausibly overlap active work. | Board-off: do not open or create `todo.md`. Local board: relevant active scope in `todo.md`. External stub: the stub (`Tracker:` / `Next:`); do not invent a board. |
+| 2 — Operational | A non-trivial bug, feature, integration, multi-file change, or continuation task. | Board-off: this workspace's `handoff.md` only when boundary and concrete resumption risk may both exist, plus applicable specifications and decisions. Do not use `handoff.md` as a backlog. Local board or stub: relevant `todo.md`, plus this workspace's `handoff.md` when boundary transfer state with concrete resumption risk may exist, plus applicable specifications and decisions. |
 | 3 — Deep | Architecture, migration, broad refactor, cross-domain work, or material ambiguity. | Relevant hot and warm context; archive only for a concrete historical question. |
 
 For detailed signals and semantics, load only [Adaptive context
@@ -108,8 +229,13 @@ truth. Escalate hydration if the target proves broader or riskier than expected.
 
 ## Route reads by question
 
-- Read relevant `.csdd/todo.md` entries for current work, ownership, scope,
-  dependencies, and blockers.
+- **Board-off:** do not open or create `.csdd/todo.md`. The next action is
+  the user message. Read `handoff.md` only for boundary plus resumption risk.
+- **Local board:** read relevant `.csdd/todo.md` entries for current work,
+  ownership, scope, dependencies, and blockers.
+- **External stub:** read `Mode:` / `Tracker:` / `Next:` and follow that policy
+  for task selection; do not invent a local board. See
+  [External-tracker stub](references/document-contracts.md#external-tracker-stub).
 - Read the relevant `.csdd/handoff.md` section when this workspace has concrete
   resumption risk; validate critical claims against the repository before
   relying on them. The handoff is workspace-local and untracked.
@@ -125,7 +251,11 @@ default.
 
 ## Coordinate and claim non-trivial work
 
-Before editing plausible shared scope:
+On **board-off**, do not mint a `T-` id, `Owner`, `Agent`, or `Scope`, and do
+not create `.csdd/todo.md`. Follow the user message. Use `handoff.md` only
+when both a boundary and concrete resumption risk exist.
+
+Before editing plausible shared scope on a **local board**:
 
 1. Inspect relevant active tasks.
 2. Compare the requested scope with active file, module, behavior, and contract
@@ -144,13 +274,74 @@ model](references/protocol.md#concurrency-model), [`todo.md` scope
 claims](references/document-contracts.md#scope-and-coordination-claims), and
 [stale claims](references/document-contracts.md#stale-claims).
 
+Under an **external stub**, do not mint local-board claims. Follow `Tracker:` /
+`Next:` (and any explicit user designation). Missing in-repo claim and scope
+fields are an honest capability loss—rely on tracker assignees, PR or branch
+ownership, and handoffs. See
+[External-tracker stub](references/document-contracts.md#external-tracker-stub).
+
+For new tracked work, use a local `T-<namespace>-<number>` ID with an explicitly
+agreed bounded namespace and one allocator at a time. Preserve existing IDs;
+continuation keeps the same ID. Consult [Local task
+identity](references/document-contracts.md#local-task-identity) when allocating,
+continuing a counter after retention, or reconciling duplicates. Never infer the
+next counter solely from the current TODO; insufficient history needs a fresh
+coordinated namespace. Optional `Issue:` URLs do not replace or rename local IDs.
+These rules add no tracking requirement to the trivial fast path.
+
+## Delegate with a fitting model
+
+This section applies only in a session that has loaded CSDD, and only when
+the harness can delegate. A session that never loads this skill does not get
+this rule. Do not copy it into `AGENTS.md` or `CLAUDE.md`.
+
+Choose the child model and effort for the subtask. Do not inherit the parent
+unless the harness, an orchestrator role line, or a project rule explicitly
+says to. An explicit inherit-parent choice stays valid. If an orchestrator
+already selected a per-role model, that choice wins. This section is the
+fallback when nothing else selected a model.
+
+The same pattern holds on Cursor, Codex, and Claude. Use a cheaper or
+lower-effort model for reading, searching, mechanical edits, and narrowed
+implementation, when that model can still do the job. Keep the parent model
+for contested judgment, cross-cutting design, and work whose mistakes are
+expensive. Do not record a catalog of model slugs.
+
+Name the choice in the brief, with any CSDD constraint the child must follow.
+The child may not load this skill. On current Cursor, Codex, and Claude
+tooling, an omitted model argument inherits the parent.
+
+Do not delegate only to satisfy this section. Work the parent can finish
+directly stays with the parent.
+
+Avoid TODO/handoff writes for reads or unchanged verification; preserve necessary
+claims and waiting states. Batch compatible known changes within one operation,
+without delaying updates across a coordination boundary. For parallel landing,
+reconcile relevant task deltas against base/current target/source, preserving
+unrelated target work and blocking real conflicts. See [Write
+economy](references/document-contracts.md#write-economy) and [Task-wise landing
+reconciliation](references/document-contracts.md#task-wise-landing-reconciliation).
+
 ### `todo.md` fast path
 
-Keep `todo.md` under these fixed H2 headings, including when empty, in this
-order: In Progress, Ready to Land, Blocked, Pending, Deferred, Recently
-Completed. Do not invent, rename, reorder, alias, or omit state H2 headings.
-Default presentation is flat; introduce H3 workstream grouping only when an
-existing project convention or explicit human direction requires it.
+Test the path before any heading rule.
+
+- **Board-off:** `.csdd/todo.md` does not exist. Return. Do not create the
+  file and do not invent the six headings.
+- **External stub:** the file has `Mode: external`. Do not apply the
+  six-heading board. Keep only stub fields and update them when the pointer or
+  policy changes. Field rules:
+  [External-tracker stub](references/document-contracts.md#external-tracker-stub).
+- **Local board:** the file exists and is not a stub. Keep these fixed H2
+  headings, including when empty, in this order: In Progress, Ready to Land,
+  Blocked, Pending, Deferred, Recently Completed. Do not invent, rename,
+  reorder, alias, or omit state H2 headings. Default presentation is flat;
+  introduce H3 workstream grouping only when an existing project convention or
+  explicit human direction requires it.
+- **Anything else** (empty file, mixed shape, non-file): stop and recommend
+  `/csdd doctor`. Do not repair the path into a board.
+
+The local-board rules below apply only on the local-board arm.
 
 Deferred requires authoritative intent plus `Reason:` and an observable
 `Resume when:`; do not invent Deferred to park unfinished work. Recently
@@ -198,27 +389,33 @@ During non-trivial work:
   changes materially.
 - Validate assumptions against repository reality.
 - Verify results in proportion to risk.
-- Update `todo.md` when operational state materially changes.
+- On a local board, update `todo.md` when operational state materially
+  changes. On a stub, update `todo.md` when `Tracker:` / `Next:` policy must
+  change. On board-off, do not create `todo.md`.
 - Persist only consequential knowledge; avoid activity logs and routine
   narration.
 - Surface contradictions instead of silently choosing documentation or code.
 
 Route persistence as follows:
 
-- Update `todo.md` when task state, ownership, executor, material scope,
-  dependencies, blockers, or a continuity-critical checkpoint changes. It is
-  committed and shared.
+- **Board-off:** do not write tasks and do not append a backlog to
+  `handoff.md`. **Local board:** update `todo.md` when task state, ownership,
+  executor, material scope, dependencies, blockers, or a continuity-critical
+  checkpoint changes. It is committed and shared. **External stub:** update
+  `todo.md` only when `Mode:`, `Tracker:`, or `Next:` must change; do not mirror
+  tracker backlog churn.
 - Update the workspace-local `handoff.md` only at a real execution boundary with
   concrete resumption risk—when a later agent in this workspace would otherwise
   resume incorrectly, repeat meaningful work, miss a material risk, or overlook
   a blocking question. Do not update it for routine session closure,
   uninterrupted work, ordinary checkpoints, or live collisions coordinated in
-  `todo.md`. Keep it short, replace rather than append, and delete it when the
+  `todo.md` (local board), the tracker (external stub), or the user message
+  (board-off). Keep it short, replace rather than append, and delete it when the
   risk is consumed. Never commit it. Keep state and collision coordination in
-  `todo.md`.
+  the local board or tracker, not in handoff.
 - Promote anything another person, machine, branch, or worktree needs to
-  `todo.md`, `specs.md`, `decisions.md`, a commit, or a pull request. The local
-  handoff is not a transfer channel.
+  committed state (`todo.md`, `specs.md`, `decisions.md`, a commit, or a pull
+  request). The local handoff is not a transfer channel.
 - Update `specs.md` when intended behavior, a requirement, constraint,
   invariant, stable contract, or other durable project truth changes or is found
   incomplete or incorrect. It is committed.
@@ -280,6 +477,12 @@ locality](references/document-contracts.md#branch-and-worktree-locality).
 
 ## Close truthfully
 
+On **board-off**, do not write a board and do not append a task list to
+`handoff.md`. Verify the change. Record a handoff only when both a boundary
+and concrete resumption risk exist.
+
+On a **local board**:
+
 - **Completed:** Verify the result, reconcile documentation and repository
   state, mark the task completed, release active scope, compact completed
   metadata, enforce Recently Completed retention, and delete the local handoff
@@ -300,32 +503,63 @@ locality](references/document-contracts.md#branch-and-worktree-locality).
 - **Trivial:** Verify the change and do not create CSDD state unless durable
   truth or a material conflict changed.
 
+Under an **external stub**, close via the tracker and PR or branch evidence; do
+not invent six-state board transitions in `todo.md`. Create or update
+`handoff.md` only for boundary + concrete resumption risk, preferably linking
+external issue or PR identifiers. See
+[External-tracker stub](references/document-contracts.md#external-tracker-stub).
+
 For every close, promote anything another person or machine needs to committed
 state before deleting the local handoff.
 
 Keep implemented work awaiting required human review active with a concise
 review note when completion has not yet been earned.
 
+## When Poteto mode is active
+
+Apply this section only when the current session is running Poteto mode.
+Either signal is enough:
+
+- The user invoked poteto, poteto-mode, or pstack mode.
+- The poteto-mode skill is loaded for this session.
+
+A copy of that skill on disk that this session did not load is not a signal.
+Do not search the filesystem to decide.
+
+If neither signal is present, stop. Do not load
+[Poteto composition](references/poteto-composition.md). Do not change claims,
+handoffs, hydration, initialization, or any other CSDD behavior because that
+file exists.
+
+If a signal is present, load that file and follow it for this session only.
+
 ## Load detailed references progressively
 
 Load only the section relevant to the current question:
 
 - Use [the protocol](references/protocol.md) for principles, hydration semantics,
-  lifecycle, initialization and adoption, boundary-driven handoffs, TODO
-  structure and retention, concurrency, stale claims, branch/worktree baseline
-  reconciliation, contradiction handling, archive policy, and validation
-  scenarios.
+  lifecycle, initialization and adoption, read-only inspection, boundary-driven
+  handoffs, TODO structure and retention, concurrency, stale claims,
+  branch/worktree baseline reconciliation, contradiction handling, archive
+  policy, and validation scenarios.
+- Use [the doctor contract](references/read-only-workflows.md) only when the
+  user explicitly requests `/csdd doctor`.
+- Use [the status contract](references/read-only-workflows.md#csdd-status) only
+  when the user explicitly requests `/csdd status`.
 - Use [the document contracts](references/document-contracts.md) for exact
   document boundaries, the initialization contract, the detailed `todo.md` and
-  `handoff.md` contracts, read and update triggers, aging and cleanup,
-  cross-document movement, task and handoff structure, branch/worktree
-  locality, and archive-entry guidance.
+  `handoff.md` contracts, the
+  [external-tracker stub](references/document-contracts.md#external-tracker-stub),
+  read and update triggers, aging and cleanup, cross-document movement, task
+  and handoff structure, branch/worktree locality, and archive-entry guidance.
 - Use [the v0.1 → v0.2 migration guide](references/migration-v0.1-to-v0.2.md)
   only when recognizable older v0.1 state is present and migration intent is
   explicit.
 - Use [the v0.2 → v0.3 migration guide](references/migration-v0.2-to-v0.3.md)
   when a tracked `.csdd/handoff.md` or a v0.2 layout needs the workspace-local
   handoff migration, and migration intent is explicit.
+- Use [Poteto composition](references/poteto-composition.md) only when
+  [this session is running Poteto mode](#when-poteto-mode-is-active).
 
 Do not load both references in full by default and do not reproduce their
 detailed procedures in working notes.

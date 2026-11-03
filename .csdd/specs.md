@@ -39,9 +39,9 @@ The authoritative conceptual protocol is defined in:
 
 - Agents are ephemeral; project state is durable.
 - Persist consequential knowledge, not activity.
-- The three committed primary documents remain plain Markdown.
-- `todo.md` remains the committed primary coordination surface.
-- `handoff.md` is workspace-local, ignored, optional, and transfers only same-workspace resumable state; it does not duplicate task tracking or carry shared truth.
+- `specs.md`, `decisions.md`, and an opted-in `todo.md` remain plain Markdown.
+- A fresh init leaves the task surface board-off. This repository keeps an opted-in local board at `.csdd/todo.md`.
+- `handoff.md` is workspace-local, ignored, optional, and transfers only same-workspace resumable state; it does not duplicate task tracking or carry shared truth, including when `todo.md` is absent.
 - A missing `handoff.md` is valid state; its default close action is deletion.
 - Archive content, when present, is cold context and is never loaded by default.
 - Active scope overlap is never knowingly ignored.
@@ -52,14 +52,18 @@ The authoritative conceptual protocol is defined in:
 - Agent Skills entrypoint: `SKILL.md`
 - Conceptual protocol: `references/protocol.md`
 - Document semantics: `references/document-contracts.md`
+- Local identity policy: `references/document-contracts.md#local-task-identity`
+  (canonical allocation, external relationships, and duplicate repair)
+- Shared-state integration policy: `references/document-contracts.md#write-economy`
+  and `#task-wise-landing-reconciliation` (canonical minimal writes and per-task preservation)
 - v0.2 → v0.3 migration: `references/migration-v0.2-to-v0.3.md`
-- Distributed project templates: `assets/templates/` (`specs.md`, `todo.md`, `decisions.md`, `gitignore`)
+- Distributed project templates: `assets/templates/` (`specs.md`, `todo.md`, `todo.external.md`, `decisions.md`, `gitignore`)
 - Runtime project state: `.csdd/`
 
 ## Distribution (non-normative for protocol semantics)
 
-These distribution facts do not change the v0.3 protocol rules in
-`references/`. They describe how the skill itself is obtained.
+These distribution facts do not change the protocol rules in `references/`.
+They describe how the skill itself is obtained.
 
 - Agent Skills (`npx skills`) is the standard distribution mechanism for the
   CSDD skill.
@@ -74,7 +78,7 @@ These distribution facts do not change the v0.3 protocol rules in
 
 ## Structural validation (non-normative for protocol semantics)
 
-These facts describe repository tooling. They do not change the v0.3 protocol
+These facts describe repository tooling. They do not change the protocol
 rules in `references/`.
 
 - The repository provides reproducible structural validation for the skill
@@ -89,7 +93,7 @@ rules in `references/`.
 ## Compatibility claims (non-normative for protocol semantics)
 
 These facts govern how public harness compatibility is stated. They do not
-change the v0.3 protocol rules in `references/`.
+change the protocol rules in `references/`.
 
 - Compatibility claims MUST be dimensional (install, discovery, invocation,
   init, workflow, Git visibility, and similar), never a single harness-wide

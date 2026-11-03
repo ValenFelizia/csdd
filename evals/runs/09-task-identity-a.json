@@ -1,0 +1,704 @@
+{
+  "schema_version": 1,
+  "scenario": "09",
+  "run": "A",
+  "date": "2026-10-03",
+  "harness": "Codex desktop collaboration.spawn_agent",
+  "model": "Inherited current configuration, no override; exact model identifier not exposed to orchestrator",
+  "invocation": "explicit",
+  "evaluator": "identity_final_evaluator",
+  "runtime_sha": "da0feb18049ca8b02e034f6505b76cc1882f05f8",
+  "fixture_source_sha": "64160795d956d744d9777bb6d95d30f5845b4836",
+  "evaluation_branch": "codex/task-id-namespaces",
+  "environment": {
+    "os": "Microsoft Windows NT 10.0.26300.0",
+    "powershell": "7.6.5",
+    "git": "2.54.0.windows.1",
+    "python": "3.11.7"
+  },
+  "independently_checked": {
+    "worktrees": 27,
+    "canonical_document_hashes": 108,
+    "unchanged_product_worktrees": 27,
+    "snapshot_mismatches": 0,
+    "reproduced_baseline_heads": 27
+  },
+  "artifact_sha256": {
+    "manifest.json": "14adeffe8e4777f305e5f10bdbe22cee7f120465771f9df57252ee706f38336b",
+    "evidence.json": "79a92bb849fe5b3fd621482b65372106f2ebd6ce2aecd2eba0a3f29bf55caa5f",
+    "mechanical-results.json": "1d0887c22b0cfd86085a57ee8727a96b98d484e9939294aec08486ec34bd94e1",
+    "materializer-checks.json": "4783f47899628c194ab38ec7d990542b855546b9e2bf8a0e173293c94972aca3"
+  },
+  "source_blobs": {
+    "SKILL.md@runtime": "7ad404c718f1d9b5bfe0b9cdd240483125297230",
+    "references/document-contracts.md@runtime": "86b637be2061807fccd08dae3c50eaf0540ac03e",
+    "evals/scenarios/09-task-identity.md@fixture-source": "8f03fe9daaafd2e58be0a7dce08865b758c366ad",
+    "evals/fixtures/task_identity.py@fixture-source": "7bd0df4065d65e98578db62010a42bd13390017e"
+  },
+  "cases": {
+    "mechanical-legacy": {
+      "base_sha": "c811fcd703d2851b67fd58d22cde0869d3726433",
+      "source_shas": {
+        "alpha": "30a48f92a5cfa80676c3f829108dfe58342b2fc9",
+        "beta": "e930fc915cb5da27649a9d0c52e5becfce518d12"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/mechanical-legacy/repository",
+          "branch": "main",
+          "initial_head": "c811fcd703d2851b67fd58d22cde0869d3726433",
+          "final_head": "c811fcd703d2851b67fd58d22cde0869d3726433",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "25df9a8186807f768d7d7a8d2e56201e0581c822e442cc028a153053c84341c5",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "alpha": {
+          "path": "$RUN_ROOT/mechanical-legacy/alpha",
+          "branch": "fixture/alpha",
+          "initial_head": "30a48f92a5cfa80676c3f829108dfe58342b2fc9",
+          "final_head": "30a48f92a5cfa80676c3f829108dfe58342b2fc9",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "da34c3ddd24a576e6b695e3a55de42defdd3d61d86a1fd171b1a2b21faa993c0",
+            ".csdd/handoff.md": "aa828c97f3e3d1a718e0fc2943a47de726cf320e8968db6d8cab3606c8ac6c0e"
+          }
+        },
+        "beta": {
+          "path": "$RUN_ROOT/mechanical-legacy/beta",
+          "branch": "fixture/beta",
+          "initial_head": "e930fc915cb5da27649a9d0c52e5becfce518d12",
+          "final_head": "e930fc915cb5da27649a9d0c52e5becfce518d12",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "cc9053cb6ccff8d8d0ac6f30b360272bbb0a5fb7581195005267665f465a3893",
+            ".csdd/handoff.md": "1f69296fdaed64954b16039db4eb6dbff254e70ff7cf8e973499f49715d0c87d"
+          }
+        }
+      },
+      "subjects": []
+    },
+    "creation-pair": {
+      "base_sha": "6c1c0699e32d6a27d8ea33e4bd8011337706ffe2",
+      "source_shas": {},
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/creation-pair/repository",
+          "branch": "main",
+          "initial_head": "6c1c0699e32d6a27d8ea33e4bd8011337706ffe2",
+          "final_head": "6c1c0699e32d6a27d8ea33e4bd8011337706ffe2",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "25df9a8186807f768d7d7a8d2e56201e0581c822e442cc028a153053c84341c5",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "alpha": {
+          "path": "$RUN_ROOT/creation-pair/alpha",
+          "branch": "fixture/alpha",
+          "initial_head": "6c1c0699e32d6a27d8ea33e4bd8011337706ffe2",
+          "final_head": "828d9d988c7b9fa3e0abe3abffc06b4440e12a9c",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "f9584d5ca52fb166b1c130a8202e8e630ea2671f4ec800d4bb9885ffab1b2cf8",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex 23c4ec9..552d4e9 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -10,6 +10,8 @@\n \n ## Pending\n \n+- [ ] T-alpha-export-001 â€” Add alpha export\n+  - Scope: `src/alpha.py`\n \n \n ## Deferred"
+        },
+        "beta": {
+          "path": "$RUN_ROOT/creation-pair/beta",
+          "branch": "fixture/beta",
+          "initial_head": "6c1c0699e32d6a27d8ea33e4bd8011337706ffe2",
+          "final_head": "d31653444b7e26d8ecb6c15528bf89e0cefa9223",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "fd10e0a5c926fb1b7f5c4d0b3f3cf20056fcba67fb43deb15d3f51656563b375",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex 23c4ec9..dcb75e1 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -10,6 +10,8 @@\n \n ## Pending\n \n+- [ ] T-beta-export-001 â€” Add beta export\n+  - Scope: `src/beta.py`\n \n \n ## Deferred"
+        }
+      },
+      "subjects": [
+        {
+          "label": "creation-a",
+          "grade": "PASS",
+          "worktree": "alpha"
+        },
+        {
+          "label": "creation-b",
+          "grade": "PASS",
+          "worktree": "beta"
+        }
+      ]
+    },
+    "history-continuation": {
+      "base_sha": "cef5271789a7be6b7cc13f2afa028834e194c102",
+      "source_shas": {
+        "historical_high_water": "9fe4924e3058a64d0fbd787cfa08efd6968a73a4",
+        "retained_head": "80431ffef7ed0c4318c597d27cd94e1431b7bdbd",
+        "same_task_continuation": "293ca8f205864f68a54248536a1425611b616176"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/history-continuation/repository",
+          "branch": "main",
+          "initial_head": "80431ffef7ed0c4318c597d27cd94e1431b7bdbd",
+          "final_head": "80431ffef7ed0c4318c597d27cd94e1431b7bdbd",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "543ef3040b1f1e5216b27104947fc5d71dbb8a9b44fe53190c03284996bdf544",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "billing-a": {
+          "path": "$RUN_ROOT/history-continuation/billing-a",
+          "branch": "fixture/billing-a",
+          "initial_head": "80431ffef7ed0c4318c597d27cd94e1431b7bdbd",
+          "final_head": "80431ffef7ed0c4318c597d27cd94e1431b7bdbd",
+          "initial_clean": true,
+          "final_status": " M .csdd/todo.md",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "9bba7fdba8c20e480ae92b82071daf10b6954a54967f20f71ff7baa800605e74",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex fbbaa9e..a10887b 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -8,6 +8,7 @@\n   - Scope: src/invoices.py\n   - Updated: 2026-10-03\n   - Issue: https://github.com/example/offline-export/issues/17, https://linear.app/example/issue/BILL-17/normalize-invoices\n+  - Note: Same task continues in fixture/billing-b at 293ca8f205864f68a54248536a1425611b616176; preserve T-billing-003 and both Issue relationships. Whitespace trimming is committed only there; empty invoice behavior still needs agreement. Invoice execution stays in billing-b; no implementation is imported here.\n \n \n ## Ready to Land\n@@ -16,6 +17,12 @@\n \n ## Pending\n \n+- [ ] T-billing-042 Add billing audit export\n+  - Owner: Fixture Team\n+  - Scope: src/audit.py\n+  - Updated: 2026-10-03\n+  - Note: Accepted Pending work; Scope is planned work, not an active write claim. billing-a is the sole current allocator for the agreed billing namespace; billing-b may only continue T-billing-003. Counter follows T-billing-041 evidenced at 9fe4924e3058a64d0fbd787cfa08efd6968a73a4, removed from visible retention at 80431ffef7ed0c4318c597d27cd94e1431b7bdbd.\n+\n - [ ] T-billing-004 Review invoice captions\n   - Owner: Fixture Team\n   - Agent: fixture-author"
+        },
+        "billing-b": {
+          "path": "$RUN_ROOT/history-continuation/billing-b",
+          "branch": "fixture/billing-b",
+          "initial_head": "293ca8f205864f68a54248536a1425611b616176",
+          "final_head": "293ca8f205864f68a54248536a1425611b616176",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "543ef3040b1f1e5216b27104947fc5d71dbb8a9b44fe53190c03284996bdf544",
+            ".csdd/handoff.md": "8baaa2db816233b2874dac4488e34dcfac5f16813432e75574a5bc9c23db7c28"
+          }
+        }
+      },
+      "subjects": [
+        {
+          "label": "history",
+          "grade": "PASS",
+          "worktree": "billing-a"
+        }
+      ]
+    },
+    "duplicate-repair": {
+      "base_sha": "9e04d172d6b5432508eeb8675f56b7bbb39ea7e8",
+      "source_shas": {
+        "target_integrated_alpha": "f34aec5737b2feb26a6604fa7c8812f79dcaa3ce",
+        "original_beta": "87d7dc17c60e84b591fad40c2decb92702660e50"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/duplicate-repair/repository",
+          "branch": "main",
+          "initial_head": "f34aec5737b2feb26a6604fa7c8812f79dcaa3ce",
+          "final_head": "f34aec5737b2feb26a6604fa7c8812f79dcaa3ce",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "0791c462a8fcaeea4225fd540bf63d698aacf3e874ebcda116b0d8724162a5d8",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "alpha": {
+          "path": "$RUN_ROOT/duplicate-repair/alpha",
+          "branch": "fixture/alpha",
+          "initial_head": "f34aec5737b2feb26a6604fa7c8812f79dcaa3ce",
+          "final_head": "f34aec5737b2feb26a6604fa7c8812f79dcaa3ce",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "0791c462a8fcaeea4225fd540bf63d698aacf3e874ebcda116b0d8724162a5d8",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "beta": {
+          "path": "$RUN_ROOT/duplicate-repair/beta",
+          "branch": "fixture/beta",
+          "initial_head": "87d7dc17c60e84b591fad40c2decb92702660e50",
+          "final_head": "87d7dc17c60e84b591fad40c2decb92702660e50",
+          "initial_clean": true,
+          "final_status": " M .csdd/handoff.md\n M .csdd/todo.md",
+          "changed_files": [
+            ".csdd/handoff.md",
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "b6206551e3870c19aca49d397c6976e41120e1f54da24e5012acaab41fc454fc",
+            ".csdd/handoff.md": "dc36c18de65cc055e8bce0485049972aa3049909a6112956c0e3400f3f9b713c"
+          },
+          "diff": "diff --git a/.csdd/handoff.md b/.csdd/handoff.md\nindex bd4192a..46095ba 100644\n--- a/.csdd/handoff.md\n+++ b/.csdd/handoff.md\n@@ -1,5 +1,5 @@\n # Handoff\n \n-## T-091\n+## T-beta-repair-001\n \n-The beta separator is provisional. T-beta-check-001 depends on T-091; do not mistake the already integrated alpha export for this beta work.\n+The beta separator is provisional. T-beta-check-001 depends on T-beta-repair-001; do not mistake the already integrated alpha export (T-091 on main) for this beta work.\ndiff --git a/.csdd/todo.md b/.csdd/todo.md\nindex 3ac4a94..b41ffee 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -2,13 +2,14 @@\n \n ## In Progress\n \n-- [ ] T-091 Add beta CSV export\n+- [ ] T-beta-repair-001 Add beta CSV export\n   - Owner: Fixture Team\n   - Agent: fixture-author\n   - Scope: src/beta.py\n   - Updated: 2026-10-03\n   - Target: main\n   - Base: 9e04d172d6b5432508eeb8675f56b7bbb39ea7e8\n+  - Note: Duplicate-ID repair of former T-091, Add beta CSV export (Scope: src/beta.py), from source branch fixture/beta at observed commit 87d7dc17c60e84b591fad40c2decb92702660e50. Distinct alpha task Add alpha CSV export retains T-091 on fixture/alpha and target main at f34aec5737b2feb26a6604fa7c8812f79dcaa3ce. Former T-091 remains reserved and identifies beta only with this source provenance, never as a global alias. beta-repair is the agreed repair namespace; the beta subject is its sole allocator; no prior assignments were found in retained local state or available local Git history.\n \n \n ## Ready to Land\n@@ -22,7 +23,7 @@\n   - Agent: fixture-author\n   - Scope: tests/beta.py\n   - Updated: 2026-10-03\n-  - Depends on: T-091\n+  - Depends on: T-beta-repair-001\n \n \n ## Deferred"
+        }
+      },
+      "subjects": [
+        {
+          "label": "repair",
+          "grade": "PASS",
+          "worktree": "beta"
+        }
+      ]
+    },
+    "insufficient-history": {
+      "base_sha": "725a9868a445996d761d7c37cc554c32c7fcba8e",
+      "source_shas": {
+        "author_only_original_base": "464715d27b17a1772d40e51f157c3c7eb5524ef2",
+        "author_only_hidden_high_water": "09af786dd3c45c19a453bf3a6dd51f41ad08238e",
+        "shallow_head": "725a9868a445996d761d7c37cc554c32c7fcba8e"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/insufficient-history/repository",
+          "branch": "main",
+          "initial_head": "725a9868a445996d761d7c37cc554c32c7fcba8e",
+          "final_head": "725a9868a445996d761d7c37cc554c32c7fcba8e",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "658b42d9349577788fe82f49615f5d360827b19cb1afd8c81c86943537c3f9f6",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "reports-a": {
+          "path": "$RUN_ROOT/insufficient-history/reports-a",
+          "branch": "fixture/reports-a",
+          "initial_head": "725a9868a445996d761d7c37cc554c32c7fcba8e",
+          "final_head": "725a9868a445996d761d7c37cc554c32c7fcba8e",
+          "initial_clean": true,
+          "final_status": " M .csdd/todo.md",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "c24a9dc10c269ffc257318e6f3cd1b6868c95a0922eea86c1753236728deca57",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex ced0f1a..e0348b0 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -10,6 +10,10 @@\n \n ## Pending\n \n+- [ ] T-monthly-export-001 â€” Add monthly report export\n+  - Scope: src/reports.py\n+  - Note: Fresh monthly-export namespace explicitly agreed for this bounded line; reports-a is its sole allocator. Available history is incomplete; reports counter is not continued. Scope describes planned work; task remains unclaimed.\n+\n - [ ] T-reports-002 Review report headings\n   - Owner: Fixture Team\n   - Agent: fixture-author"
+        },
+        "reports-b": {
+          "path": "$RUN_ROOT/insufficient-history/reports-b",
+          "branch": "fixture/reports-b",
+          "initial_head": "725a9868a445996d761d7c37cc554c32c7fcba8e",
+          "final_head": "725a9868a445996d761d7c37cc554c32c7fcba8e",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "658b42d9349577788fe82f49615f5d360827b19cb1afd8c81c86943537c3f9f6",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        }
+      },
+      "subjects": [
+        {
+          "label": "insufficient",
+          "grade": "PASS",
+          "worktree": "reports-a"
+        }
+      ]
+    },
+    "overlapping-scopes": {
+      "base_sha": "c16117b0d5baa2309ce8eb226a23435ba97e8bda",
+      "source_shas": {
+        "round-total": "b01c83db4e43bb698c7f513ef49e5cf0aeb3cd43",
+        "round-line": "924c36c1da9f8504811ccffe94e7f1ec700f9fd0"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/overlapping-scopes/repository",
+          "branch": "main",
+          "initial_head": "c16117b0d5baa2309ce8eb226a23435ba97e8bda",
+          "final_head": "c16117b0d5baa2309ce8eb226a23435ba97e8bda",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "25df9a8186807f768d7d7a8d2e56201e0581c822e442cc028a153053c84341c5",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "round-total": {
+          "path": "$RUN_ROOT/overlapping-scopes/round-total",
+          "branch": "fixture/round-total",
+          "initial_head": "b01c83db4e43bb698c7f513ef49e5cf0aeb3cd43",
+          "final_head": "b01c83db4e43bb698c7f513ef49e5cf0aeb3cd43",
+          "initial_clean": true,
+          "final_status": " M .csdd/todo.md",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "224b591a2128aecefff5a3a1b92855d96cafd2c85ac2973e85913161b8ccb453",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex 4acc3c6..25a450c 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -2,18 +2,21 @@\n \n ## In Progress\n \n-- [ ] T-round-total-001 Change checkout rounding\n-  - Owner: Fixture Team\n-  - Agent: fixture-author\n-  - Scope: src/checkout.py; tests/checkout.txt\n-  - Updated: 2026-10-03\n-  - Target: main\n-  - Base: c16117b0d5baa2309ce8eb226a23435ba97e8bda\n-\n \n ## Ready to Land\n \n-## Blocked\n+## Blocked\n+\n+- [ ] T-round-total-001 Change checkout rounding\n+  - Owner: Fixture Team\n+  - Agent: codex/subject-overlap\n+  - Scope: released while blocked; intended scope src/checkout.py; tests/checkout.txt\n+  - Updated: 2026-10-03\n+  - Target: main\n+  - Base: c16117b0d5baa2309ce8eb226a23435ba97e8bda\n+  - Blocked by: unresolved checkout rounding order and overlapping scope with T-round-line-001 on fixture/round-line at 924c36c1da9f8504811ccffe94e7f1ec700f9fd0.\n+  - Note: Resumed under the same ID; T-round-line-001 is a distinct task with the same title and file/behavior scope, not a duplicate ID. Both worktrees were clean on inspection. This branch at b01c83db4e43bb698c7f513ef49e5cf0aeb3cd43 rounds the sum; fixture/round-line rounds each item before summing. specs.md and decisions.md agree but do not resolve this choice; tests/checkout.txt states that rounding order is still under discussion. Neither branch's implementation is reachable from main at Base. Existing source and tests are preserved; no implementation or behavioral verification performed during this resumption. The other worktree's claim remains unchanged.\n+  - Resume when: Fixture Team explicitly resolves rounding order and coordinates write boundaries or sequencing with T-round-line-001. Recheck both worktrees, HEADs, relevant claims, and checkout changes before reclaiming scope; then implement and verify the agreed behavior. No new task ID is needed.\n \n ## Pending"
+        },
+        "round-line": {
+          "path": "$RUN_ROOT/overlapping-scopes/round-line",
+          "branch": "fixture/round-line",
+          "initial_head": "924c36c1da9f8504811ccffe94e7f1ec700f9fd0",
+          "final_head": "924c36c1da9f8504811ccffe94e7f1ec700f9fd0",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "53b8c42455b46a77178870110bb17536154679346772132c738414ac2894ac74",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        }
+      },
+      "subjects": [
+        {
+          "label": "overlap",
+          "grade": "PASS",
+          "worktree": "round-total"
+        }
+      ]
+    },
+    "no-target-precedence": {
+      "base_sha": "c7ff4f38169a111b8e4dd14084d34ccec53c72d1",
+      "source_shas": {
+        "alpha": "baa3d131b0504a39a4d4f9f9b853ef9e5d074cc9",
+        "beta": "d38310e7af7574d7ff641f9bff0eb09a2537259b"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/no-target-precedence/repository",
+          "branch": "main",
+          "initial_head": "c7ff4f38169a111b8e4dd14084d34ccec53c72d1",
+          "final_head": "c7ff4f38169a111b8e4dd14084d34ccec53c72d1",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "25df9a8186807f768d7d7a8d2e56201e0581c822e442cc028a153053c84341c5",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "alpha": {
+          "path": "$RUN_ROOT/no-target-precedence/alpha",
+          "branch": "fixture/alpha",
+          "initial_head": "baa3d131b0504a39a4d4f9f9b853ef9e5d074cc9",
+          "final_head": "baa3d131b0504a39a4d4f9f9b853ef9e5d074cc9",
+          "initial_clean": true,
+          "final_status": " M .csdd/todo.md",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "79a45d4b3a03fc24bff063ba9251de69289efb6ab635bea229df466a2553669a",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex b64bfa1..a4c07bd 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -2,17 +2,20 @@\n \n ## In Progress\n \n-- [ ] T-077 Add alpha XML export\n-  - Owner: Fixture Team\n-  - Agent: fixture-author\n-  - Scope: src/alpha.py\n-  - Updated: 2026-10-03\n \n \n ## Ready to Land\n \n ## Blocked\n \n+- [ ] T-077 Add alpha XML export\n+  - Owner: Fixture Team\n+  - Agent: fixture-author\n+  - Scope: src/alpha.py\n+  - Updated: 2026-10-03\n+  - Blocker: Identity reconciliation and integration require explicit agreement on Target, which task retains T-077, and the replacement namespace/counter and allocator. No identity repair or integration may proceed until agreed.\n+  - Note: This task originates on fixture/alpha at baa3d131b0504a39a4d4f9f9b853ef9e5d074cc9. The distinct Add beta XML export task uses T-077 on fixture/beta at d38310e7af7574d7ff641f9bff0eb09a2537259b, with Scope: src/beta.py. Neither branch is an agreed Target; no precedence or repair namespace is agreed. Both original identities and histories remain preserved. Beta is read-only and its operational state is unchanged.\n+\n ## Pending"
+        },
+        "beta": {
+          "path": "$RUN_ROOT/no-target-precedence/beta",
+          "branch": "fixture/beta",
+          "initial_head": "d38310e7af7574d7ff641f9bff0eb09a2537259b",
+          "final_head": "d38310e7af7574d7ff641f9bff0eb09a2537259b",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "700c16cdb9eb73eedea23ed3d6dc76ef0150cf242e20a0b5c41f5417e13ce8a2",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        }
+      },
+      "subjects": [
+        {
+          "label": "no-precedence",
+          "grade": "PASS",
+          "worktree": "alpha"
+        }
+      ]
+    },
+    "both-integrated": {
+      "base_sha": "1c56367fcd4523b1c47470692562894f546ef093",
+      "source_shas": {
+        "original_alpha": "a802572bd1a79d2f1d1ae944c8943d484d6bd3c5",
+        "original_beta": "80712bf899e169ece976e6aa378bda79a4f5d6e3",
+        "both_integrated_target": "fe55a9e3f1a44647118ce9464ccf1dff7705e147"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/both-integrated/repository",
+          "branch": "main",
+          "initial_head": "fe55a9e3f1a44647118ce9464ccf1dff7705e147",
+          "final_head": "fe55a9e3f1a44647118ce9464ccf1dff7705e147",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "4f6b883009bfcb0dffd366dc0d526fa1c0db8f9f21d09444f2e93a19c76f1444",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "alpha": {
+          "path": "$RUN_ROOT/both-integrated/alpha",
+          "branch": "fixture/alpha",
+          "initial_head": "a802572bd1a79d2f1d1ae944c8943d484d6bd3c5",
+          "final_head": "a802572bd1a79d2f1d1ae944c8943d484d6bd3c5",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "2121eefcd8617c3d54ce39cefec728dbfcf4bc511d1f28ddf3f6ac89812667c1",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "beta": {
+          "path": "$RUN_ROOT/both-integrated/beta",
+          "branch": "fixture/beta",
+          "initial_head": "80712bf899e169ece976e6aa378bda79a4f5d6e3",
+          "final_head": "80712bf899e169ece976e6aa378bda79a4f5d6e3",
+          "initial_clean": true,
+          "final_status": " M .csdd/todo.md",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "bf3ab4c776976ec29d196bd9e35cacac43a16e7374fa4705858753a422360b5b",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex 5a3cd7e..0174d82 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -2,18 +2,19 @@\n \n ## In Progress\n \n+## Ready to Land\n+\n+## Blocked\n+\n - [ ] T-088 Add beta XML export\n   - Owner: Fixture Team\n   - Agent: fixture-author\n-  - Scope: src/beta.py\n+  - Scope: released\n   - Updated: 2026-10-03\n   - Target: main\n   - Base: 1c56367fcd4523b1c47470692562894f546ef093\n-\n-\n-## Ready to Land\n-\n-## Blocked\n+  - Blocked by: Explicit agreement selecting which task retains T-088, followed by an agreed replacement namespace and allocator/counter for the other task.\n+  - Note: Implementation is already integrated; only task-identity reconciliation is blocked. Beta originates on fixture/beta at 80712bf899e169ece976e6aa378bda79a4f5d6e3, while the distinct alpha XML export originates on fixture/alpha at a802572bd1a79d2f1d1ae944c8943d484d6bd3c5. Both commits are ancestors of agreed Target main at fe55a9e3f1a44647118ce9464ccf1dff7705e147, whose .csdd/todo.md retains both completed tasks under T-088. Neither task has unique integration precedence. T-088 remains ambiguous and reserved pending agreement; no replacement ID was allocated. Alpha and main documents remain unchanged.\n \n ## Pending"
+        }
+      },
+      "subjects": [
+        {
+          "label": "both-integrated",
+          "grade": "PASS",
+          "worktree": "beta"
+        }
+      ]
+    },
+    "external-relationships": {
+      "base_sha": "c811fcd703d2851b67fd58d22cde0869d3726433",
+      "source_shas": {
+        "prepared_relationships": "621cfe6ad23ac1282201ca08ef2e23480915ad4b"
+      },
+      "worktrees": {
+        "main": {
+          "path": "$RUN_ROOT/external-relationships/repository",
+          "branch": "main",
+          "initial_head": "621cfe6ad23ac1282201ca08ef2e23480915ad4b",
+          "final_head": "621cfe6ad23ac1282201ca08ef2e23480915ad4b",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "351fac03628dc72258ac7a8f42f35767c536fb4c78ced2534f7a19b21715a7f8",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        },
+        "links-a": {
+          "path": "$RUN_ROOT/external-relationships/links-a",
+          "branch": "fixture/links-a",
+          "initial_head": "621cfe6ad23ac1282201ca08ef2e23480915ad4b",
+          "final_head": "621cfe6ad23ac1282201ca08ef2e23480915ad4b",
+          "initial_clean": true,
+          "final_status": " M .csdd/todo.md",
+          "changed_files": [
+            ".csdd/todo.md"
+          ],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "720906d6b9fdcff96679cf3cd8d12f13d8ba1a8f84545ba59a6ed97d90db04a7",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          },
+          "diff": "diff --git a/.csdd/todo.md b/.csdd/todo.md\nindex 114955d..edd3902 100644\n--- a/.csdd/todo.md\n+++ b/.csdd/todo.md\n@@ -2,12 +2,12 @@\n \n ## In Progress\n \n-- [ ] T-links-001 Prepare export review\n+- [ ] T-links-001 Prepare offline export review\n   - Owner: Fixture Team\n-  - Agent: fixture-author\n+  - Agent: review-subject\n   - Scope: docs/review.md\n   - Updated: 2026-10-03\n-  - Issue: https://github.com/example/offline-export/issues/17, https://linear.app/example/issue/EXP-17/export-review\n+  - Issue: https://linear.app/example/issue/EXP-17/export-review\n \n - [ ] T-links-002 Prepare delimiter review\n   - Owner: Fixture Team"
+        },
+        "links-b": {
+          "path": "$RUN_ROOT/external-relationships/links-b",
+          "branch": "fixture/links-b",
+          "initial_head": "621cfe6ad23ac1282201ca08ef2e23480915ad4b",
+          "final_head": "621cfe6ad23ac1282201ca08ef2e23480915ad4b",
+          "initial_clean": true,
+          "final_status": "",
+          "changed_files": [],
+          "document_sha256": {
+            ".csdd/specs.md": "7d7fb8054b43216f2200f91748e63d8042c14302cd5ce0b868d8dafe258fcc98",
+            ".csdd/decisions.md": "ab31eaab2746ea91304fa04cf0e65ece52c70c094c0248edf95338bd8d99a1e9",
+            ".csdd/todo.md": "351fac03628dc72258ac7a8f42f35767c536fb4c78ced2534f7a19b21715a7f8",
+            ".csdd/handoff.md": "bb83ff77761af89a96c1eff2e71d28e557dcda4944c64b82630062af84db101d"
+          }
+        }
+      },
+      "subjects": [
+        {
+          "label": "relationships",
+          "grade": "PASS",
+          "worktree": "links-a"
+        }
+      ]
+    }
+  },
+  "mechanical": {
+    "legacy": [
+      {
+        "order": [
+          "30a48f92a5cfa80676c3f829108dfe58342b2fc9",
+          "e930fc915cb5da27649a9d0c52e5becfce518d12"
+        ],
+        "exit": 1,
+        "result_tree_sha": "2cdf820760fd58848eb0ae74bcee4167659ef842",
+        "conflict_paths": [
+          ".csdd/handoff.md",
+          ".csdd/todo.md"
+        ],
+        "command": "git merge-tree --write-tree <first-sha> <second-sha>"
+      },
+      {
+        "order": [
+          "e930fc915cb5da27649a9d0c52e5becfce518d12",
+          "30a48f92a5cfa80676c3f829108dfe58342b2fc9"
+        ],
+        "exit": 1,
+        "result_tree_sha": "aaf52799db0ca67df830dde2e0e5d0f2a349b5e1",
+        "conflict_paths": [
+          ".csdd/handoff.md",
+          ".csdd/todo.md"
+        ],
+        "command": "git merge-tree --write-tree <first-sha> <second-sha>"
+      }
+    ],
+    "creation": [
+      {
+        "order": "alpha-then-beta",
+        "heads": [
+          "828d9d988c7b9fa3e0abe3abffc06b4440e12a9c",
+          "d31653444b7e26d8ecb6c15528bf89e0cefa9223"
+        ],
+        "exit_code": 1,
+        "integration_merge_exit": 1,
+        "integration_resolution": "Mechanical explicit TODO resolution concatenated actual subject Pending task blocks; no subject grading or automatic contention policy.",
+        "integration_sha": "e92e8a7fa1b051466d24b4decda172cd7e4d4e06",
+        "integration_clean": true,
+        "result_tree_sha": "488b52be95cff40cd9ee55b3b239fa0f40a3f92a",
+        "conflict_paths": [
+          ".csdd/todo.md"
+        ],
+        "command": "git merge-tree --write-tree <first-sha> <second-sha>"
+      },
+      {
+        "order": "beta-then-alpha",
+        "heads": [
+          "d31653444b7e26d8ecb6c15528bf89e0cefa9223",
+          "828d9d988c7b9fa3e0abe3abffc06b4440e12a9c"
+        ],
+        "exit_code": 1,
+        "integration_merge_exit": 1,
+        "integration_resolution": "Mechanical explicit TODO resolution concatenated actual subject Pending task blocks; no subject grading or automatic contention policy.",
+        "integration_sha": "fdf3eef1bfc82f41aaaf5f61d6e716691ea4c153",
+        "integration_clean": true,
+        "result_tree_sha": "a3cc4d88978a6978d6ea34d7fc0b8ea4cdd13b5d",
+        "conflict_paths": [
+          ".csdd/todo.md"
+        ],
+        "command": "git merge-tree --write-tree <first-sha> <second-sha>"
+      }
+    ],
+    "overlap": [
+      {
+        "exit_code": 1,
+        "result_tree_sha": "8888591a9391e847e85eff41d700fa2c6d037ebe",
+        "conflict_paths": [
+          ".csdd/todo.md",
+          "src/checkout.py"
+        ],
+        "command": "git merge-tree --write-tree <first-sha> <second-sha>"
+      }
+    ]
+  },
+  "limitations": [
+    "Exact model identifier unavailable",
+    "Complete subject tool logs unavailable",
+    "No egress instrumentation",
+    "No implicit invocation coverage",
+    "No cross-harness or cross-model coverage",
+    "No global uniqueness or locking guarantee",
+    "No unseen history coverage",
+    "No unknown-same-task-identity seed",
+    "No CI verification by evaluator"
+  ],
+  "source_commit_timing": "Runtime and subject repository baselines committed before dispatch. First creation/history subjects started with already-written but uncommitted fixture/contract source; fixture-source commit captured during campaign after supplemental relationships seed was added. Orchestrator reports exposed seed/prompt bytes unchanged; all nine baseline heads reproduce. No behavioral reruns."
+}

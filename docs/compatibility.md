@@ -37,8 +37,10 @@ Installer availability ≠ discovery. Discovery ≠ correct protocol behavior.
 ## Evidence-backed matrix
 
 The initial v0.2.1 campaign covered **Codex** and **Cursor**. T-032 adds a
-narrow project-local distribution claim for **Antigravity**; its discovery and
-behavioral dimensions remain **not tested**.
+narrow project-local distribution claim for **Antigravity**. T-033 adds
+narrow distribution claims for **Claude Code** (CLI personal/project install
+and manual layout). Discovery and behavioral dimensions for Antigravity and
+Claude Code remain **not tested**.
 
 Cells below reflect the **T-027 manual campaign** (4/4 PASS) plus retained
 inherited **partial** install/discovery evidence. Procedure, frozen fixtures,
@@ -99,6 +101,29 @@ part of the reason for partial.
 | Representative workflow in an existing CSDD-aware project | **verified** | Fixture B T-901 workflow PASS ([t027-03](../evals/runs/t027-03-cursor-fixture-b.md)). |
 | Relevant Git / branch / worktree visibility | **verified** | Fixture A Git root/status and Fixture B feature branch + parallel `main` worktree observed ([t027-01](../evals/runs/t027-01-cursor-fixture-a.md), [t027-03](../evals/runs/t027-03-cursor-fixture-b.md)). |
 
+### Claude Code
+
+T-033 provenance: Agent Skills CLI `1.5.18`; date `2026-10-11`; Linux isolated
+`HOME` / workspace; source `ValenFelizia/csdd` from GitHub; Node `v22.14.0`;
+skill source mode `CLI-managed copy` (personal and project) plus a separate
+manual copy/symlink layout check; Claude Code harness version and model
+`not recorded`; no Claude Code session was run. Official skill paths cited from
+[Claude Code skills documentation](https://code.claude.com/docs/en/skills)
+(`~/.claude/skills/` personal, `.claude/skills/` project). See
+[`evidence/t-033-claude-code.md`](../evidence/t-033-claude-code.md).
+
+| Dimension | Status | Evidence / notes |
+| --- | --- | --- |
+| Personal install via Agent Skills CLI | **partial** | CLI `1.5.18` with `--agent claude-code -g` installed to `~/.claude/skills/csdd` with required runtime files present. No Claude Code session consumed the copy ([T-033](../evidence/t-033-claude-code.md#personal-cli-install)). |
+| Project install via Agent Skills CLI | **partial** | CLI `1.5.18` with `--agent claude-code` installed to `./.claude/skills/csdd`. No Claude Code session consumed the copy ([T-033](../evidence/t-033-claude-code.md#project-cli-install)). |
+| Manual copy / clone / symlink layout | **partial** | Offline layout check placed a repository snapshot at project and user Claude Code paths (including a symlink) and parsed `SKILL.md` frontmatter (`name: csdd`, description length within limits). Proves layout only ([T-033](../evidence/t-033-claude-code.md#manual-layout-check)). |
+| Discovery in a new session | **not tested** | No Claude Code session was started against an installed copy. |
+| Explicit invocation | **not tested** | No `/csdd` or equivalent request was run in Claude Code. |
+| Implicit activation | **not tested** | No implicit prompt was run in Claude Code. |
+| `/csdd init` or equivalent natural request | **not tested** | Installation and initialization remain separate; no Claude Code initialization run exists. |
+| Representative workflow in an existing CSDD-aware project | **not tested** | No Claude Code behavioral fixture was executed. |
+| Relevant Git / branch / worktree visibility | **not tested** | No Claude Code behavioral fixture was executed. |
+
 ### Antigravity
 
 T-032 provenance: Agent Skills CLI `1.5.20`; date `2026-07-29`; Linux isolated
@@ -147,6 +172,8 @@ and model `not recorded`; no Antigravity session was run. See
   blocker when left **not tested**.
 - Model strings were `not recorded` for campaign subject sessions; Codex
   harness version was `not user-visible`.
+- Claude Code has installer-path and manual-layout evidence only (T-033). No
+  discovery or behavioral session has been recorded.
 - Antigravity has project-local installer-path evidence only. Its current
   documented global path disagrees with the path encoded by Agent Skills CLI
   `1.5.20`, and no discovery or behavioral session has been recorded.
@@ -171,6 +198,7 @@ Record new runs in [`evidence/t-027-compatibility.md`](../evidence/t-027-compati
 - Installation guide: [`docs/installation.md`](installation.md)
 - Installation evidence: [`evidence/t-025-installation.md`](../evidence/t-025-installation.md)
 - Compatibility test contract: [`evidence/t-027-compatibility.md`](../evidence/t-027-compatibility.md)
+- Claude Code distribution evidence: [`evidence/t-033-claude-code.md`](../evidence/t-033-claude-code.md)
 - Antigravity distribution evidence: [`evidence/t-032-antigravity.md`](../evidence/t-032-antigravity.md)
 - Structural validation note: repository `.csdd/specs.md` (Structural validation)
   and CI workflows — mechanical only

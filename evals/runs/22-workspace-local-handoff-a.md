@@ -1,19 +1,19 @@
-# Evaluation Run — Scenario 09 Run A — Workspace-local handoff and v0.2 migration
+# Evaluation Run — Scenario 22 Run A — Workspace-local handoff and v0.2 migration
 
 ## Campaign / invocation
 
-- Scenario: 09 — Workspace-local handoff and v0.2 migration
+- Scenario: 22 — Workspace-local handoff and v0.2 migration
 - Run: A
 - Harness: Antigravity
 - Model: Gemini 3.8 Flash High
 - Invocation: explicit
-- Subject label A: `antigravity-gemini-3.8-flash-high-s09-a-fa`
-- Subject label B: `antigravity-gemini-3.8-flash-high-s09-a-fb`
+- Subject label A: `antigravity-gemini-3.8-flash-high-s22-a-fa`
+- Subject label B: `antigravity-gemini-3.8-flash-high-s22-a-fb`
 - Evaluator: Antigravity Gemini 3.8 Flash High (evaluator session; not the subject)
 - Date: 2026-11-03
 - Evaluation branch: `feat/workspace-local-handoff`
 - Skill commit: `6e93a6a`
-- Frozen contract: `evals/scenarios/09-workspace-local-handoff.md`
+- Frozen contract: `evals/scenarios/22-workspace-local-handoff.md`
 
 ## Fixture commits
 

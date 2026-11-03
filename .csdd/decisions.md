@@ -4,6 +4,7 @@
 
 - Status: accepted
 - Date: 2026-07-10
+- Superseded in part by DEC-009: `.csdd/` stays the location. `todo.md` is no longer a required file.
 
 ### Context
 
@@ -185,35 +186,127 @@ No external blocker can be ruled out from zero completed sessions. Any concrete
 install, initialization, destructive-behavior, or first-use blocker reported by
 an adopter receives priority triage and correction before broader promotion.
 
-## DEC-007 — Keep the handoff workspace-local and the other three documents committed
+## DEC-007 — Coordinate local task identity with bounded namespaces
+
+- Status: accepted
+- Date: 2026-10-03
+
+### Context
+
+Independent worktrees can mint the same sequential task ID from a shared base.
+The human reviewed namespace, random-ID, external-identity, and landing-time
+alternatives and approved namespace allocation plus optional external relations.
+
+### Decision
+
+Adopt the direction specified by [Local task
+identity](../references/document-contracts.md#local-task-identity), keeping that
+contract as the single source of behavioral rules. Coordinate creation locally
+rather than deriving task identity from a tracker or agent identity.
+
+### Rationale and alternatives
+
+Bounded namespaces keep IDs readable and let explicitly divided lines create
+work offline. The trade-off is coordinated allocation and honest limits on
+unseen branches. Random IDs would reduce allocation coordination but were not
+selected; external IDs as canonical identity would weaken local independence;
+landing-time numbering would destabilize references needed before integration.
+
+### Consequences
+
+Existing projects need no renumbering. Optional tracker relations can evolve
+without moving canonical authority. Duplicate repair remains necessary where
+agreements or visibility fail. This decision addresses #41 identity, not #42
+shared-file contention; adopting it does not authorize stronger guarantees,
+runtime infrastructure, or a release.
+
+## DEC-008 — Combine write economy with task-wise landing reconciliation
+
+- Status: accepted
+- Date: 2026-10-04
+
+### Context
+
+Distinct stable IDs do not eliminate shared TODO text contention. The human
+selected fewer unnecessary writes plus per-task reconciliation and authorized
+implementation/evaluation after reviewing the alternatives.
+
+### Decision
+
+Follow [Write economy](../references/document-contracts.md#write-economy) and
+[Task-wise landing reconciliation](../references/document-contracts.md#task-wise-landing-reconciliation)
+as the canonical rules. Keep claims and waiting state visible and preserve the
+current four-document model. Evaluate actual total integration work before
+claiming savings or resolution of #42.
+
+### Rationale and alternatives
+
+Fewer writes alone cannot reconcile divergent task state. Per-task reconciliation
+alone can preserve outcomes but still adds preparation/resolution work. Together,
+minimal updates and coherent closure of compatible verified outcomes can avoid
+redundant state patches. Per-task files would change storage/discovery and remain
+a future option only if evidence warrants another jointly reviewed design.
+
+### Consequences
+
+No migration, central service, lock, automatic tracker synchronization, or custom
+merge driver is required. Safety and meaningful coordination updates take priority
+over lower patch counts. Fresh comparative evaluation must count preparation,
+conflicts, commits, and closure; no universal conflict-free or compatibility claim
+follows from adopting the direction. No merge or release is authorized here.
+
+The tested workload and execution limitations are recorded in the
+[scenario 10 run report](../evals/runs/10-todo-integration-a.md).
+
+## DEC-009 — Default the task surface to board-off
+
+- Status: accepted
+- Date: 2026-10-21
+- Supersedes: the DEC-001 implication that `.csdd/todo.md` is required. DEC-001's location text stays.
+
+### Context
+
+Plan 048 kept a file at `.csdd/todo.md` and treated a missing file as partial, so absence would not be confused with an external tracker. That compatibility promise made the local board the init default. v0.3.0 reverses the default and keeps the two file shapes as opt-in.
+
+### Decision
+
+Fresh `/csdd init` writes `specs.md`, `decisions.md`, and `handoff.md` only. A valid trio with no `.csdd/todo.md` is Current board-off. A local board or an external stub is created only by the phrase fence in [document-contracts.md](../references/document-contracts.md#phrase-fence). This repository stays on an opted-in local board. Do not delete `.csdd/todo.md` to resemble a fresh init.
+
+### Rationale
+
+Absence is a smaller switch than a `Mode: off` file or a fifth document. The deletion hazard is accepted: removing the board classifies as board-off, and doctor does not restore it. Git restore is the undo. Enable writes a blank template and does not resurrect task text.
+
+### Consequences
+
+v0.3.0 is a breaking contract change and is not a tag by itself. Existing valid boards and valid stubs stay valid. `/csdd todo enable` is the only post-init creator, and only from Current board-off. It does not convert shapes and does not delete.
+
+## DEC-010 — Keep the handoff workspace-local and untracked
 
 - Status: accepted
 - Date: 2026-11-02
 
 ### Context
 
-v0.2 treated all four `.csdd/` documents as committed, branch-local state. In
+v0.2 treated `.csdd/` documents as committed, branch-local state. In
 practice the handoff carries transient same-workspace resumption state. Committing
 it created several problems: handoff churn polluted diffs and review, concurrent
 branches conflicted over a file that describes one workspace, and the committed
 copy implied the handoff was a reliable channel between people and machines.
-`specs.md` and `decisions.md` stayed current; `todo.md` stayed committed but is
-increasingly replaced by GitHub issues for the maintainer.
+`specs.md` and `decisions.md` stayed current; `todo.md` became optional under DEC-009.
 
 ### Decision
 
-- Keep `.csdd/specs.md`, `.csdd/todo.md`, and `.csdd/decisions.md` committed.
+- Keep committed documents (`specs.md`, `decisions.md`, and `todo.md` when enabled) committed.
 - Make `.csdd/handoff.md` workspace-local and untracked through a committed
   `.csdd/.gitignore` containing an uncommented `handoff.md` rule.
 - Keep the canonical path `.csdd/handoff.md`. Do not rename existing documents or
   add a fifth one.
-- `/csdd init` creates the three committed documents plus `.csdd/.gitignore` and
-  does not create `handoff.md`.
+- `/csdd init` creates the committed pair `specs.md` and `decisions.md` (plus `todo.md` only
+  if opted-in via phrase fence) and `.csdd/.gitignore`. It does not create `handoff.md`.
 - Treat a tracked handoff as legacy v0.2 state. Offer the v0.2 → v0.3 migration
   explicitly; never untrack, delete, or rewrite it automatically.
 - Default the handoff close action to deletion. Keep one short replaceable
   snapshot only when committed state cannot recover a concrete resumption risk.
-- Keep `todo.md` committed for now. Do not split or localize it.
 
 ### Rationale
 
@@ -227,13 +320,12 @@ of a project's existing ignore rules.
 
 ### Consequences
 
-The release is `0.3.0`. v0.3 reads v0.2 state, but a v0.2 skill may treat a
-missing handoff as partial state and may create or commit one. Migration needs
-`git rm --cached .csdd/handoff.md`; adding the ignore rule alone does not untrack
-the file. `assets/templates/handoff.md` is deleted because the contract owns the
-handoff shape and init no longer creates the file. Structural validation requires
-three primary templates and a `gitignore` template with an active `handoff.md`
-rule.
+v0.3 reads v0.2 state, but a v0.2 skill may treat a missing handoff as partial state
+and may create or commit one. Migration needs `git rm --cached .csdd/handoff.md`;
+adding the ignore rule alone does not untrack the file. `assets/templates/handoff.md`
+is deleted because the contract owns the handoff shape and init no longer creates the
+file. Structural validation requires the primary templates and a `gitignore` template
+with an active `handoff.md` rule.
 
 ### Alternatives Considered
 

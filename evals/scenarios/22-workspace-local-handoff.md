@@ -1,12 +1,12 @@
-# Scenario 09 — Workspace-local handoff and v0.2 migration
+# Scenario 22 — Workspace-local handoff and v0.2 migration
 
 Pre-run evaluation contract. Not a run report.
 
 ## Purpose
 
 Evaluate the v0.3 split between committed CSDD state and the workspace-local
-handoff. T-036 makes `.csdd/handoff.md` untracked and ignored while keeping
-`specs.md`, `todo.md`, and `decisions.md` committed.
+handoff. T-038 makes `.csdd/handoff.md` untracked and ignored while keeping
+committed documents committed.
 
 Validates the changed initialization contract, the v0.2 → v0.3 migration, and
 the delete-by-default handoff close. Does not repeat the broad v0.1 campaign or

@@ -2,7 +2,32 @@
 
 All notable changes to CSDD will be documented in this file.
 
-## [0.3.0] — Unreleased
+## [Unreleased]
+
+## [0.3.0]
+
+Prepared notes since v0.2.1. This version is not tagged in the commit that
+adds these notes.
+
+### Breaking
+
+- `.csdd/handoff.md` is now workspace-local and untracked. A committed
+  `.csdd/.gitignore` excludes it. It holds one short, replaceable snapshot of
+  same-workspace resumption risk and defaults to absent.
+- Fresh `/csdd init` writes `specs.md`, `decisions.md`, and `.csdd/.gitignore`
+  only. `.csdd/todo.md` is opt-in through a whole-line phrase fence. It no
+  longer creates `handoff.md`; the file appears lazily at a real boundary with
+  concrete resumption risk. Doctor does not emit `docs.missing` for an absent
+  `todo.md` or absent `handoff.md`, and does not treat board-off as external
+  mode. An empty local board still reports six counts of zero.
+- `/csdd todo enable` is the only post-init writer, and only from Current
+  board-off. The same shape is unchanged and is not recopied. A different
+  shape, a stub field mismatch, or an invalid existing path is a refusal.
+  Nothing deletes the file. Enable writes a blank template and does not
+  resurrect task text. Restore a deleted board from Git instead of enabling
+  over the restored file.
+- Existing valid local boards and valid stubs stay valid. Do not delete them
+  to match the new init default.
 
 ### Added
 
@@ -10,27 +35,58 @@ All notable changes to CSDD will be documented in this file.
   template, so every clone ignores the workspace-local handoff.
 - `references/migration-v0.2-to-v0.3.md` with detection, untracking,
   verification, compatibility, and rollback.
-- Evaluation scenario 09 for the workspace-local handoff contract and the v0.2
-  migration path.
+- Evaluation scenario 22 (`evals/scenarios/22-workspace-local-handoff.md`) and
+  run report (`evals/runs/22-workspace-local-handoff-a.md`) for the
+  workspace-local handoff contract and the v0.2 migration path.
+- Scenarios 18 and 19, with Run A for each. A session that is not running
+  Poteto mode did not open the composition reference. An instructed delegation
+  named `composer-2.5-fast` instead of the parent model. One Cursor subject
+  each, at skill commit `a6ac88f`. The compatibility matrix is unchanged.
+- Subagent model and effort fallback in `SKILL.md`. When CSDD is loaded and
+  the harness can delegate, the child model matches the subtask. The parent
+  is not inherited unless a harness, orchestrator, or project rule says so.
+  No model catalog. Sessions that never load the skill are unchanged.
+- Adaptive Poteto-mode composition. The skill loads
+  `references/poteto-composition.md` only when the current session is running
+  Poteto mode. Other sessions do not load it and do not change claims,
+  handoffs, hydration, or initialization. On board-off or a stub, that
+  session does not create `.csdd/todo.md` to hold `Agent`.
+- Claude Code distribution docs: personal `~/.claude/skills/csdd/` and project
+  `.claude/skills/csdd/` install via Agent Skills CLI (`--agent claude-code`)
+  and manual copy/clone/symlink; README Supported agents section; T-033
+  distribution evidence. Discovery and behavior remain not tested.
+- Opt-in task surfaces at `.csdd/todo.md`: a six-heading local board and an
+  external stub (`Mode: external`, `Tracker:`, `Next:`). Package templates
+  stay `assets/templates/todo.md` and `assets/templates/todo.external.md`.
+  Mixed shapes stay malformed. Scenarios 16–17, 20, and 21 are the new
+  contracts. Scenarios 16–17 and 20–21 are unexecuted.
+- Compatible local task-ID convention with explicitly coordinated bounded
+  namespaces, optional external issue relationships, and duplicate repair.
+- Offline identity fixtures and a qualitative evaluation scenario.
+- Shared-state write economy and task-wise landing reconciliation, with
+  visible claims and waiting states and combined retention after verified
+  landing.
+- Reproducible offline integration fixtures comparing the baseline, each
+  change separately, and their combination, with separate safety cases.
+- Read-only `/csdd doctor` workflow for diagnosing CSDD state without writing,
+  repairing, or migrating. Structural TODO checks reuse the repository
+  validator's heading and retention rules on a local board. Evaluation
+  contracts are scenarios 11–13 and have not been executed.
+- Read-only `/csdd status` workflow that derives a brief operational snapshot
+  from canonical documents and observable Git state. It does not persist a
+  status file. Current briefs include `task surface:`. Evaluation contracts
+  are scenarios 14–15 and have not been executed.
 
 ### Changed
 
-- `.csdd/handoff.md` is now workspace-local and untracked. It holds one short,
-  replaceable snapshot of same-workspace resumption risk and defaults to absent.
-- `.csdd/specs.md`, `.csdd/todo.md`, and `.csdd/decisions.md` remain committed
-  and are the only cross-person, cross-machine, branch, and worktree transport.
-- `/csdd init` creates three committed documents plus `.csdd/.gitignore`. It no
-  longer creates `handoff.md`; the file appears lazily at a real boundary.
-- "Already initialized" now means the three committed documents plus a valid
-  `.csdd/.gitignore` and current structure. A missing handoff is valid state.
-- Handoff close behavior defaults to deletion. Keep a snapshot only when
-  committed state cannot recover a concrete resumption risk.
 - Branch and worktree reconciliation covers committed documents only. A local
   handoff is never imported from another worktree.
+- Handoff close behavior defaults to deletion. Keep a snapshot only when
+  committed state cannot recover a concrete resumption risk.
 - Protocol gains P12: committed truth and local continuity have different
   transport.
-- Structural validation now requires three primary templates and a `gitignore`
-  template with an uncommented `handoff.md` rule.
+- Structural validation now requires the primary templates, `todo.external.md`,
+  and a `gitignore` template with an uncommented `handoff.md` rule.
 
 ### Removed
 
@@ -45,23 +101,17 @@ All notable changes to CSDD will be documented in this file.
   the ignore rule. Adding the ignore rule alone does not untrack the file.
 - A tracked handoff is legacy state. Agents surface it and require explicit
   migration intent; they do not untrack, delete, or rewrite it silently.
+- To opt in to an in-repo task surface, put a fence line in the init utterance,
+  or run `/csdd todo enable` later on Current board-off. A recognizable v0.1
+  `todo.md` is still transformed in place. It is not deleted.
 
-### Compatibility
+### Adoption
 
-- v0.3 reads v0.2 state. A tracked handoff is recognized as legacy, not as a
-  stale local entry.
-- A v0.2 skill may treat a missing handoff as partial state and may create or
-  commit one. Upgrade the skill before relying on v0.3 behavior in a shared
-  repository.
-- Historical eval runs, field reports, and evidence remain frozen and unchanged.
-
-### Validation
-
-- Unit tests cover the three-template set, the `gitignore` template, and the
-  absence of a committed handoff template.
-- Offline structural validation passes on this checkout.
-- Behavioral scenario 09 is a pre-run contract; no run is recorded in this
-  release.
+- No release is published with these notes.
+- Existing IDs remain valid. No renumbering, fifth primary document, tracker
+  sync service, or runtime service is required. Valid local boards and valid
+  stubs need no migration. Parallel-integration guidance does not create
+  `todo.md`. Savings remain workload-dependent.
 
 ## [0.2.1] — 2026-09-27
 

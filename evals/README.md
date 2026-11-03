@@ -5,7 +5,7 @@ behavior across fresh coding-agent sessions.
 
 ## Scenario contracts vs run reports
 
-- **Pre-run scenario contracts** (for example scenarios 06–09) define fixture
+- **Pre-run scenario contracts** (for example scenarios 06–22) define fixture
   shape, the exact subject prompt, expected observable behavior, critical
   failures, and grading notes. They are not evaluation reports and must not
   contain Observed Behavior, PASS/PARTIAL/FAIL results, or invented run
@@ -16,10 +16,12 @@ behavior across fresh coding-agent sessions.
 - Evaluations 01–05 predate the contract/report split. Their combined historical
   reports now live under `evals/runs/`. No separate frozen pre-run contracts
   exist for those historical evaluations.
-- Scenarios 06–09 are the reusable pre-run contracts under `evals/scenarios/`.
-- Scenario 08 records v0.2 initialization behavior, which created four primary
-  documents. It stays as written; scenario 09 owns v0.3 initialization and the
-  workspace-local handoff migration.
+- Scenarios 06–22 are the reusable pre-run contracts under `evals/scenarios/`.
+  Scenario 08 is the board-off init default. Scenario 20 is local opt-in at
+  init. Scenarios 16–17 are the external stub. Scenario 21 is board-off
+  doctor, status, and post-init enable. Scenario 22 is workspace-local handoff
+  and v0.2 migration. Contracts that assume a local `todo.md` board say they
+  assume an opted-in board, not the init default.
 
 ## Evaluation Roles
 
@@ -111,13 +113,73 @@ Default campaign settings:
 
 Do not add results to `evals/results.md` before execution.
 
-### T-036 v0.3 campaign (scenario 09)
+### T-036 doctor scenarios (11–13)
 
-Scenario 09 uses the same defaults: one harness and one model, explicit
-invocation, one fresh subject per fixture, run A only by default. It has no
-recorded run yet. Do not add a row to `evals/results.md` until one exists.
+Scenarios 11–13 are pre-run contracts for `/csdd doctor`. They are not run
+reports. Do not add them to `evals/results.md` before execution.
+
+### T-037 status scenarios (14–15)
+
+Scenarios 14–15 are pre-run contracts for `/csdd status`. They are not run
+reports. Do not add them to `evals/results.md` before execution.
+
+### Task surface scenarios (08, 16–17, 20–21)
+
+Scenario 08 is board-off init. Scenario 20 is the local fence at init.
+Scenarios 16–17 cover the external stub, including variant D as Current
+board-off. Scenario 21 covers board-off doctor and status, then
+`/csdd todo enable`. They are not run reports. Do not add them to
+`evals/results.md` before execution. Run A of scenario 08 recorded the older
+four-file init and is historical.
+
+### Poteto gate and delegation model (scenarios 18–19)
+
+[Scenario 18](scenarios/18-poteto-inactive.md) checks that a session which is
+not running Poteto mode does not open the composition reference.
+[Scenario 19](scenarios/19-delegate-model.md) checks an instructed delegation.
+The child model must not inherit the parent, and the child prompt must name
+the chosen model. Run A for each is recorded. One subject per scenario. The
+compatibility matrix is unchanged. A session that is running Poteto mode is
+not part of this campaign.
+
+### T-038 workspace-local handoff campaign (scenario 22)
+
+Scenario 22 owns v0.3 initialization without a committed handoff and the
+v0.2 → v0.3 migration path. Run A is recorded in `evals/runs/22-workspace-local-handoff-a.md`.
 
 ## Reporting
+
+### Task identity campaign (scenario 09)
+
+[Task identity](scenarios/09-task-identity.md) evaluates coordinated allocation,
+historical counters, continuity, optional external relationships, explicit
+duplicate repair, and safe stops. Its [offline materializer](fixtures/task_identity.py)
+creates disposable Git repositories and worktrees using Python's standard library
+and Git, without executing or grading agents. Give subjects only their fixture,
+the recorded runtime, and the exact prompt; keep the contract and manifest with
+the evaluator. Use the current harness/model configuration and explicit invocation;
+record available configuration metadata and limitations rather than inventing it.
+Keep shared-TODO conflicts separate from identity grades and rerun only for a
+defect or material ambiguity. The historical compatibility matrix is unchanged.
+
+### TODO integration campaign (scenario 10)
+
+[TODO integration](scenarios/10-todo-integration.md) compares write economy and
+task-wise reconciliation separately and together, in both integration orders,
+plus six safety cases. Its [offline materializer](fixtures/todo_integration.py)
+records reproducible local Git seeds and separate committed runtime snapshots.
+Count preparation, refresh, resolution, landing, and closure work; report safety
+and measured savings separately. One subject per case supports bounded findings,
+not universal conflict or overhead guarantees. Keep the four-document storage
+and historical compatibility matrix unchanged.
+See [Run A](runs/10-todo-integration-a.md) for observed metrics and limitations.
+
+### Recorded Poteto and delegation runs (scenarios 18–19)
+
+[Run A for scenario 18](runs/18-poteto-inactive-a.md) and
+[Run A for scenario 19](runs/19-delegate-model-a.md) are the executed reports
+for the contracts above. They grade tool logs and fixture diffs. They do not
+update the compatibility matrix.
 
 Store structured reports under `evals/runs/`.
 

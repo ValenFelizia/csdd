@@ -9,6 +9,10 @@
 | 06 Git divergence (Run A)     | PASS    | —         | PASS  |
 | 07 Landing / TODO / handoff (Run A) | PASS    | —         | PASS  |
 | 08 Existing repo init (Run A) | PASS    | —         | PASS  |
-| 09 Workspace-local handoff (Run A) | PASS    | —         | PASS  |
+| [09 Local task identity (Run A)](runs/09-task-identity-a.md) | PASS (9 subjects) | — | PASS |
+| [10 TODO integration (Run A)](runs/10-todo-integration-a.md) | PARTIAL (13 PASS, 1 PARTIAL) | — | PARTIAL |
+| [18 Poteto inactive (Run A)](runs/18-poteto-inactive-a.md) | PASS | — | PASS |
+| [19 Delegated model (Run A)](runs/19-delegate-model-a.md) | PASS | — | PASS |
+| [22 Workspace-local handoff (Run A)](runs/22-workspace-local-handoff-a.md) | PASS | — | PASS |
 
 

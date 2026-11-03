@@ -10,6 +10,12 @@ case: a real execution boundary plus a concrete, non-obvious resumption risk.
 Validates surfaces introduced or strengthened by T-018 and T-020. Does not
 repeat the broad v0.1 campaign.
 
+## Applicability
+
+**Opted-in local board.** This fixture already contains a six-heading
+`todo.md`. It is not the init default (scenario 08). Expectations below stay.
+External-stub mode is out of scope (see scenario 17).
+
 ## Behaviors under test
 
 - Target/Base resolution and remote-backed Target refresh before editing

@@ -30,27 +30,45 @@ branches and worktrees. Trivial work keeps a trivial fast path.
 
 ### 1. Install the skill
 
-Install CSDD globally for Codex and Cursor with the Agent Skills CLI:
+```bash
+npx skills add valenfelizia/csdd
+```
+
+The default install puts skill `csdd` into the current project at
+`./.agents/skills/csdd`. The Agent Skills CLI prompts you to pick agents. The
+prompt is `Which agents do you want to install to?`. The install does not create
+project `.csdd/` state.
+
+See the [CSDD package on skills.sh](https://www.skills.sh/valenfelizia/csdd).
+
+### Advanced / per-agent install
+
+Use these when you want a specific harness and scope without the agent picker.
+
+**Codex and Cursor** (global):
 
 ```bash
 npx skills add ValenFelizia/csdd --skill csdd --agent codex cursor -g -y
 ```
 
-This installs the skill under `~/.agents/skills/csdd`. It does **not** create
-or modify `.csdd/` in any project.
+**Claude Code** (personal / global):
 
-For Google Antigravity, run the project-local install from the workspace root:
+```bash
+npx skills add ValenFelizia/csdd --skill csdd --agent claude-code -g -y
+```
+
+**Google Antigravity** (project-local, from the workspace root):
 
 ```bash
 npx skills add ValenFelizia/csdd --skill csdd --agent antigravity -y
 ```
 
-This installs CSDD under `.agents/skills/csdd` for that workspace, which is
-Antigravity's documented workspace skill location. Do not add `-g` to this
-command until the Agent Skills CLI global target agrees with Antigravity's
-current documented global path. See the
-[installation guide](docs/installation.md) for prerequisites, verification,
-updates, and uninstall steps.
+Skill install does **not** create or modify `.csdd/` in any project. Do not
+add `-g` to the Antigravity command until the Agent Skills CLI global target
+agrees with Antigravity's current documented global path. Full commands, manual
+copy, clone, or symlink options, verification, and uninstall steps are in the
+[installation guide](docs/installation.md). See
+[Supported agents](#supported-agents) for the evidence-backed summary.
 
 ### 2. Initialize one repository
 
@@ -72,25 +90,57 @@ Installation and initialization are separate operations:
 
 | Operation | Result |
 | --- | --- |
+| `npx skills add valenfelizia/csdd` | Installs skill `csdd` into the current project (`./.agents/skills/csdd`) and prompts for agents |
 | `npx skills add ... --agent codex cursor -g` | Makes CSDD globally available to Codex and Cursor |
+| `npx skills add ... --agent claude-code -g` | Makes CSDD available to Claude Code under `~/.claude/skills/csdd` |
 | `npx skills add ... --agent antigravity` | Makes CSDD available to Antigravity in the current workspace |
 | `/csdd init` | Creates CSDD state in the current repository |
 
 Initialization is Absent-only: it creates state only when the target repository
-does not already contain `.csdd/`. A successful run creates exactly:
+does not already contain `.csdd/`. A successful run with no fence line creates
+exactly:
 
 ```text
 your-project/
 └── .csdd/
     ├── .gitignore
     ├── specs.md
-    ├── todo.md
     └── decisions.md
 ```
 
 It does not create `handoff.md`. That file is optional, workspace-local, and
 ignored by Git. An agent creates it only when this workspace reaches a real
 execution boundary with concrete resumption risk.
+
+That tree is Current with `task surface: board-off`. `.csdd/todo.md` is not
+created. A sentence about GitHub, Linear, or issues does not create it.
+
+CSDD’s value is how agents decide and which documents they load, not an
+in-repo board. In a project that already uses git with Issues and pull
+requests, a checked-in `todo.md` is a second backlog that forces constant
+rebases. Leave the surface board-off there. Opt in when a solo repo has no
+issue tracker and you want in-repo claims (`Owner`, `Agent`, `Scope`), or
+when you want a stub that points agents at an external tracker with
+`Tracker:` and `Next:`.
+
+Opt in during the same init, or later on a Current board-off tree, with one
+whole line from this fence. The contract is
+[Phrase fence](references/document-contracts.md#phrase-fence).
+
+```text
+/csdd todo enable local board
+csdd todo enable local board
+/csdd todo enable external stub
+csdd todo enable external stub
+```
+
+The local phrase also writes `.csdd/todo.md` from
+[`assets/templates/todo.md`](assets/templates/todo.md): six headings and
+`Retention: 5`, no tasks. The external phrase also needs one whole-line
+`Tracker:` and one whole-line `Next:`, and writes the
+[external-tracker stub](references/document-contracts.md#external-tracker-stub).
+A second init does not add the file. `/csdd todo enable` is the later writer,
+and only while the surface is still board-off.
 
 ### 3. Start using durable project state
 
@@ -107,20 +157,37 @@ active work should be recorded, without inventing missing information.
 The initialized documents may stay sparse. Structural success does not require
 the agent to guess requirements, decisions, tasks, or handoff state.
 
-As a manual fallback, copy `specs.md`, `todo.md`, and `decisions.md` from
+As a manual fallback, copy `specs.md` and `decisions.md` from
 [`assets/templates`](assets/templates) into a repository-level `.csdd/`
 directory. Also copy `assets/templates/gitignore` to `.csdd/.gitignore` so the
-local handoff stays untracked. Prefer `/csdd init` when an agent can run the
-adoption workflow.
+local handoff stays untracked. Copy `todo.md`, or copy `todo.external.md` and
+rename it to `todo.md` after replacing `Tracker:` and `Next:`, only when
+opting in. Prefer `/csdd init` when an agent can run the adoption workflow.
+
+### 4. Inspect existing state
+
+When CSDD state may already exist, ask for a read-only diagnosis or a derived
+snapshot:
+
+```text
+/csdd doctor
+/csdd status
+```
+
+`/csdd doctor` reports classification, evidence-backed findings, and one next
+step. `/csdd status` summarizes what is active and points back at the canonical
+files. Neither initializes, repairs, migrates, or edits files. If status
+cannot count the state reliably, it says so and recommends doctor. The
+contracts are in [read-only-workflows.md](references/read-only-workflows.md).
 
 ## The documents
 
 | Document | Transport | Canonical responsibility |
 | --- | --- | --- |
-| [`specs.md`](assets/templates/specs.md) | Committed | Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
-| [`todo.md`](assets/templates/todo.md) | Committed | Current operational coordination: tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history |
-| [`decisions.md`](assets/templates/decisions.md) | Committed | Accepted directions whose rationale, alternatives, or consequences should survive the session |
-| `handoff.md` | Workspace-local, ignored | One short current snapshot of resumable state that a later agent in the same workspace would otherwise misunderstand, repeat, or lose |
+| [`specs.md`](assets/templates/specs.md) | Committed | Required. Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
+| [`decisions.md`](assets/templates/decisions.md) | Committed | Required. Accepted directions whose rationale, alternatives, or consequences should survive the session |
+| `handoff.md` | Workspace-local, ignored | Optional. One short current snapshot of resumable state that a later agent in the same workspace would otherwise misunderstand, repeat, or lose. Not a backlog when `todo.md` is absent |
+| [`todo.md`](assets/templates/todo.md) | Committed | Optional. Absent by default (board-off). Opt-in local board: tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history. Opt-in external stub ([`todo.external.md`](assets/templates/todo.external.md)): in-repo `Mode: external`, `Tracker:`, and `Next:` when an external tracker owns the backlog |
 
 The handoff is not a collaboration channel. Anything another person, machine,
 branch, or worktree must continue belongs in a committed document, commit, or
@@ -149,10 +216,58 @@ CSDD does not provide:
 - a guarantee that every agent observes every branch or worktree;
 - a substitute for tests, code review, or human project ownership.
 
+## Supported agents
+
+CSDD ships as an [Agent Skills](https://agentskills.io/specification)-compatible
+skill (`SKILL.md` with `name` / `description`, optional `license`). Compatibility
+is dimensional (distribution ≠ discovery ≠ behavior). Do not treat this table as
+proof that CSDD “works everywhere.”
+
+| Agent | Recommended install | Skill location | Distribution | Discovery | Behavior |
+| --- | --- | --- | --- | --- | --- |
+| Codex | `npx skills add ValenFelizia/csdd --skill csdd --agent codex cursor -g -y` | `~/.agents/skills/csdd` | **partial** | **partial** | **verified** (explicit / init / workflow) |
+| Cursor | same command as Codex | `~/.agents/skills/csdd` | **partial** | **partial** | **verified** (explicit / init / workflow) |
+| Claude Code | `npx skills add ValenFelizia/csdd --skill csdd --agent claude-code -g -y` | `~/.claude/skills/csdd` (personal) or `.claude/skills/csdd` (project) | **partial** | **not tested** | **not tested** |
+| Google Antigravity | `npx skills add ValenFelizia/csdd --skill csdd --agent antigravity -y` | `.agents/skills/csdd` (project) | **partial** | **not tested** | **not tested** |
+
+### Claude Code notes
+
+Claude Code discovers skills from personal `~/.claude/skills/<name>/` and
+project `.claude/skills/<name>/` ([Claude Code skills docs](https://code.claude.com/docs/en/skills)).
+CSDD’s frontmatter `name: csdd` matches the install directory name, so `/csdd`
+is the expected command once a session loads the skill.
+
+Manual install (copy, clone, or symlink) is also supported by Claude Code:
+
+```bash
+# Personal (all projects on this machine)
+git clone https://github.com/ValenFelizia/csdd.git ~/.claude/skills/csdd
+# or: cp -a /path/to/csdd ~/.claude/skills/csdd
+# or: ln -s /path/to/csdd ~/.claude/skills/csdd
+
+# Project (commit for the team)
+git clone https://github.com/ValenFelizia/csdd.git .claude/skills/csdd
+```
+
+A project `CLAUDE.md` is not required for skill discovery. Prefer installing the
+skill over pasting CSDD into `CLAUDE.md`.
+
+### Agent Skills CLI
+
+The short command and the per-agent commands are in
+[Quick start](#1-install-the-skill). Use
+[Advanced / per-agent install](#advanced-per-agent-install) when you want a
+specific harness. See the
+[installation guide](docs/installation.md) and the
+[Claude Code distribution evidence](evidence/t-033-claude-code.md).
+
+Full dimensional matrix, provenance, and limitations:
+[compatibility matrix](docs/compatibility.md).
+
 ## Compatibility and validation
 
 Compatibility is still a work in progress. Codex and Cursor have behavioral
-evidence; Antigravity has an initial project-local installation path but no
+evidence; Claude Code and Antigravity have installation-path evidence but no
 recorded discovery or behavioral run yet. Compatibility is dimensional rather
 than a binary supported/unsupported label. See the
 [compatibility matrix](docs/compatibility.md) for current evidence, limitations,
@@ -164,11 +279,12 @@ CSDD is experimental public-beta software. The latest published version is
 shown by the release badge above; release history is recorded in
 [`changelog.md`](changelog.md).
 
-The v0.3 protocol keeps `specs.md`, `todo.md`, and `decisions.md` committed and
-makes `handoff.md` workspace-local and untracked. It includes a Git-aware task
-lifecycle, six canonical TODO states with bounded retention, boundary-driven
-replaceable handoffs, an Absent-only initialization workflow, and three
-committed primary templates.
+The v0.3 protocol keeps `specs.md`, `decisions.md`, and opted-in `todo.md`
+committed and makes `handoff.md` workspace-local and untracked. It includes a
+Git-aware task lifecycle, six canonical TODO states on an opted-in local board
+with bounded retention, boundary-driven replaceable handoffs, an Absent-only
+initialization workflow, and templates for the required committed documents plus
+the opt-in task surface. Fresh init leaves the task surface board-off.
 
 Before `1.0`, document contracts and workflows may still evolve through
 versioned releases. Current compatibility claims are intentionally narrow and
@@ -180,6 +296,7 @@ evidence-backed.
 - [Architecture and product boundaries](docs/architecture.md)
 - [Installation and lifecycle](docs/installation.md)
 - [Agent compatibility matrix](docs/compatibility.md)
+- [Example: session resume and adaptive hydration](docs/examples/session-resume.md)
 - [Full protocol](references/protocol.md)
 - [Document contracts](references/document-contracts.md)
 - [Evaluation results](evals/results.md)
@@ -215,6 +332,27 @@ A trivial label change should not require reading project history. A stale
 claim, architectural migration, or phase closure should not proceed without
 relevant project state.
 
+### Before / after: session resume
+
+Same task: a fresh agent must finish partially completed password-reset work
+with no prior conversation.
+
+| | Without durable state (problem CSDD targets) | With CSDD ([run 02](evals/runs/02-session-resume.md), PASS) |
+| --- | --- | --- |
+| Continuity | Generation-done / consumption-left lives only in a dead chat — easy to redo or miss | Handoff + TODO record the boundary; subject preserved generation work |
+| Context loaded | Broad rediscovery, or loading “everything” hoping something sticks | Level 2 on that opted-in board: read `todo.md`, `handoff.md`, `specs.md`, and `decisions.md` only |
+| Decisions | Accepted storage choice can be reinvented | Reused the accepted SHA-256 hashed-storage decision |
+| Outcome | Repeat or contradict prior work | Consumption + rejection cases implemented; **five tests passed**; scope released; obsolete handoff removed |
+
+Trivial work stays cheap: a button-label change stayed Level 0 and **did not
+read any `.csdd/` document contents**
+([run 01](evals/runs/01-trivial-edit.md)).
+
+Sources: [`evals/runs/02-session-resume.md`](evals/runs/02-session-resume.md),
+[`evals/runs/01-trivial-edit.md`](evals/runs/01-trivial-edit.md),
+[`evals/results.md`](evals/results.md). Longer walkthrough:
+[`docs/examples/session-resume.md`](docs/examples/session-resume.md).
+
 ## Task and claim semantics
 
 CSDD distinguishes:
@@ -231,10 +369,34 @@ ignored silently.
 
 Completed tasks release or remove their write scopes.
 
+## Local task IDs and optional issue links
+
+New tracked tasks use IDs such as `T-auth-reset-001`: explicitly agreed
+namespaces separate independent lines of task creation without requiring an
+issue tracker or network connection. Continuing a task preserves its ID.
+Optional `Issue:` URLs relate a task to GitHub, Linear, or another tracker;
+they do not become its identity or enable automatic synchronization.
+
+Existing stable IDs remain valid and can coexist with new IDs. Adoption does
+not renumber tasks or migrate project state. Retention does not release IDs;
+missing counter history requires a fresh coordinated namespace rather than
+guessing. See the [identity contract](references/document-contracts.md#local-task-identity)
+for allocation and duplicate reconciliation. This addition is unreleased;
+it does not change compatibility claims recorded for older skill commits.
+
 ## Branches and worktrees
 
-`specs.md`, `todo.md`, and `decisions.md` are version-controlled and therefore
-branch-local.
+Parallel PRs can contend on TODO text even when their task IDs and code scopes
+are distinct. Avoid patches for reads/unchanged checks and keep necessary
+claims and waiting states visible. Reconcile relevant task changes against the
+current target; after landing, close compatible known outcomes coherently and
+apply retention to combined state. See [write economy](references/document-contracts.md#write-economy)
+and [task-wise landing reconciliation](references/document-contracts.md#task-wise-landing-reconciliation).
+The layout and Git-aware lifecycle are unchanged. Git conflicts and preparation
+still count as integration work; savings depend on the workload and evaluation.
+
+`specs.md`, `decisions.md`, and an opted-in `todo.md` are version-controlled and
+therefore branch-local.
 
 The current worktree is the operational baseline, but it is not proof that no
 relevant activity exists elsewhere.
@@ -310,7 +472,9 @@ When completed:
 ├── docs/
 │   ├── architecture.md
 │   ├── installation.md
-│   └── compatibility.md
+│   ├── compatibility.md
+│   └── examples/
+│       └── session-resume.md
 ├── assets/
 │   └── templates/
 ├── references/
@@ -330,6 +494,7 @@ When completed:
 - [`SKILL.md`](SKILL.md) is the operational router.
 - [`docs/installation.md`](docs/installation.md) is the global skill installation guide.
 - [`docs/compatibility.md`](docs/compatibility.md) is the canonical dimensional compatibility matrix.
+- [`docs/examples/session-resume.md`](docs/examples/session-resume.md) walks through adaptive hydration on a recorded resume eval.
 - [`references/protocol.md`](references/protocol.md) defines the full protocol.
 - [`references/document-contracts.md`](references/document-contracts.md) defines document semantics.
 - [`references/migration-v0.2-to-v0.3.md`](references/migration-v0.2-to-v0.3.md) covers the workspace-local handoff migration.
@@ -370,20 +535,29 @@ python scripts/validate_repository.py
 ```
 
 Structural validation verifies machine-checkable repository contracts such as
-`SKILL.md` frontmatter, the T-025 runtime file boundary, the three committed
-primary templates, the `gitignore` template and its `handoff.md` rule, canonical
-`todo.md` template headings and Retention, and relative Markdown links. It is
-deterministic and does not use the network or model output. Passing these checks
-does not replace the qualitative evaluations in [`evals/`](evals).
+`SKILL.md` frontmatter, the T-025 runtime file boundary, the primary templates
+plus `todo.external.md`, the `gitignore` template and its `handoff.md` rule,
+local-board `todo.md` headings and Retention, external stub fields and
+mixed-shape rejection, and relative Markdown links. It is deterministic and does
+not use the network or model output. Passing these checks does not replace the
+qualitative evaluations in [`evals/`](evals).
 
 ## Versioning
 
-CSDD follows semantic versioning.
+CSDD follows semantic versioning. Before 1.0, a minor version may change
+required init behavior.
 
 - patch releases clarify wording or fix non-breaking protocol defects;
 - minor releases add compatible rules, document fields, or workflows;
 - major releases may change canonical document contracts or required behavior.
 
+v0.3.0 changes the init patch and the Current class. Fresh init does not
+write `.csdd/todo.md` and does not write `.csdd/handoff.md`. A valid tree with
+`todo.md` absent is Current board-off. `.csdd/.gitignore` ignores `handoff.md` so
+local continuity stays untracked. Existing valid local boards and valid stubs
+stay valid. Re-enable with a fence line. Enable writes a blank template and does
+not restore deleted task text. Restore that file from Git instead.
+
 ## License
 
-See [`LICENSE`](LICENSE).
+[MIT License](LICENSE). Copyright (c) 2026 Valentín Felizia.

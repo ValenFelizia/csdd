@@ -6,8 +6,8 @@ safe orientation, resumption, and Git-aware coordination with context and proces
 proportional to the task.
 
 This is the canonical contributor design policy for reviewing product scope and
-optional integrations. It consolidates existing intent; it does not change the
-v0.3 runtime contract, add a project-state document, or require agents to load
+optional integrations. It consolidates existing intent. It does not replace
+the runtime contract, add a project-state document, or require agents to load
 this file during ordinary work. Runtime behavior remains defined by the
 [protocol](../references/protocol.md) and
 [document contracts](../references/document-contracts.md).
@@ -21,7 +21,7 @@ this file during ordinary work. Runtime behavior remains defined by the
 2. **Repository-local truth.** Committed canonical state travels with the
    repository and can be inspected through files, diffs, commits, branches, and
    worktrees. Integrations must not silently move that authority into a service.
-   The three committed documents retain their
+   `specs.md`, `decisions.md`, and an opted-in `todo.md` retain their
    [distinct responsibilities](../references/protocol.md#core-project-state-documents).
    The workspace-local handoff is continuity state, not canonical truth; it
    never carries anything another person or machine must continue.
@@ -81,7 +81,7 @@ maintenance changes do not need a separate design document or full checklist.
 1. What concrete CSDD operational failure is observed, and what dogfooding,
    evaluation, or user evidence supports it? Separate observations from
    hypotheses and untested benefits.
-2. Why are the existing three committed documents and workflows insufficient?
+2. Why are the existing committed documents and workflows insufficient?
    Compare the smallest credible alternatives, including using an external
    specialized tool.
 3. Where does canonical truth live, and can ordinary repository files still
@@ -92,8 +92,9 @@ maintenance changes do not need a separate design document or full checklist.
 5. What context, coordination, and maintenance cost does it add to trivial,
    local, and collaborative work? Does it improve explicit coordination or add
    general memory/retrieval capability?
-6. If optional, does it preserve the same canonical semantics with and without
-   the integration, rather than creating incompatible CSDD modes?
+6. If optional, does it stay inside the one task-surface contract (board-off,
+   local, or external) rather than a second protocol with different specs,
+   decisions, or handoff rules?
 7. Which current non-guarantees, contracts, versions, and migrations are
    affected? Do not introduce stronger guarantees or structural changes by
    implication; use the [versioning policy](../README.md#versioning).
@@ -120,7 +121,12 @@ it should not become a separately maintained task store. A memory system may
 retrieve CSDD state, but stale retrieved state does not authorize overwriting
 the current repository.
 
-This policy leaves task-ID allocation, external issue aliases, and parallel-PR
-integration mechanisms open to separate design and evaluation. It does not
-select a solution for [#41](https://github.com/ValenFelizia/csdd/issues/41) or
-[#42](https://github.com/ValenFelizia/csdd/issues/42).
+The accepted direction for [#41](https://github.com/ValenFelizia/csdd/issues/41)
+is defined by the [local task identity contract](../references/document-contracts.md#local-task-identity):
+bounded namespaces with optional external relationships. The accepted direction
+for [#42](https://github.com/ValenFelizia/csdd/issues/42) combines
+[write economy](../references/document-contracts.md#write-economy) with
+[task-wise landing reconciliation](../references/document-contracts.md#task-wise-landing-reconciliation).
+Its measured scope is recorded in the [scenario 10 run report](../evals/runs/10-todo-integration-a.md);
+neither direction introduces
+stronger coordination guarantees or adds a fifth primary document.
