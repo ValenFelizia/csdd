@@ -9,5 +9,6 @@
 | 06 Git divergence (Run A)     | PASS    | —         | PASS  |
 | 07 Landing / TODO / handoff (Run A) | PASS    | —         | PASS  |
 | 08 Existing repo init (Run A) | PASS    | —         | PASS  |
+| 09 Workspace-local handoff (Run A) | PASS    | —         | PASS  |
 
 
