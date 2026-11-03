@@ -4,6 +4,17 @@
 
 ## Ready to Land
 
+- [ ] T-038 — Make `.csdd/handoff.md` workspace-local and untracked for v0.3.0
+  - Owner: valen
+  - Agent: antigravity/gemini-3.8-flash-high
+  - Scope: `SKILL.md`, `references/protocol.md`, `references/document-contracts.md`, `references/migration-v0.2-to-v0.3.md`, `assets/templates/`, `.csdd/.gitignore`, `scripts/validate_repository.py`, `tests/test_repository_validation.py`, `README.md`, `changelog.md`, `CONTRIBUTING.md`, `docs/architecture.md`, `docs/installation.md`, `evals/scenarios/22-workspace-local-handoff.md`, `evals/runs/22-workspace-local-handoff-a.md`, `evals/README.md`, `evals/results.md`, `.csdd/specs.md`, `.csdd/decisions.md`, `.csdd/todo.md`
+  - Target: `main`
+  - Base: `4bf868e`
+  - Updated: 2026-11-03
+  - Landing: `feat/workspace-local-handoff` → `main`; draft PR #62
+  - Verification: 22 unit tests PASS; offline repository validator PASS; git check-ignore confirms .csdd/handoff.md is ignored; scenario 22 run A PASS.
+  - Note: Implements DEC-010. Adds `.csdd/.gitignore`, deletes `assets/templates/handoff.md`, adds the v0.2 → v0.3 migration path, adds scenario 22, and untracks this repository's own handoff.
+
 - [ ] T-behavior-001 — Record the Poteto-inactive and delegated-model runs
   - Owner: valen
   - Agent: cursor/behavior-eval

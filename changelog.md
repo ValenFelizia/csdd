@@ -11,11 +11,15 @@ adds these notes.
 
 ### Breaking
 
-- Fresh `/csdd init` writes `specs.md`, `decisions.md`, and `handoff.md` only.
-  `.csdd/todo.md` is opt-in through a whole-line phrase fence. A valid trio
-  with that path absent is Current board-off. Doctor does not emit
-  `docs.missing` for it and does not treat it as external mode. An empty
-  local board still reports six counts of zero.
+- `.csdd/handoff.md` is now workspace-local and untracked. A committed
+  `.csdd/.gitignore` excludes it. It holds one short, replaceable snapshot of
+  same-workspace resumption risk and defaults to absent.
+- Fresh `/csdd init` writes `specs.md`, `decisions.md`, and `.csdd/.gitignore`
+  only. `.csdd/todo.md` is opt-in through a whole-line phrase fence. It no
+  longer creates `handoff.md`; the file appears lazily at a real boundary with
+  concrete resumption risk. Doctor does not emit `docs.missing` for an absent
+  `todo.md` or absent `handoff.md`, and does not treat board-off as external
+  mode. An empty local board still reports six counts of zero.
 - `/csdd todo enable` is the only post-init writer, and only from Current
   board-off. The same shape is unchanged and is not recopied. A different
   shape, a stub field mismatch, or an invalid existing path is a refusal.
@@ -27,6 +31,13 @@ adds these notes.
 
 ### Added
 
+- Committed `.csdd/.gitignore` policy and matching `assets/templates/gitignore`
+  template, so every clone ignores the workspace-local handoff.
+- `references/migration-v0.2-to-v0.3.md` with detection, untracking,
+  verification, compatibility, and rollback.
+- Evaluation scenario 22 (`evals/scenarios/22-workspace-local-handoff.md`) and
+  run report (`evals/runs/22-workspace-local-handoff-a.md`) for the
+  workspace-local handoff contract and the v0.2 migration path.
 - Scenarios 18 and 19, with Run A for each. A session that is not running
   Poteto mode did not open the composition reference. An instructed delegation
   named `composer-2.5-fast` instead of the parent model. One Cursor subject
@@ -66,10 +77,32 @@ adds these notes.
   status file. Current briefs include `task surface:`. Evaluation contracts
   are scenarios 14–15 and have not been executed.
 
+### Changed
+
+- Branch and worktree reconciliation covers committed documents only. A local
+  handoff is never imported from another worktree.
+- Handoff close behavior defaults to deletion. Keep a snapshot only when
+  committed state cannot recover a concrete resumption risk.
+- Protocol gains P12: committed truth and local continuity have different
+  transport.
+- Structural validation now requires the primary templates, `todo.external.md`,
+  and a `gitignore` template with an uncommented `handoff.md` rule.
+
+### Removed
+
+- `assets/templates/handoff.md`. The contract owns the handoff shape; init does
+  not create the file.
+
 ### Migration
 
-- To opt in, put a fence line in the init utterance, or run
-  `/csdd todo enable` later on Current board-off. A recognizable v0.1
+- Run the v0.2 → v0.3 migration when `git ls-files .csdd/handoff.md` prints a
+  path or the project lacks `.csdd/.gitignore`.
+- Untrack with `git rm --cached .csdd/handoff.md` and commit that deletion with
+  the ignore rule. Adding the ignore rule alone does not untrack the file.
+- A tracked handoff is legacy state. Agents surface it and require explicit
+  migration intent; they do not untrack, delete, or rewrite it silently.
+- To opt in to an in-repo task surface, put a fence line in the init utterance,
+  or run `/csdd todo enable` later on Current board-off. A recognizable v0.1
   `todo.md` is still transformed in place. It is not deleted.
 
 ### Adoption

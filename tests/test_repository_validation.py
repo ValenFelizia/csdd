@@ -65,7 +65,7 @@ Next: open Issues labeled `ready`
 
 VALID_SPECS = "# Specifications\n\nSummary.\n"
 VALID_DECISIONS = "# Decisions\n\nNone yet.\n"
-VALID_HANDOFF = "# Handoff\n\nNone.\n"
+VALID_GITIGNORE = "# Local handoff only.\nhandoff.md\n"
 VALID_PROTOCOL = "# Protocol\n\n## Adaptive context hydration\n\nDetails.\n"
 VALID_CONTRACTS = (
     "# Document contracts\n\n"
@@ -85,11 +85,12 @@ def build_valid_repo(root: Path) -> None:
     write(root / "references" / "protocol.md", VALID_PROTOCOL)
     write(root / "references" / "document-contracts.md", VALID_CONTRACTS)
     write(root / "references" / "migration-v0.1-to-v0.2.md", VALID_MIGRATION)
+    write(root / "references" / "migration-v0.2-to-v0.3.md", VALID_MIGRATION)
     write(root / "assets" / "templates" / "specs.md", VALID_SPECS)
     write(root / "assets" / "templates" / "todo.md", VALID_TODO)
     write(root / "assets" / "templates" / "todo.external.md", VALID_TODO_EXTERNAL)
     write(root / "assets" / "templates" / "decisions.md", VALID_DECISIONS)
-    write(root / "assets" / "templates" / "handoff.md", VALID_HANDOFF)
+    write(root / "assets" / "templates" / "gitignore", VALID_GITIGNORE)
     write(
         root / "README.md",
         "# CSDD\n\nSee [protocol](references/protocol.md#adaptive-context-hydration).\n",
@@ -336,6 +337,47 @@ class RepositoryValidationTests(unittest.TestCase):
                 diagnostics, "templates.primary.extra", "backlog.md"
             )
 
+    def test_handoff_template_is_not_a_primary_template(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            write(root / "assets" / "templates" / "handoff.md", "# Handoff\n")
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assert_has_rule(
+                diagnostics, "templates.primary.extra", "handoff.md"
+            )
+
+    def test_gitignore_template_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            (root / "assets" / "templates" / "gitignore").unlink()
+            diagnostics = VALIDATOR.validate_repository(root)
+            self.assert_has_rule(
+                diagnostics, "templates.gitignore.missing", "gitignore"
+            )
+
+    def test_gitignore_template_must_ignore_handoff(self):
+        cases = (
+            ("# handoff.md\n", "comment only"),
+            ("node_modules/\n", "unrelated rule"),
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            build_valid_repo(root)
+            for content, label in cases:
+                with self.subTest(case=label):
+                    write(
+                        root / "assets" / "templates" / "gitignore",
+                        content,
+                    )
+                    diagnostics = VALIDATOR.validate_repository(root)
+                    self.assert_has_rule(
+                        diagnostics,
+                        "templates.gitignore.handoff",
+                        "gitignore",
+                    )
+
     def test_external_stub_template_required_and_valid(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -444,7 +486,6 @@ class RepositoryValidationTests(unittest.TestCase):
                 "todo_external_template.mode.mixed",
                 "todo.external.md",
             )
-
     def test_links_inside_fenced_code_are_ignored(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

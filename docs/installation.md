@@ -266,7 +266,7 @@ captured transcript.
 | `npx skills add ... --agent claude-code -g` | Makes CSDD available to Claude Code personally | `~/.claude/skills/csdd` |
 | `npx skills add ... --agent claude-code` | Makes CSDD available to Claude Code in one repository | `<workspace>/.claude/skills/csdd` |
 | `npx skills add ... --agent antigravity` | Makes CSDD available to Antigravity in one workspace | `<workspace>/.agents/skills/csdd` |
-| `/csdd init` | Creates `specs.md`, `decisions.md`, and `handoff.md`. A fence line also creates `todo.md` | `<project>/.csdd/` |
+| `/csdd init` | Creates `specs.md`, `decisions.md`, and `.csdd/.gitignore`. A fence line also creates `todo.md` | `<project>/.csdd/` |
 
 `/csdd init` never installs the skill. Skill install never initializes a
 project. After the skill is installed, open any repository and ask the agent to

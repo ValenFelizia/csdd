@@ -279,3 +279,60 @@ Absence is a smaller switch than a `Mode: off` file or a fifth document. The del
 ### Consequences
 
 v0.3.0 is a breaking contract change and is not a tag by itself. Existing valid boards and valid stubs stay valid. `/csdd todo enable` is the only post-init creator, and only from Current board-off. It does not convert shapes and does not delete.
+
+## DEC-010 — Keep the handoff workspace-local and untracked
+
+- Status: accepted
+- Date: 2026-11-02
+
+### Context
+
+v0.2 treated `.csdd/` documents as committed, branch-local state. In
+practice the handoff carries transient same-workspace resumption state. Committing
+it created several problems: handoff churn polluted diffs and review, concurrent
+branches conflicted over a file that describes one workspace, and the committed
+copy implied the handoff was a reliable channel between people and machines.
+`specs.md` and `decisions.md` stayed current; `todo.md` became optional under DEC-009.
+
+### Decision
+
+- Keep committed documents (`specs.md`, `decisions.md`, and `todo.md` when enabled) committed.
+- Make `.csdd/handoff.md` workspace-local and untracked through a committed
+  `.csdd/.gitignore` containing an uncommented `handoff.md` rule.
+- Keep the canonical path `.csdd/handoff.md`. Do not rename existing documents or
+  add a fifth one.
+- `/csdd init` creates the committed pair `specs.md` and `decisions.md` (plus `todo.md` only
+  if opted-in via phrase fence) and `.csdd/.gitignore`. It does not create `handoff.md`.
+- Treat a tracked handoff as legacy v0.2 state. Offer the v0.2 → v0.3 migration
+  explicitly; never untrack, delete, or rewrite it automatically.
+- Default the handoff close action to deletion. Keep one short replaceable
+  snapshot only when committed state cannot recover a concrete resumption risk.
+
+### Rationale
+
+The split follows transport, not document count. Committed documents are the
+only surfaces that survive clones, branches, worktrees, and machines. The handoff
+is one workspace's current snapshot and should not pretend to be shared truth.
+Removing it from Git eliminates review noise and cross-branch conflicts while
+preserving same-workspace continuity. Adding `.csdd/.gitignore` rather than a
+root `.gitignore` keeps the policy local to the state directory and independent
+of a project's existing ignore rules.
+
+### Consequences
+
+v0.3 reads v0.2 state, but a v0.2 skill may treat a missing handoff as partial state
+and may create or commit one. Migration needs `git rm --cached .csdd/handoff.md`;
+adding the ignore rule alone does not untrack the file. `assets/templates/handoff.md`
+is deleted because the contract owns the handoff shape and init no longer creates the
+file. Structural validation requires the primary templates and a `gitignore` template
+with an active `handoff.md` rule.
+
+### Alternatives Considered
+
+Keeping the handoff committed preserves cross-person transfer but keeps the
+conflict and review costs that motivated the change. Deleting the handoff
+entirely removes same-workspace continuity, which the field evidence still
+supports. A root `.gitignore` rule was rejected because it would not travel with
+`.csdd/` and could collide with project policy. Auto-migrating tracked handoffs
+during `init` was rejected because it is destructive and violates the init
+contract.

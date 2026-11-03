@@ -17,6 +17,8 @@ The authoritative conceptual protocol is defined in:
 - CSDD MUST use `.csdd/` as the canonical project-state location in v0.
 - CSDD MUST support adaptive context hydration.
 - CSDD MUST preserve distinct responsibilities for specifications, tasks, decisions, and handoffs.
+- CSDD MUST keep `specs.md`, `todo.md`, and `decisions.md` committed and MUST treat `handoff.md` as workspace-local and untracked.
+- CSDD MUST NOT use the local handoff as transport between people, machines, branches, or worktrees.
 - CSDD MUST avoid imposing collaborative overhead on trivial isolated tasks.
 - The initial skill MUST be usable without scripts, hooks, plugins, MCP, or runtime dependencies.
 - The skill MUST guide agents to reconcile documentation with repository reality.
@@ -37,9 +39,10 @@ The authoritative conceptual protocol is defined in:
 
 - Agents are ephemeral; project state is durable.
 - Persist consequential knowledge, not activity.
-- `specs.md`, `decisions.md`, `handoff.md`, and an opted-in `todo.md` remain plain Markdown.
+- `specs.md`, `decisions.md`, and an opted-in `todo.md` remain plain Markdown.
 - A fresh init leaves the task surface board-off. This repository keeps an opted-in local board at `.csdd/todo.md`.
-- `handoff.md` transfers resumable state and does not duplicate task tracking, including when `todo.md` is absent.
+- `handoff.md` is workspace-local, ignored, optional, and transfers only same-workspace resumable state; it does not duplicate task tracking or carry shared truth, including when `todo.md` is absent.
+- A missing `handoff.md` is valid state; its default close action is deletion.
 - Archive content, when present, is cold context and is never loaded by default.
 - Active scope overlap is never knowingly ignored.
 - Durable decisions are never silently reversed.
@@ -53,7 +56,8 @@ The authoritative conceptual protocol is defined in:
   (canonical allocation, external relationships, and duplicate repair)
 - Shared-state integration policy: `references/document-contracts.md#write-economy`
   and `#task-wise-landing-reconciliation` (canonical minimal writes and per-task preservation)
-- Distributed project templates: `assets/templates/`
+- v0.2 → v0.3 migration: `references/migration-v0.2-to-v0.3.md`
+- Distributed project templates: `assets/templates/` (`specs.md`, `todo.md`, `todo.external.md`, `decisions.md`, `gitignore`)
 - Runtime project state: `.csdd/`
 
 ## Distribution (non-normative for protocol semantics)

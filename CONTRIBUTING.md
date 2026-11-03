@@ -14,19 +14,25 @@ gate.
 | `references/protocol.md` | Conceptual protocol behavior and lifecycle rules |
 | `references/document-contracts.md` | Exact document structure, fields, read/write boundaries, and cleanup |
 | `SKILL.md` | Operational router and fast paths; detailed rules stay in references |
-| `assets/templates/` | Distributed starting documents for adoption |
-| `references/migration-v0.1-to-v0.2.md` | Existing migration contract; future breaking changes need appropriate migration guidance |
+| `assets/templates/` | Distributed committed starting documents and ignore policy for adoption |
+| `references/migration-v0.1-to-v0.2.md`, `references/migration-v0.2-to-v0.3.md` | Migration contracts; future breaking changes need appropriate migration guidance |
 | `docs/architecture.md` | Canonical contributor product-scope and integration review policy |
 | `docs/installation.md`, `docs/compatibility.md` | Distribution guidance and evidence-backed dimensional compatibility claims |
 | `evals/scenarios/`, `evals/runs/`, `evals/results.md` | Frozen scenario contracts, actual run evidence, and the results index |
 | `scripts/`, `tests/`, `.github/workflows/` | Optional offline repository validation and its CI execution |
 | `evidence/`, `dogfooding/`, `field-reports/` | Observations and supporting evidence, not additional normative sources |
-| `.csdd/` | This repository's own project state; it is not a template for adopters |
+| `.csdd/` | This repository's own project state; it is not a template for adopters. `handoff.md` is local and untracked |
 | `README.md`, `changelog.md`, `adapters/` | Public entrypoint, release history, and harness-specific guidance |
 
 Protocol references and this repository's own `.csdd/` specifications and
 decisions have different purposes. Do not turn a local task note, example,
 evaluation expectation, issue, or unmerged PR into a new protocol rule.
+
+Keep committed truth and local continuity separate. `specs.md`, `todo.md`, and
+`decisions.md` are committed and must stay current when durable truth or shared
+work state changes. `.csdd/handoff.md` is workspace-local and ignored; it is not
+a transport for anything another person or machine must continue. Update
+`specs.md` and `decisions.md` when truth changes, not as an activity log.
 
 ## Classify the change and review its impact
 
@@ -78,8 +84,9 @@ python scripts/validate_repository.py
 git diff --check
 ```
 
-The validator checks package structure, templates, and relative Markdown links;
-it does not prove semantic correctness, agent behavior, or harness compatibility.
+The validator checks package structure, templates including the handoff ignore
+policy, and relative Markdown links; it does not prove semantic correctness,
+agent behavior, or harness compatibility.
 For documentation-only changes, review consistency with the canonical source
 and record that behavioral evaluations were not needed when behavior is
 unchanged. Do not add tests that merely mirror wording.

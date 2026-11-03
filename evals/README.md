@@ -5,7 +5,7 @@ behavior across fresh coding-agent sessions.
 
 ## Scenario contracts vs run reports
 
-- **Pre-run scenario contracts** (for example scenarios 06–21) define fixture
+- **Pre-run scenario contracts** (for example scenarios 06–22) define fixture
   shape, the exact subject prompt, expected observable behavior, critical
   failures, and grading notes. They are not evaluation reports and must not
   contain Observed Behavior, PASS/PARTIAL/FAIL results, or invented run
@@ -16,11 +16,12 @@ behavior across fresh coding-agent sessions.
 - Evaluations 01–05 predate the contract/report split. Their combined historical
   reports now live under `evals/runs/`. No separate frozen pre-run contracts
   exist for those historical evaluations.
-- Scenarios 06–21 are the reusable pre-run contracts under `evals/scenarios/`.
+- Scenarios 06–22 are the reusable pre-run contracts under `evals/scenarios/`.
   Scenario 08 is the board-off init default. Scenario 20 is local opt-in at
   init. Scenarios 16–17 are the external stub. Scenario 21 is board-off
-  doctor, status, and post-init enable. Contracts that assume a local
-  `todo.md` board say they assume an opted-in board, not the init default.
+  doctor, status, and post-init enable. Scenario 22 is workspace-local handoff
+  and v0.2 migration. Contracts that assume a local `todo.md` board say they
+  assume an opted-in board, not the init default.
 
 ## Evaluation Roles
 
@@ -140,6 +141,11 @@ The child model must not inherit the parent, and the child prompt must name
 the chosen model. Run A for each is recorded. One subject per scenario. The
 compatibility matrix is unchanged. A session that is running Poteto mode is
 not part of this campaign.
+
+### T-038 workspace-local handoff campaign (scenario 22)
+
+Scenario 22 owns v0.3 initialization without a committed handoff and the
+v0.2 → v0.3 migration path. Run A is recorded in `evals/runs/22-workspace-local-handoff-a.md`.
 
 ## Reporting
 

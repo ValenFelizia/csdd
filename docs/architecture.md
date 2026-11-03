@@ -18,13 +18,13 @@ this file during ordinary work. Runtime behavior remains defined by the
    inform proposals. Inferred memory alone cannot authorize requirements,
    decisions, task claims, or canonical writes. Investigate contradictions;
    neither code nor documentation automatically wins.
-2. **Repository-local truth.** Canonical state travels with the repository and
-   can be inspected through files, diffs, commits, branches, and worktrees.
-   Integrations must not silently move that authority into a service.
-   `specs.md`, `decisions.md`, and `handoff.md` stay required and keep their
+2. **Repository-local truth.** Committed canonical state travels with the
+   repository and can be inspected through files, diffs, commits, branches, and
+   worktrees. Integrations must not silently move that authority into a service.
+   `specs.md`, `decisions.md`, and an opted-in `todo.md` retain their
    [distinct responsibilities](../references/protocol.md#core-project-state-documents).
-   `.csdd/todo.md` is optional coordination. Board-off, local, and external
-   share those three documents and differ on in-repo claims.
+   The workspace-local handoff is continuity state, not canonical truth; it
+   never carries anything another person or machine must continue.
 3. **Usable without optional infrastructure.** The core needs no daemon,
    database, hosted backend, model proxy, continuous model calls, control panel,
    authenticated agent identity, or central coordination server. Optional tools
@@ -81,10 +81,12 @@ maintenance changes do not need a separate design document or full checklist.
 1. What concrete CSDD operational failure is observed, and what dogfooding,
    evaluation, or user evidence supports it? Separate observations from
    hypotheses and untested benefits.
-2. Why are the existing documents and workflows insufficient? Compare the
-   smallest credible alternatives, including using an external specialized tool.
+2. Why are the existing committed documents and workflows insufficient?
+   Compare the smallest credible alternatives, including using an external
+   specialized tool.
 3. Where does canonical truth live, and can ordinary repository files still
-   express it? Identify any changed document responsibilities or derived views.
+   express it? Identify any changed document responsibilities, derived views, or
+   state that must stay workspace-local.
 4. What required runtime, external service, model dependency, data export, or
    synchronization does the proposal introduce? State what happens without it.
 5. What context, coordination, and maintenance cost does it add to trivial,

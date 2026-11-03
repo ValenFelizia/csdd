@@ -1,1 +1,3 @@
 csdd.code-workspace
+__pycache__/
+*.pyc

@@ -13,6 +13,10 @@ CSDD does not provide true shared agent memory or create a shared mind. It
 provides durable, inspectable project artifacts from which each agent can
 reconstruct a task-appropriate working context.
 
+Committed CSDD documents carry durable truth and shared coordination. The
+workspace-local handoff carries only same-workspace continuity and never travels
+through Git.
+
 > Agents are ephemeral. Project state must be durable.
 
 ## Normative language
@@ -90,9 +94,11 @@ Current, operational, and frequently changing:
   [External-tracker stub](document-contracts.md#external-tracker-stub));
 - `.csdd/handoff.md`.
 
-Hot context is the first candidate for project or collaborative work, but a
-trivial isolated task may need neither file. Board-off has no `todo.md` hot
-path. `handoff.md` stays hot and is still not the backlog.
+An opted-in `todo.md` is committed and branch-local. `handoff.md` is
+workspace-local, untracked, and optional. Hot context is the first candidate
+for project or collaborative work, but a trivial isolated task may need
+neither file. Board-off has no `todo.md` hot path. `handoff.md` stays hot and
+is still not the backlog.
 
 ### Warm context
 
@@ -115,49 +121,58 @@ when current state points to it or the task requires historical explanation.
 
 ## Core project-state documents
 
-CSDD v0 uses one canonical, deterministic project-state location:
+CSDD v0.3 separates committed project state from workspace-local continuity
+state inside one canonical location:
 
 ```text
 .csdd/
-|-- specs.md        # required
-|-- decisions.md    # required
-|-- handoff.md      # required
-|-- todo.md         # optional; absence is Current board-off
-`-- archive/        # optional
+|-- .gitignore        # committed; excludes handoff.md
+|-- specs.md          # committed, required
+|-- decisions.md      # committed, required
+|-- todo.md           # committed, optional; absence is Current board-off
+|-- handoff.md        # optional, workspace-local, ignored
+`-- archive/          # optional
 ```
 
-`specs.md`, `decisions.md`, and `handoff.md` MUST live directly under
-`.csdd/`. `.csdd/todo.md` is optional. CSDD state MUST remain human-readable
-Markdown. V0 does not support project-root alternatives, arbitrary paths, or
-configurable discovery. A fixed location reduces discovery ambiguity, context
-cost, harness-specific behavior, and adapter complexity. Configurable
-locations remain a possible post-v0 feature.
+`specs.md` and `decisions.md` MUST live directly under `.csdd/` and MUST be
+tracked by Git. `.csdd/.gitignore` MUST be committed and exclude `handoff.md`.
+`.csdd/todo.md` is optional; when present, it is tracked by Git.
+`.csdd/handoff.md` is optional, MUST be ignored by `.csdd/.gitignore`, and MUST
+NOT be tracked by Git. CSDD state MUST remain human-readable Markdown. Committed
+state is shared through Git. The local handoff is shared with no one: it
+describes only this workspace's current resumption risk.
 
-The documents separate by responsibility:
+V0 does not support project-root alternatives, arbitrary paths, or configurable
+discovery. A fixed location reduces discovery ambiguity, context cost,
+harness-specific behavior, and adapter complexity. Configurable locations remain
+a possible post-v0 feature.
 
-| Document | Context layer | Primary responsibility |
-| --- | --- | --- |
-| `.csdd/specs.md` | L1 | Durable requirements, constraints, invariants, and contracts |
-| `.csdd/decisions.md` | L1 | Consequential choices, rationale, consequences, and supersession |
-| `.csdd/todo.md` | L2, when the file exists | Opt-in local board: current work, accountability, executor, scope, dependencies, and blockers. Opt-in external stub: in-repo pointer (`Mode: external`, `Tracker:`, `Next:`) when an external tracker owns the backlog. Absent file: no task surface |
-| `.csdd/handoff.md` | L2 | Minimum replaceable transfer state at a boundary with concrete resumption risk |
+CSDD separates the documents by responsibility and transport:
 
-`todo.md` and `handoff.md` MUST preserve distinct responsibilities. The
-default task surface is **board-off**: the path does not exist, and the class
-is Current when the other three files are regular files. On an opted-in
-**local board**, `todo.md` is the coordination surface for active work and
-overlap detection. On an opted-in **external-tracker stub**, `todo.md` records
-only mode and next-action policy. Backlog and issue state live in the
-external tracker, and in-repo `Owner` / `Agent` / `Scope` claims are not
-available. The stub field contract and the phrase fence are canonical in
+| Document | Transport | Context layer | Primary responsibility |
+| --- | --- | --- | --- |
+| `.csdd/specs.md` | Committed | L1 | Durable requirements, constraints, invariants, and contracts |
+| `.csdd/decisions.md` | Committed | L1 | Consequential choices, rationale, consequences, and supersession |
+| `.csdd/todo.md` | Committed | L2, when the file exists | Opt-in local board: current work, accountability, executor, scope, dependencies, and blockers. Opt-in external stub: in-repo pointer (`Mode: external`, `Tracker:`, `Next:`) when an external tracker owns the backlog. Absent file: no task surface |
+| `.csdd/handoff.md` | Workspace-local, ignored | L2 | One replaceable same-workspace snapshot at a boundary with concrete resumption risk |
+
+`todo.md` and `handoff.md` MUST preserve distinct responsibilities. The default
+task surface is **board-off**: the path does not exist, and the class is Current
+when `.csdd/specs.md`, `.csdd/decisions.md`, and a valid `.csdd/.gitignore`
+exist. On an opted-in **local board**, `todo.md` is the committed coordination
+surface for active work, overlap detection, and cross-person or cross-machine
+continuity. On an opted-in **external-tracker stub**, `todo.md` records only
+mode and next-action policy. Backlog and issue state live in the external
+tracker, and in-repo `Owner` / `Agent` / `Scope` claims are not available. The
+stub field contract and the phrase fence are canonical in
 [Task surface](document-contracts.md#task-surface) and
-[External-tracker stub](document-contracts.md#external-tracker-stub). Omitting
-the `todo.md` file is never external mode. It is a valid Current board-off
-state.
+[External-tracker stub](document-contracts.md#external-tracker-stub). Absence of
+`todo.md` does not declare external mode; it is a valid Current board-off state.
 
 `handoff.md` holds only additional non-obvious transient state needed to cross a
-boundary safely; it is not the primary collision-prevention mechanism, a
-parallel task tracker, or chronological history. See [Boundary-driven
+boundary safely in this workspace; it is not the primary collision-prevention
+mechanism, a parallel task tracker, a chronological history, or a transport for
+anything another person or machine needs. See [Boundary-driven
 handoffs](#boundary-driven-handoffs).
 
 The detailed boundaries, read policies, update triggers, and aging rules are
@@ -235,6 +250,14 @@ The protocol MUST NOT make a trivial change more expensive than the change
 itself. Claiming work, writing handoffs, and updating shared state are required
 only when they reduce meaningful coordination or continuity risk.
 
+### P12 - Committed truth and local continuity have different transport
+
+Durable truth and shared coordination MUST live in committed documents.
+Workspace-local handoff state MUST NOT be the only carrier of anything another
+person, machine, branch, or worktree needs. Git, `todo.md`, `specs.md`,
+`decisions.md`, commits, and pull requests carry shared meaning. The local
+handoff carries only same-workspace resumption context.
+
 ## Adaptive context hydration
 
 Before reading CSDD state, estimate the minimum context required to perform the
@@ -310,10 +333,10 @@ instructions, and available documentation.
 
 ### Orient
 
-Reconstruct minimum sufficient context. Inspect relevant handoff and work state
-when resumable risk may exist, validate critical handoff claims against
-repository reality before relying on them, then load only relevant
-specifications and decisions.
+Reconstruct minimum sufficient context. Inspect this workspace's relevant
+handoff and work state when resumable risk may exist, validate critical handoff
+claims against repository reality before relying on them, then load only
+relevant specifications and decisions.
 
 ### Claim/Plan
 
@@ -375,6 +398,11 @@ resumption risk exist.
 
 ### Boundary-driven handoffs
 
+`handoff.md` is workspace-local and untracked. It is not a collaboration surface
+between people, machines, branches, or worktrees. Anything that must survive
+those boundaries belongs in committed task state or durable documents before the
+handoff is cleared.
+
 A handoff entry is created or updated only when both conditions hold:
 
 1. **Boundary:** execution reaches a real continuity, responsibility,
@@ -395,6 +423,11 @@ chronological history. During uninterrupted execution, agents MUST NOT append
 progress narration or rewrite the handoff for routine intermediate changes.
 When a new boundary and risk exist, replace the prior snapshot coherently
 rather than appending session history.
+
+The default close action is deletion. Keep a snapshot only when a concrete
+resumption risk remains that committed state cannot recover. Promote durable
+truth to `specs.md` or `decisions.md`, and shared work state to `todo.md`, before
+the local snapshot is cleared.
 
 Reading, claiming, reassigning, or beginning to resume does not consume a
 handoff. A handoff is consumed only when its resumption risk is resolved,
@@ -425,7 +458,7 @@ is only that boundary risk. See
 | Blocked | `todo.md` records the state and named blocker | Create only when consequential partial state or an unresolved question creates concrete resumption risk that must survive the boundary |
 | Partial / interrupted | `todo.md` preserves honest task state and scope | Create when a later resumer would otherwise proceed incorrectly or repeat meaningful work |
 | Collision | `todo.md` coordinates scope, overlap, and sequencing | Create only when the collision forces a boundary and leaves partial state that creates concrete resumption risk |
-| Completed | Git and `todo.md` record truthful closure | Remove obsolete task handoff state; create separate transfer state only for an active dependent workstream with concrete risk |
+| Completed | Git and `todo.md` record truthful closure | Delete the local snapshot unless a separate active dependent workstream has concrete transfer risk |
 
 Operational rule. The fence lines live only in
 [Phrase fence](document-contracts.md#phrase-fence).
@@ -495,16 +528,19 @@ relevant for coordination.
 worktrees are in play, or when concurrency is plausible. `Base` MAY be omitted
 for Level 0 work and for Level 1 work with no coordination value. Agents MUST
 NOT silently advance `Base` to hide divergence from `Target`. When `Base`
-changes, record the reconciliation (for example in `Note` or handoff).
+changes, record the reconciliation in committed state (for example in a task
+`Note`).
 
 For repository-modifying work, *landed* means the verified changes are
 committed and reachable from the resolved integration `Target`. Completed
 repository tasks SHOULD record `Landed`. They MUST record `Landed` when
 attribution is not obvious from the current tip of `Target` alone.
 
-Editing rules for `todo.md` and `handoff.md` as shared coordination surfaces
-are in [document-contracts.md](document-contracts.md#shared-coordination-surfaces).
-Those documents are not automatically part of a task's principal write `Scope`.
+Editing rules for `todo.md` as the committed coordination surface, and for the
+workspace-local handoff, are in
+[document-contracts.md](document-contracts.md#shared-coordination-surfaces).
+`todo.md` is part of committed project state; the local handoff is not part of a
+task's principal write `Scope`.
 
 ### Ready to Land
 
@@ -565,12 +601,15 @@ and `Base` still matches the `Target` tip.
 ### Minimal Git contract
 
 Agents MUST NOT stage or commit files outside the claimed `Scope`, except for
-minimal coherent patches to `.csdd/todo.md` and `.csdd/handoff.md` made under
-the [shared coordination-surface
+minimal coherent patches to `.csdd/todo.md` made under the [shared
+coordination-surface
 contract](document-contracts.md#shared-coordination-surfaces). Any other file
 outside `Scope` requires explicit reconciliation that expands or coordinates
-that scope. Commits primarily associated with one task SHOULD include the task
-ID in the subject or a trailer (for example `T-018` or `Task: T-018`).
+that scope. Agents MUST NOT stage or commit `.csdd/handoff.md`; it is
+workspace-local and ignored. A tracked handoff is legacy state and requires the
+explicit [v0.2 → v0.3 migration](migration-v0.2-to-v0.3.md). Commits primarily
+associated with one task SHOULD include the task ID in the subject or a trailer
+(for example `T-018` or `Task: T-018`).
 
 ### Illustrative landing shapes
 
@@ -677,7 +716,7 @@ agent to remove or defer Pending work.
 
 Recently Completed is a bounded operational window, not permanent history.
 Directly under `## Recently Completed`, the project declares `Retention: N`.
-The v0.2 default is `Retention: 5`. If the line is absent in an older project,
+The v0.3 default is `Retention: 5`. If the line is absent in an older project,
 agents MUST use five as the fallback until migration. `N` is a positive
 integer (`N >= 1`) and applies globally. `Retention: 0` is invalid. A human
 or explicit project policy MAY change it; agents MUST NOT increase it
@@ -711,7 +750,8 @@ the following hold:
    inside `Scope`;
 4. active write `Scope` is released (`Scope: released` or omitted when
    compacted);
-5. obsolete handoff state for the task is removed or replaced; and
+5. the local handoff snapshot is deleted or replaced when a concrete resumption
+   risk remains; and
 6. `Landed` is recorded when required by the Landed rules above.
 
 Work that awaits required review or landing remains active—typically
@@ -746,21 +786,27 @@ classes are then mutually exclusive by first-match precedence in this order:
 | --- | --- | --- |
 | 1 | Ambiguous or conflicting — competing or unresolved roots, unusable `.csdd` destination, or another conflict that prevents safe classification | Stop; request clarification; do not write |
 | 2 | Absent — the canonical `.csdd/` path does not exist | Proceed with initialization |
-| 3 | Already initialized / Current — `specs.md`, `decisions.md`, and `handoff.md` exist as regular files, and `.csdd/todo.md` is absent (board-off) or exactly one valid shape | Do not overwrite; report already initialized. A fence line in this utterance does not create `todo.md` |
-| 4 | Recognizable older state — not Current, and a present `todo.md` follows an older contract | Do not migrate via `init`; direct to migration |
+| 3 | Already initialized / Current — `specs.md`, `decisions.md`, and `.csdd/.gitignore` exist as regular files with valid ignore rules, and `.csdd/todo.md` is absent (board-off) or exactly one valid shape | Do not overwrite; report already initialized. A fence line in this utterance does not create `todo.md` |
+| 4 | Recognizable older state — not Current, and state follows an older contract (such as a tracked `handoff.md`, missing `.csdd/.gitignore`, or older `todo.md` format) | Do not migrate via `init`; direct to migration |
 | 5 | Partial or malformed — `.csdd/` exists but is neither Current nor recognizable older | Do not complete or repair via `init` |
 
 An ambiguous or unusable destination MUST block before absence is evaluated. An
 unusable `.csdd` path (for example a regular file) MUST NOT classify as Absent.
 Filenames alone MUST NOT classify a malformed `todo.md` as already initialized.
-A valid trio with no `todo.md` is Current board-off, not a missing-file defect.
-Every non-Absent class remains non-destructive and routes to
+A missing `.csdd/handoff.md` is valid current state and MUST NOT classify as
+partial or malformed. A valid tree with no `todo.md` is Current board-off, not a
+missing-file defect. Every non-Absent class remains non-destructive and routes to
 already-initialized reporting, migration, repair, or clarification as
 applicable. The only later writer of `.csdd/todo.md` is `/csdd todo enable`
 on Current board-off, using the same
 [phrase fence](document-contracts.md#phrase-fence) and
 [transition table](document-contracts.md#transition-table). Init does not
 restate those lines.
+
+A tracked `.csdd/handoff.md` is legacy state. `init` MUST NOT untrack, delete,
+or rewrite it. Surface the condition, require explicit migration intent, and
+point to the [v0.2 → v0.3 migration
+guide](migration-v0.2-to-v0.3.md).
 
 Successful initialization MUST NOT imply permission for later repair,
 enrichment, migration, staging, commit, push, or other repository actions.
@@ -827,20 +873,23 @@ document-local generation rules are in
 ### Structural adoption versus knowledge completeness
 
 Successful initialization certifies coherent structural adoption of the
-required documents, plus `.csdd/todo.md` only when the fence selects a file,
-not completeness of project knowledge. Sparse documents, an absent task
-surface, empty operational sections, and explicitly reported gaps are valid.
-The agent MUST NOT invent claims, broaden Scope, continue discovery without
-material justification, or answer unresolved questions on the human's behalf
-merely to satisfy postconditions.
+required committed documents (`.csdd/specs.md`, `.csdd/decisions.md`, and
+`.csdd/.gitignore`), plus `.csdd/todo.md` only when the phrase fence selects a
+surface, not completeness of project knowledge. Sparse documents, an absent
+task surface, an absent local handoff, empty operational sections, and
+explicitly reported gaps are valid. The agent MUST NOT invent claims, broaden
+Scope, continue discovery without material justification, or answer unresolved
+questions on the human's behalf merely to satisfy postconditions.
 
 ### Safety invariants
 
 Initialization MUST:
 
-- create only the three required documents under the canonical root, plus
-  `.csdd/todo.md` when the phrase fence selects local or a complete external
-  stub, as one coherent patch;
+- create only `.csdd/specs.md`, `.csdd/decisions.md`, and `.csdd/.gitignore`
+  under the canonical root, plus `.csdd/todo.md` when the phrase fence selects
+  local board or a complete external stub, as one coherent patch;
+- not create `.csdd/handoff.md`; a handoff is created lazily only at a real
+  boundary with concrete resumption risk;
 - revalidate the destination immediately before writing: confirm the
   canonical root and that the destination remains usable, then reclassify
   from the beginning against the recorded preflight state; stop without
@@ -903,8 +952,10 @@ explicitly requested but the canonical state is missing, partial, malformed,
 old, or conflicting, the agent MUST surface that condition and follow only the
 requested workflow—initialization, repair, or migration—without silently
 inventing an alternative layout or overwriting existing state. `init` never
-repairs or migrates. Without either signal, the skill need not enter the CSDD
-lifecycle.
+repairs or migrates. A tracked `.csdd/handoff.md` is legacy v0.2 state; surface
+it and point to the [v0.2 → v0.3 migration
+guide](migration-v0.2-to-v0.3.md) instead of untracking it silently. Without
+either signal, the skill need not enter the CSDD lifecycle.
 
 Bootstrap SHOULD inspect repository status, project instructions, the `.csdd/`
 shape, and the task's apparent target before hydrating project state. This is
@@ -924,12 +975,12 @@ scope, ambiguity, continuity, or collision risk. Use this initial routing:
 | 3 - deep | Inspect relevant hot and warm context; use cold context only on demand. On board-off, `handoff.md` is the only hot coordination file. |
 
 The authoritative document-specific read policies are in
-[document-contracts.md](document-contracts.md). In particular, `handoff.md` is
-read when relevant boundary transfer state with concrete resumption risk may
-exist, while `specs.md` and `decisions.md` are loaded only when their
-documented behavioral, contractual, or decision triggers apply. Follow
-[Optional archive and cold history](#optional-archive-and-cold-history) for any
-historical access.
+[document-contracts.md](document-contracts.md). In particular, the
+workspace-local `handoff.md` is read when this workspace has relevant boundary
+transfer state with concrete resumption risk, while `specs.md` and
+`decisions.md` are loaded only when their documented behavioral, contractual, or
+decision triggers apply. Follow [Optional archive and cold
+history](#optional-archive-and-cold-history) for any historical access.
 
 ### Ownership, overlap, and claiming
 
@@ -992,13 +1043,14 @@ minimum and the [Git-aware task lifecycle](#git-aware-task-lifecycle)
 completion rules when a local board exists.
 
 `Ready to Land` in the table below is a session-close condition that leaves the
-task in the Ready to Land state. It is not a completed outcome.
+task in the Ready to Land state. It is not a completed outcome. `handoff.md` in
+the table is the workspace-local, untracked file; it is never committed.
 
 | Close condition | Required close |
 | --- | --- |
-| Completed | Verify the result; for repository-modifying work, confirm the changes are landed and reachable from `Target`, with no unlanded task changes and no unresolved unattributed changes remaining inside `Scope`; record `Landed` when required; reconcile repository and durable docs; move or mark the task completed and release active scope; remove obsolete handoff state. Create a handoff only when a separate active dependent workstream has its own concrete transfer risk. |
-| Ready to Land | Persist the Ready to Land task state when verified work remains unlanded at a session, responsibility, or coordination boundary; keep the claim honest; update `handoff.md` only when `Landing:` and `Verification:` are insufficient for safe continuation. Omit task persistence only when landing completes in the same uninterrupted operation. |
-| Partial | Keep the task honestly active with current scope and a useful checkpoint; update `handoff.md` only when both a boundary and concrete resumption risk exist. |
+| Completed | Verify the result; for repository-modifying work, confirm the changes are landed and reachable from `Target`, with no unlanded task changes and no unresolved unattributed changes remaining inside `Scope`; record `Landed` when required; reconcile repository and durable docs; move or mark the task completed and release active scope; delete the local handoff snapshot unless a separate active dependent workstream has concrete transfer risk. |
+| Ready to Land | Persist the Ready to Land task state when verified work remains unlanded at a session, responsibility, or coordination boundary; keep the claim honest; update the local `handoff.md` only when `Landing:` and `Verification:` are insufficient for safe continuation. Omit task persistence only when landing completes in the same uninterrupted operation. |
+| Partial | Keep the task honestly active with current scope and a useful checkpoint; update the local `handoff.md` only when both a boundary and concrete resumption risk exist. |
 | Blocked | Move or mark the task blocked and name the blocker or decision needed in `todo.md`; update `handoff.md` only when consequential partial state or an unresolved question creates concrete resumption risk that must survive the boundary; retain `Scope` only when partial work or safe continuation needs protection, otherwise release it and explain why. |
 | Interrupted | Record an honest active checkpoint in `todo.md`; create or update `handoff.md` only when concrete resumption risk must survive; if implementation is finished but unlanded, close as Ready to Land rather than implying completion; do not retain a misleading claim. |
 | Trivial | Verify the change. Do not create a task, handoff, decision, archive entry, or other CSDD update unless the work discovered a material conflict or changed durable truth. |
@@ -1209,15 +1261,20 @@ worktree baseline reconciliation](#branch-and-worktree-baseline-reconciliation).
 
 ## Branch and worktree baseline reconciliation
 
-`.csdd/` is versioned, branch-local state. The current worktree is the
-operational baseline for reading and writing CSDD documents, but it is not proof
-that other worktrees or branches lack relevant claims, handoffs, or durable
-truth.
+Committed CSDD state (`.csdd/specs.md`, `.csdd/todo.md`, `.csdd/decisions.md`)
+is versioned and branch-local. The current worktree is the operational baseline
+for those documents, but it is not proof that other worktrees or branches lack
+relevant claims or durable truth.
+
+`.csdd/handoff.md` is workspace-local and untracked. It is not versioned,
+branch-local state. It is not visible from another worktree and MUST NOT be
+imported, merged, or reconciled across baselines. Cross-worktree discovery
+applies only to committed documents.
 
 CSDD does not introduce a global lock service, shared configuration file, or
 out-of-band synchronization channel. Coordination remains artifact-based. When
 branches or worktrees diverge, agents MUST reconcile explicitly rather than
-silently copy, concatenate, merge, release, or overwrite CSDD state.
+silently copy, concatenate, merge, release, or overwrite committed CSDD state.
 
 ### When cross-worktree inspection is required
 
@@ -1246,19 +1303,20 @@ Trigger -> Discover -> Compare -> Classify -> Reconcile or block -> Execute -> C
 2. **Discover.** Inspect the current worktree baseline, then relevant other
    worktrees and branches: checked-out refs, clean or dirty status, uncommitted
    changes inside the requested or claimed scope, recent commits touching
-   `.csdd/` or the implementation scope, and any visible handoff or ownership
-   evidence. Prefer targeted inspection over exhaustive repository enumeration.
-3. **Compare.** Diff the current `.csdd/` documents and relevant code against
+   `.csdd/` or the implementation scope, and visible committed ownership
+   evidence. Do not expect handoff evidence from another worktree; the local
+   handoff is not committed.
+3. **Compare.** Diff the committed `.csdd/` documents and relevant code against
    the candidate baseline. Note whether divergence is limited to operational
-   coordination (`todo.md`, `handoff.md`), durable truth (`specs.md`,
-   `decisions.md`), implementation artifacts, or a combination.
+   coordination (`todo.md`), durable truth (`specs.md`, `decisions.md`),
+   implementation artifacts, or a combination.
 4. **Classify.** Assign one primary class (combine only when needed for
    clarity):
 
    | Class | Meaning | Default action |
    | --- | --- | --- |
    | No material divergence | Other baselines do not change claim, resume, or implementation decisions | Proceed on the current worktree baseline |
-   | Coordination-only divergence | Claims or handoffs differ; durable truth agrees | Preserve live compatible claims, block on live conflict, or explicitly reclaim/supersede stale operational state |
+   | Coordination-only divergence | Committed claims differ; durable truth agrees | Preserve live compatible claims, block on live conflict, or explicitly reclaim/supersede stale operational state |
    | Durable-truth divergence | Material differences in `specs.md` or `decisions.md` | Reconcile or block before implementing dependent behavior |
    | Live conflicting work | Another worktree or branch shows active overlapping execution | Surface overlap; coordinate, sequence, or block; do not silently reclaim or overwrite |
 
@@ -1280,8 +1338,9 @@ Trigger -> Discover -> Compare -> Classify -> Reconcile or block -> Execute -> C
 7. **Close.** Leave truthful task state on the current baseline. Release active
    write scope when complete. Do not imply that another worktree's claims were
    cleared unless that worktree's documents were explicitly updated. Clear or
-   update handoff only when both a real boundary and concrete resumption risk
-   require it on this baseline.
+   replace this workspace's local handoff only when both a real boundary and
+   concrete resumption risk require it. Never imply that another worktree's
+   local handoff changed.
 
 Document-contract detail for locality, evidence, and provenance lives in
 [Branch and worktree locality](document-contracts.md#branch-and-worktree-locality).
@@ -1332,7 +1391,9 @@ only after it is sufficiently validated and its loss could harm later work:
 Use `specs.md` when the finding describes what must remain true. Use
 `decisions.md` when it records a consequential choice and why. Use `todo.md`
 when the information changes active work, and `handoff.md` only when both a
-real boundary and concrete resumption risk require transient transfer state.
+real boundary and concrete resumption risk require transient transfer state in
+the same workspace. Anything another person or machine needs must be promoted
+to a committed document before the local handoff is cleared.
 
 Transient state should expire when it is completed, disproven, superseded, or
 no longer useful for resumption. Promotion must not mean copying the same fact
@@ -1399,9 +1460,12 @@ reconstruction. Its effectiveness depends on agents and operators keeping the
 relevant state honest and scoped. Text files cannot provide atomic claims,
 guarantee fresh ownership, prevent conflicting writes, synchronize every
 worktree automatically, or resolve ambiguous project intent without judgment.
-Because `.csdd/` is branch-local, claims are advisory only for observers of that
-document version; cross-worktree reconciliation remains an explicit agent
-responsibility when concurrency is material.
+Because committed `.csdd/` state is branch-local, claims are advisory only for
+observers of that document version; cross-worktree reconciliation remains an
+explicit agent responsibility when concurrency is material. The workspace-local
+handoff is not shared across worktrees or machines at all. Moving continuity to
+another machine requires committed task state, durable documents, commits, or a
+pull request.
 
 The protocol is harness-agnostic and requires no runtime service, global lock
 file, or shared configuration channel. That keeps it portable and inspectable,
@@ -1416,6 +1480,7 @@ The following questions remain for dogfooding or later tasks:
   Code, and future harnesses?
 - Which normative statements should be promoted from SHOULD to MUST after
   real-world testing?
-- Will one `.csdd/handoff.md` remain practical under concurrent editing?
+- Which practices keep a workspace-local handoff short and current across
+  harnesses without turning it into a second task tracker?
 - Does the archive model remain useful without becoming redundant with Git and
   durable project documents?

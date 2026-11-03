@@ -12,8 +12,9 @@ project state across AI coding sessions, agents, harnesses, branches, and
 worktrees.
 
 Coding agents are temporary. Their conversations end, context windows reset,
-and parallel sessions do not share reliable state. CSDD keeps the minimum
-sufficient context in four small, version-controlled documents and uses
+and parallel sessions do not share reliable state. CSDD keeps durable truth and
+shared coordination in three small, version-controlled documents, plus an
+optional workspace-local handoff for same-workspace resumption, and uses
 [adaptive hydration](#adaptive-hydration) so agents load only what each task
 needs. The next agent can determine what is true, what is active, what was
 decided, and what remains unfinished.
@@ -102,10 +103,14 @@ exactly:
 ```text
 your-project/
 └── .csdd/
+    ├── .gitignore
     ├── specs.md
-    ├── decisions.md
-    └── handoff.md
+    └── decisions.md
 ```
+
+It does not create `handoff.md`. That file is optional, workspace-local, and
+ignored by Git. An agent creates it only when this workspace reaches a real
+execution boundary with concrete resumption risk.
 
 That tree is Current with `task surface: board-off`. `.csdd/todo.md` is not
 created. A sentence about GitHub, Linear, or issues does not create it.
@@ -152,11 +157,12 @@ active work should be recorded, without inventing missing information.
 The initialized documents may stay sparse. Structural success does not require
 the agent to guess requirements, decisions, tasks, or handoff state.
 
-As a manual fallback, copy `specs.md`, `decisions.md`, and `handoff.md` from
+As a manual fallback, copy `specs.md` and `decisions.md` from
 [`assets/templates`](assets/templates) into a repository-level `.csdd/`
-directory. Copy `todo.md`, or copy `todo.external.md` and rename it to
-`todo.md` after replacing `Tracker:` and `Next:`, only when opting in.
-Prefer `/csdd init` when an agent can run the adoption workflow.
+directory. Also copy `assets/templates/gitignore` to `.csdd/.gitignore` so the
+local handoff stays untracked. Copy `todo.md`, or copy `todo.external.md` and
+rename it to `todo.md` after replacing `Tracker:` and `Next:`, only when
+opting in. Prefer `/csdd init` when an agent can run the adoption workflow.
 
 ### 4. Inspect existing state
 
@@ -176,12 +182,17 @@ contracts are in [read-only-workflows.md](references/read-only-workflows.md).
 
 ## The documents
 
-| Document | Canonical responsibility |
-| --- | --- |
-| [`specs.md`](assets/templates/specs.md) | Required. Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
-| [`decisions.md`](assets/templates/decisions.md) | Required. Accepted directions whose rationale, alternatives, or consequences should survive the session |
-| [`handoff.md`](assets/templates/handoff.md) | Required. Only current resumable state that another agent could otherwise misunderstand, repeat, or lose. Not a backlog when `todo.md` is absent |
-| [`todo.md`](assets/templates/todo.md) | Optional. Absent by default (board-off). Opt-in local board: tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history. Opt-in external stub ([`todo.external.md`](assets/templates/todo.external.md)): in-repo `Mode: external`, `Tracker:`, and `Next:` when an external tracker owns the backlog |
+| Document | Transport | Canonical responsibility |
+| --- | --- | --- |
+| [`specs.md`](assets/templates/specs.md) | Committed | Required. Durable behavioral truth: requirements, constraints, invariants, interfaces, and accepted behavior |
+| [`decisions.md`](assets/templates/decisions.md) | Committed | Required. Accepted directions whose rationale, alternatives, or consequences should survive the session |
+| `handoff.md` | Workspace-local, ignored | Optional. One short current snapshot of resumable state that a later agent in the same workspace would otherwise misunderstand, repeat, or lose. Not a backlog when `todo.md` is absent |
+| [`todo.md`](assets/templates/todo.md) | Committed | Optional. Absent by default (board-off). Opt-in local board: tasks, owners, agents, write scopes, dependencies, blockers, and bounded completion history. Opt-in external stub ([`todo.external.md`](assets/templates/todo.external.md)): in-repo `Mode: external`, `Tracker:`, and `Next:` when an external tracker owns the backlog |
+
+The handoff is not a collaboration channel. Anything another person, machine,
+branch, or worktree must continue belongs in a committed document, commit, or
+pull request. A missing `handoff.md` is normal, and the default close action is
+to delete it once the risk is consumed.
 
 Projects may add an optional `.csdd/archive/` for cold semantic summaries of
 completed phases or superseded context. It is not part of initialization or
@@ -195,7 +206,7 @@ CSDD helps agents:
 - preserve requirements and decisions outside transient conversations;
 - coordinate human ownership, operational executors, and write scopes;
 - reconcile relevant branch and worktree state before overlapping work;
-- close tasks, release claims, and remove obsolete handoffs truthfully.
+- close tasks, release claims, and delete consumed handoffs truthfully.
 
 CSDD does not provide:
 
@@ -268,10 +279,12 @@ CSDD is experimental public-beta software. The latest published version is
 shown by the release badge above; release history is recorded in
 [`changelog.md`](changelog.md).
 
-The protocol includes a Git-aware task lifecycle, six TODO states on an
-opted-in local board, boundary-driven replaceable handoffs, Absent-only
-initialization, and templates for the required documents plus the opt-in
-task surface. Fresh init leaves the task surface board-off.
+The v0.3 protocol keeps `specs.md`, `decisions.md`, and opted-in `todo.md`
+committed and makes `handoff.md` workspace-local and untracked. It includes a
+Git-aware task lifecycle, six canonical TODO states on an opted-in local board
+with bounded retention, boundary-driven replaceable handoffs, an Absent-only
+initialization workflow, and templates for the required committed documents plus
+the opt-in task surface. Fresh init leaves the task surface board-off.
 
 Before `1.0`, document contracts and workflows may still evolve through
 versioned releases. Current compatibility claims are intentionally narrow and
@@ -300,6 +313,7 @@ evidence-backed.
 8. Store each durable truth in one canonical document.
 9. Reconcile branch and worktree divergence explicitly.
 10. Coordination overhead should remain proportional to task complexity.
+11. Committed truth and local continuity travel different paths.
 
 ## Adaptive hydration
 
@@ -381,15 +395,20 @@ and [task-wise landing reconciliation](references/document-contracts.md#task-wis
 The layout and Git-aware lifecycle are unchanged. Git conflicts and preparation
 still count as integration work; savings depend on the workload and evaluation.
 
-CSDD documents are version-controlled and therefore branch-local.
+`specs.md`, `decisions.md`, and an opted-in `todo.md` are version-controlled and
+therefore branch-local.
 
 The current worktree is the operational baseline, but it is not proof that no
 relevant activity exists elsewhere.
 
+The handoff is not versioned. `.csdd/handoff.md` is workspace-local and ignored,
+so another worktree cannot see it and it must not be treated as cross-baseline
+evidence.
+
 When concurrency, stale claims, or durable truth may involve other branches or
-worktrees, agents inspect relevant Git state before editing. Live conflicting
-work blocks silent execution. Divergent specifications or decisions must be
-reconciled explicitly.
+worktrees, agents inspect relevant committed Git state before editing. Live
+conflicting work blocks silent execution. Divergent specifications or
+decisions must be reconciled explicitly.
 
 CSDD does not provide global locking or distributed consensus.
 
@@ -451,6 +470,7 @@ When completed:
 .
 ├── SKILL.md
 ├── docs/
+│   ├── architecture.md
 │   ├── installation.md
 │   ├── compatibility.md
 │   └── examples/
@@ -459,7 +479,11 @@ When completed:
 │   └── templates/
 ├── references/
 │   ├── protocol.md
-│   └── document-contracts.md
+│   ├── document-contracts.md
+│   ├── migration-v0.1-to-v0.2.md
+│   └── migration-v0.2-to-v0.3.md
+├── scripts/
+├── tests/
 ├── evals/
 │   ├── scenarios/
 │   ├── runs/
@@ -473,7 +497,9 @@ When completed:
 - [`docs/examples/session-resume.md`](docs/examples/session-resume.md) walks through adaptive hydration on a recorded resume eval.
 - [`references/protocol.md`](references/protocol.md) defines the full protocol.
 - [`references/document-contracts.md`](references/document-contracts.md) defines document semantics.
-- [`assets/templates`](assets/templates) contains initialization templates.
+- [`references/migration-v0.2-to-v0.3.md`](references/migration-v0.2-to-v0.3.md) covers the workspace-local handoff migration.
+- [`assets/templates`](assets/templates) contains initialization templates, including `gitignore`.
+- [`scripts/validate_repository.py`](scripts/validate_repository.py) is the offline structural validator.
 - [`evals`](evals) contains reusable scenarios and recorded runs.
 
 ## Evaluation
@@ -485,14 +511,16 @@ The manual evaluation suite covers:
   phase closure with semantic archival;
 - scenario 06: Git divergence and live collision;
 - scenario 07: landing truthfulness, TODO retention, and handoff cleanup;
-- scenario 08: existing-repository initialization.
+- scenario 08: existing-repository initialization (v0.2 init behavior);
+- scenario 09: workspace-local handoff and v0.2 migration.
 
 Scenarios 01–05 found protocol defects involving human ownership, completed
 scopes, historical agent metadata, and duplicated durable truth. The rules were
 updated and the same fixtures were rerun successfully.
 
 Scenarios 06–08 Run A passed with no critical failures. Run B was not warranted
-under the campaign rule.
+under the campaign rule. Scenario 09 is a pre-run contract with no recorded run
+yet.
 
 See [`evals/results.md`](evals/results.md) for the complete matrix and
 limitations.
@@ -508,10 +536,11 @@ python scripts/validate_repository.py
 
 Structural validation verifies machine-checkable repository contracts such as
 `SKILL.md` frontmatter, the T-025 runtime file boundary, the primary templates
-plus `todo.external.md`, local-board `todo.md` headings and Retention, external
-stub fields and mixed-shape rejection, and relative Markdown links. It is
-deterministic and does not use the network or model output. Passing these
-checks does not replace the qualitative evaluations in [`evals/`](evals).
+plus `todo.external.md`, the `gitignore` template and its `handoff.md` rule,
+local-board `todo.md` headings and Retention, external stub fields and
+mixed-shape rejection, and relative Markdown links. It is deterministic and does
+not use the network or model output. Passing these checks does not replace the
+qualitative evaluations in [`evals/`](evals).
 
 ## Versioning
 
@@ -523,10 +552,11 @@ required init behavior.
 - major releases may change canonical document contracts or required behavior.
 
 v0.3.0 changes the init patch and the Current class. Fresh init does not
-write `.csdd/todo.md`. A valid trio with that path absent is Current
-board-off. Existing valid local boards and valid stubs stay valid. Re-enable
-with a fence line. Enable writes a blank template and does not restore deleted
-task text. Restore that file from Git instead.
+write `.csdd/todo.md` and does not write `.csdd/handoff.md`. A valid tree with
+`todo.md` absent is Current board-off. `.csdd/.gitignore` ignores `handoff.md` so
+local continuity stays untracked. Existing valid local boards and valid stubs
+stay valid. Re-enable with a fence line. Enable writes a blank template and does
+not restore deleted task text. Restore that file from Git instead.
 
 ## License
 
